@@ -1,0 +1,44 @@
+task main() {
+    string sColor;
+    int nColor;
+
+    // Turn on the sensor
+    SetSensorColorFull(S1);
+
+    while (1) {
+
+        // Read the numerical color value from the sensor
+        nColor = Sensor(S1);
+
+        // Determine the color name from its number
+        switch(nColor) {
+            case 1: sColor = "Black";
+                 PlayTone(784, 30);
+                 break;
+            case 2: sColor = "Blue";
+                 PlayTone(884, 30);
+                 break;
+            case 3: sColor = "Green";
+                 PlayTone(984, 30);
+                 break;
+            case 4: sColor = "Yellow";
+                 PlayTone(1084, 30);
+                 break;
+            case 5: sColor = "Red";
+                 PlayTone(1184, 30);
+                 break;
+            case 6: sColor = "White";
+                 PlayTone(1284, 30);
+                 break;
+            default: sColor = "???";
+                 PlayTone(1384, 30);
+        }
+
+        // Print the color name to the LCD screen
+        ClearScreen();
+        TextOut(0, 56, NumToStr(nColor) + ". " + sColor);
+
+        // Wait until the color changes
+        while( Sensor(S1) == nColor );
+    }
+}
