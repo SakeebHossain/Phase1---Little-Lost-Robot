@@ -1,3 +1,10 @@
+#define TIME 1000
+#define MAXVOL 7
+#define pause_blue Wait(TIME)
+#define blue_sound \
+    PlayFileEx("! blue.rso", MAXVOL, FALSE); pause_blue
+
+
 sub moveForward(int seconds) {
    OnRev(OUT_BC, 85);
    Wait(seconds * 1000);
@@ -18,19 +25,21 @@ task main() {
     // Turn on the sensor
     SetSensorColorFull(S1);
     
-    while (1) {
+    while (true) {
     
         nColor = Sensor(S1);
     
         if(nColor == 5) {
+
             sColor = "Red";
-            PlayTone(784, 30);
+            PlayTone(1184, 30);
+            wait(3000);
             turnRight(180);
         }
         
         else {
             sColor = "Not Red";
-            moveForward(0.99);
+            moveForward(0.999);
         }
         
         ClearScreen();
