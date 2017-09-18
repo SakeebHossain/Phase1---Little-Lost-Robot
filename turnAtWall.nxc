@@ -1,0 +1,41 @@
+sub moveForward(int seconds) {
+   OnRev(OUT_BC, 85);
+   Wait(seconds * 1000);
+   Off(OUT_BC);
+}
+
+sub turnRight(int degree) {
+ OnRev(OUT_B, 70);
+ OnFwd(OUT_C, 70);
+ Wait(degree * 7.6);
+ Off(OUT_BC);
+}
+
+task main() {
+    string sColor;
+    int nColor;
+
+    // Turn on the sensor
+    SetSensorColorFull(S1);
+    
+    while (1) {
+    
+        nColor = Sensor(S1);
+    
+        if(nColor == 5) {
+            sColor = "Red";
+            PlayTone(784, 30);
+            turnRight(180);
+        }
+        
+        else {
+            sColor = "Not Red";
+            moveForward(0.999);
+        }
+        
+        ClearScreen();
+        TextOut(0, 56, NumToStr(nColor) + ". " + sColor);
+        
+    }
+    
+}

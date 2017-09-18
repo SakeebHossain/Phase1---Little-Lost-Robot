@@ -30,9 +30,9 @@ task main()
 {
 
 
-//moveForward(2);
-turnRight(360);
-//moveForward(2);
+moveForward(2);
+turnRight(180);
+moveForward(2);
 //turnRight(90);
 //moveForward(2);
 //turnRight(90);
