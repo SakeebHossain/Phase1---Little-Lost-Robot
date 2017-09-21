@@ -6,21 +6,21 @@
 
 
 sub moveForward(int seconds) {
-   OnRev(OUT_BC, 20);
+   OnFwd(OUT_BC, 20);
    Wait(100 * seconds);
    Off(OUT_BC);
 }
 
 sub turnRight(int degree) {
- OnRev(OUT_B, 20);
- OnFwd(OUT_C, 20);
+ OnRev(OUT_C, 20);
+ OnFwd(OUT_B, 20);
  Wait(degree * 30);
  Off(OUT_BC);
 }
 
 sub turnLeft(int degree) {
- OnRev(OUT_C, 20);
- OnFwd(OUT_B, 20);
+ OnRev(OUT_B, 20);
+ OnFwd(OUT_C, 20);
  Wait(degree * 30);
  Off(OUT_BC);
 }

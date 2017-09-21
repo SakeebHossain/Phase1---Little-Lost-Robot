@@ -18,7 +18,7 @@ Index	Identifier	Type	Flag	Data	Size	RefCount
 15	__signed_stack_001turnRight	6	1	60	4	2
 16	__signed_stack_001turnLeft	6	1	64	4	2
 17	__SPTArgsMutex	9	0	68	4	2
-18	__OnRevMutex	9	0	72	4	6
+18	__OnRevMutex	9	0	72	4	4
 19	__sense_7qG2_nColor_7qG2_000	4	1	76	2	9
 20	__move_7qG2_color_7qG2_000	4	1	78	2	8
 21	__turnLeft_7qG2_degree_7qG2_000	4	1	80	2	2
@@ -35,7 +35,7 @@ Index	Identifier	Type	Flag	Data	Size	RefCount
 32	__move_return	1	1	97	1	3
 33	____initialize_global_data_return	1	1	98	1	3
 34	__turnLeft_return	1	1	99	1	3
-35	__OnRev_Tmp	2	1	100	1	6
+35	__OnRev_Tmp	2	1	100	1	4
 36	__sense_return	1	1	101	1	4
 37	__moveForward_return	1	1	102	1	4
 38	__constVal2	2	0	103	1	2
@@ -131,39 +131,36 @@ Clump	Line	PC	Source
 2	8	0	#line 8 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 2	9	0		set __D0moveForward, 20
 2	9	3	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	10	3	#pragma macro 10
-2	10	3		acquire __OnRevMutex
-2	10	4		neg __OnRev_Tmp, __D0moveForward
-2	10	7		setout __OUT_BC, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
-2	10	30		release __OnRevMutex
-2	3956	31	#line 3956 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	10	3	#pragma macro 7
+2	10	3		setout __OUT_BC, 2, __D0moveForward, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+2	3956	26	#line 3956 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	9	26	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	9	26	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	10	26		set __signed_stack_001moveForward, 100
+2	9	29	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	9	29	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	10	29		mov __D0moveForward, __moveForward_7qG2_seconds_7qG2_000
 2	9	31	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	9	31	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	10	31		set __signed_stack_001moveForward, 100
-2	9	34	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	9	34	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	10	34		mov __D0moveForward, __moveForward_7qG2_seconds_7qG2_000
-2	9	36	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	10	36		mul __Wait_7qG2_ms_7qG2_000_inline_moveForward, __signed_stack_001moveForward, __D0moveForward
-2	9	40	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	8551	40	#line 8551 "NXCDefs.h"
-2	8552	40		wait2 NA, __Wait_7qG2_ms_7qG2_000_inline_moveForward
-2	8551	43	#line 8551 "NXCDefs.h"
-2	10	43	#line 10 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	11	43	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	12	43	#pragma macro 7
-2	12	43		setout __OUT_BC, 2, __constVal0, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
-2	3981	66	#line 3981 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	11	66	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	13	66	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
-2	14	66		subret __moveForward_return
+2	10	31		mul __Wait_7qG2_ms_7qG2_000_inline_moveForward, __signed_stack_001moveForward, __D0moveForward
+2	9	35	#line 9 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	8551	35	#line 8551 "NXCDefs.h"
+2	8552	35		wait2 NA, __Wait_7qG2_ms_7qG2_000_inline_moveForward
+2	8551	38	#line 8551 "NXCDefs.h"
+2	10	38	#line 10 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	11	38	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	12	38	#pragma macro 7
+2	12	38		setout __OUT_BC, 2, __constVal0, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+2	3981	61	#line 3981 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	11	61	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	13	61	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
+2	14	61		subret __moveForward_return
 3	14	0	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 3	15	0		set __D0turnRight, 20
 3	15	3	#line 15 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 3	16	3	#pragma macro 10
 3	16	3		acquire __OnRevMutex
 3	16	4		neg __OnRev_Tmp, __D0turnRight
-3	16	7		setout __constVal1, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+3	16	7		setout __constVal2, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
 3	16	30		release __OnRevMutex
 3	3995	31	#line 3995 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 3	15	31	#line 15 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
@@ -171,7 +168,7 @@ Clump	Line	PC	Source
 3	16	31		set __D0turnRight, 20
 3	16	34	#line 16 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 3	17	34	#pragma macro 7
-3	17	34		setout __constVal2, 2, __D0turnRight, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+3	17	34		setout __constVal1, 2, __D0turnRight, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
 3	4000	57	#line 4000 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 3	16	57	#line 16 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 3	16	57	#line 16 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
@@ -199,7 +196,7 @@ Clump	Line	PC	Source
 4	23	3	#pragma macro 10
 4	23	3		acquire __OnRevMutex
 4	23	4		neg __OnRev_Tmp, __D0turnLeft
-4	23	7		setout __constVal2, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	23	7		setout __constVal1, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
 4	23	30		release __OnRevMutex
 4	4039	31	#line 4039 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 4	22	31	#line 22 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
@@ -207,7 +204,7 @@ Clump	Line	PC	Source
 4	23	31		set __D0turnLeft, 20
 4	23	34	#line 23 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 4	24	34	#pragma macro 7
-4	24	34		setout __constVal1, 2, __D0turnLeft, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	24	34		setout __constVal2, 2, __D0turnLeft, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
 4	4044	57	#line 4044 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 4	23	57	#line 23 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
 4	23	57	#line 23 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc"
@@ -646,8 +643,8 @@ Clump	Name	Offset	File
 0	main	0	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
 1	__ResetSensorSubroutine	26	NXTDefs.h
 2	moveForward	39	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
-3	turnRight	107	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
-4	turnLeft	201	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
-5	sense	295	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
-6	move	522	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
-7	__initialize_global_data	766	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
+3	turnRight	102	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
+4	turnLeft	196	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
+5	sense	290	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
+6	move	517	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc
+7	__initialize_global_data	761	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\turnAtWall2.nxc

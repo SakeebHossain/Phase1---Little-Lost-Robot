@@ -6,7 +6,7 @@
 
 
 sub moveForward(int seconds) {
-   OnRev(OUT_BC, 20);
+   OnFwd(OUT_BC, 20);
    Wait(100 * seconds);
    Off(OUT_BC);
 }
@@ -83,7 +83,7 @@ int move(int color) {
         // move forward a bit and turn right.
         if ( color == 4 ) {
         
-            //moveForward(20);
+            moveForward(1);
             //Wait(500);
             //turnRight(90);
 
