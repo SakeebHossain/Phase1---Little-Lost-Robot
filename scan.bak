@@ -1,0 +1,71 @@
+sub turnRight(int degree) {
+ OnRev(OUT_B, 70);
+ OnFwd(OUT_C, 70);
+ Wait(degree * 7.6);
+ Off(OUT_BC);
+}
+
+sub turnLeft(int degree) {
+
+ OnRev(OUT_C, 70);
+ OnFwd(OUT_B, 70);
+ Wait(degree * 7.6);
+ Off(OUT_BC);
+}
+
+sub moveBackward(int seconds) {
+   OnFwd(OUT_BC, 70);
+   //Wait(seconds * 1000);
+   Wait(200);
+   Off(OUT_BC);
+}
+
+sub moveForward(int seconds) {
+   OnRev(OUT_BC, 70);
+   //Wait(seconds * 1000);
+   Wait(200);
+   Off(OUT_BC);
+}
+
+
+task main() {
+
+    int NE;
+    int SE;
+    int SW;
+    int NW;
+
+    SetSensorColorFull(S1);
+    
+    moveBackward(10000000);
+    
+    turnLeft(20);
+    Wait(500);
+    SW = Sensor(S1);
+    PlayTone(684 + (SW * 100), 30);
+    Wait(1000);
+
+    turnRight(40);
+    Wait(500);
+    SE = Sensor(S1);
+    PlayTone(684 + (SE * 100), 30);
+    Wait(1000);
+    
+    turnLeft(20);
+    moveForward(0.9);
+    
+    turnLeft(20);
+    Wait(500);
+    NW = Sensor(S1);
+    PlayTone(684 + (NW * 100), 30);
+    Wait(1000);
+
+    turnRight(40);
+    Wait(500);
+    NE = Sensor(S1);
+    PlayTone(684 + (NE * 100), 30);
+    Wait(1000);
+    
+    turnLeft(20);
+    
+}
