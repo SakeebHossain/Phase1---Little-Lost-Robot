@@ -1,12 +1,11 @@
-#define TIME 1000
-#define MAXVOL 7
-#define pause_blue Wait(TIME)
-#define blue_sound \
-    PlayFileEx("! blue.rso", MAXVOL, FALSE); pause_blue
-
-
 sub moveForward(int seconds) {
    OnFwd(OUT_BC, 20);
+   Wait(100 * seconds);
+   Off(OUT_BC);
+}
+
+sub moveBackward(int seconds) {
+   OnRev(OUT_BC, 20);
    Wait(100 * seconds);
    Off(OUT_BC);
 }
@@ -64,13 +63,48 @@ int sense() {
     TextOut(0, 56, NumToStr(nColor) + ". " + sColor);
     
     // Play a tone based on the color seen.
-    PlayTone(684 + (nColor * 400), 30);
+    PlayToneEx(684 + (nColor * 400), 30, 3, FALSE);
     return nColor;
 
 }
 
-int move(int color) {
+sub scan() {
+    int NE;
+    int SE;
+    int SW;
+    int NW;
 
+    moveBackward(5);
+    
+    turnLeft(35);
+    Wait(500);
+    SW = sense();
+    Wait(1000);
+
+    turnRight(70);
+    Wait(500);
+    SE = sense();
+    Wait(1000);
+    
+    turnLeft(35);
+    moveForward(15);
+    
+    turnLeft(35);
+    Wait(500);
+    NW = sense();
+    Wait(1000);
+
+    turnRight(70);
+    Wait(500);
+    NE = sense();
+    Wait(1000);
+    
+    turnLeft(35);
+
+}
+
+int move(int color) {
+    int dir;
     // If we see red, turn 180.
     if (color == 5) {
     
@@ -80,12 +114,20 @@ int move(int color) {
     } else if ( color == 1 || color == 4 ) {
     
         // If you hit yellow (i.e. an intersection,
-        // move forward a bit and turn right.
+        // scan it
         if ( color == 4 ) {
         
-            moveForward(1);
-            //Wait(500);
-            //turnRight(90);
+            scan();
+            Wait(500);
+            moveForward(6);
+            Wait(500);
+            dir = Random(2);
+            if(dir == 0) {
+                turnRight(90);
+            }
+            else if(dir == 1) {
+                turnLeft(90);
+            }
 
         // Move forward if you see black.
         } else {
