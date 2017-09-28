@@ -1,4 +1,4 @@
-#define NUMSENSES 200;
+#define NUMSENSES 200
 
 sub moveForward(int seconds) {
    OnFwd(OUT_BC, 20);
@@ -208,7 +208,7 @@ sub move(int color) {
             Wait(500);
             moveForward(8);
             Wait(500);
-            dir = Random(2);
+            dir = Random(3);
             if(dir == 0) {
                 turnRight(90);
             }

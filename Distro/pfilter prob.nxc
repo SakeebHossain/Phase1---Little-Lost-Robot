@@ -49,13 +49,14 @@
 
    decide these values for yourself
    */
-#define THRESHOLD
+#define THRESHOLD 1
 #define MATCH
 #define MISMATCH
 
 /* You may want to define macros to keep track of certain turning angles and
    speeds throughout your code. This provides an easy way to change them */
 
+#define NUMSENSES 200
 
 /* Represents a single particle.
 
@@ -91,9 +92,157 @@ struct intersection{
 /* function prototypes, to be added if needed
 */
 
+sub moveForward(int seconds) {
+   OnFwd(OUT_BC, 20);
+   Wait(100 * seconds);
+   Off(OUT_BC);
+}
+
+sub moveBackward(int seconds) {
+   OnRev(OUT_BC, 20);
+   Wait(100 * seconds);
+   Off(OUT_BC);
+}
+
+sub turnRight(int degree) {
+ OnRev(OUT_C, 20);
+ OnFwd(OUT_B, 20);
+ Wait(degree * 30);
+ Off(OUT_BC);
+}
+
+sub turnLeft(int degree) {
+ OnRev(OUT_B, 20);
+ OnFwd(OUT_C, 20);
+ Wait(degree * 30);
+ Off(OUT_BC);
+}
+
+int robot_sense(int iter) {
+
+    string sColor;
+    int nColor, bestColor = 7, possible[] = {0,0,0,0,0,0,0}, high = 0;
+    
+    // Determine what color is being seen. Scan iter amount of times
+    for(int i = 0; i < iter; i += 1) {
+        nColor = Sensor(S1);
+        if(nColor > 0 || nColor < 7) {
+            possible[nColor - 1] += 1;
+        }
+        else {
+            possible[6] += 1;
+        }
+    }
+    //Find the color that was scanned the most
+    for(int index = 0; index < 7; index += 1) {
+        if(possible[index] > high) {
+            bestColor = index + 1;
+            high = possible[index];
+        }
+    }
+    if(bestColor == 1) {
+
+            sColor = "Black";
+        }
+
+        else if(bestColor == 2) {
+
+            sColor = "Blue";
+        }
+
+        else if(bestColor == 3) {
+
+            sColor = "Green";
+        }
+
+        else if(bestColor == 4) {
+
+            sColor = "Yellow";
+        }
+        else if(bestColor == 5) {
+
+            sColor = "Red";
+        }
+        else if(bestColor == 6) {
+            sColor = "White";
+        }
+        else {
+            sColor = "Unknown";
+        }
+        
+    // Write the currently sensed color to screen.
+    ClearScreen();
+    TextOut(0, 56, NumToStr(bestColor) + ". " + sColor);
+    
+    // Play a tone based on the color seen.
+    PlayToneEx(684 + (bestColor * 400), 30, 3, FALSE);
+    return bestColor;
+
+}
+
+sub adjust() {
+        int miss = 10, angle, c;
+    
+	while (true) {
+	    angle = 1;
+	    while(angle < miss) {
+	    // Check the right side for black.
+		turnRight(3);
+		c = robot_sense(NUMSENSES);
+		if(c == 1 || c == 4) {
+                    turnRight(3);
+		    break;
+		}
+		angle += 1;
+	    }
+	    if(c == 1 || c == 4) {
+		break;
+	    }
+	    Wait(500);
+	    // If, after checking right side, black or yellow are
+	    // not found, check left.      
+	    // Check the left side.
+	    angle = 1;
+	    while(angle < 2 * miss) {
+	    // Check the right side for black.
+		turnLeft(3);
+		c = robot_sense(NUMSENSES);
+		if(c == 1 || c == 4) {
+                    turnLeft(3);
+		    break;
+		}
+		angle += 1;
+	    }
+	    if(c == 1 || c == 4) {
+		break;
+	    }
+	    
+	    Wait(500);
+	    
+	    // If after checking left side, black or yellow are
+	    // not found, re-center the robot and try again with wider scan.
+	    angle = 1;
+	    while(angle < miss) {
+		turnRight(3);
+		c = robot_sense(NUMSENSES);
+		if(c == 1 || c == 4) {
+                    turnRight(3);
+		    break;
+		}
+		angle += 1;
+	    }
+	    if(c == 1 || c == 4) {
+		break;
+	    }
+	    Wait(500);
+	    // Increment counter to increase scan zone.
+	    miss = miss + 10;
+	}
+}
+
 /* Subroutine which moves the robot forward from one intersection to the next
 */
-sub move_robot(){
+sub move_robot(int color){
     ////////////////////////////////////////////////////////////////////////////
     //  TO DO:
     //
@@ -107,13 +256,51 @@ sub move_robot(){
     //
     ////////////////////////////////////////////////////////////////////////////
 
+    int dir;
+    // If we see red, turn 180.
+    if (color == 5) {
+    
+        turnRight(175);
+        
+    // If we see black or yellow...
+    } else if ( color == 1 || color == 4 ) {
+    
+        // If you hit yellow (i.e. an intersection,
+        // scan it
+//        if (color == 4) {
+        
+//            scan_surroundings();
+//            Wait(500);
+//            moveForward(8);
+//            Wait(500);
+//            dir = Random(3);
+//            if(dir == 0) {
+//                turnRight(90);
+//            }
+//            else if(dir == 1) {
+//                turnLeft(90);
+//            }
+
+        // Move forward if you see black.
+//        } else {
+        if (color == 1) {
+            moveForward(1);
+         }
+            
+//        }
+        
+    // If we see blue, green, or white then adjust back to black.
+    } else if (color == 2 || color == 3 || color == 6) {
+        adjust();
+    }
+
 }
 
 /* This function scans the surroundings of the robot.
    It takes readings of the colour of the 4 squares surrounding the
    intersection and returns an intersection variable which holds the data.
 */
-intersection scan_surroundings(){
+intersection scan_surroundings(int color){
     intersection rsense;
     ////////////////////////////////////////////////////////////////////////////
     // TO DO:
@@ -125,6 +312,47 @@ intersection scan_surroundings(){
     // direction of the robot.
     //
     ////////////////////////////////////////////////////////////////////////////
+
+    int nColor;
+
+//    if (color == 4) {
+
+       moveForward(10);
+       nColor = robot_sense(NUMSENSES);
+       if(nColor != 1) {
+          adjust();
+       }
+       moveBackward(15);
+    
+       turnLeft(25);
+       Wait(500);
+       rsense.SW = robot_sense(NUMSENSES);
+       Wait(1000);
+
+       turnRight(50);
+       Wait(500);
+       rsense.SE = robot_sense(NUMSENSES);
+       Wait(1000);
+    
+       turnLeft(25);
+       moveForward(16);
+    
+       turnLeft(25);
+       Wait(500);
+       rsense.NW = robot_sense(NUMSENSES);
+       Wait(1000);
+
+       turnRight(50);
+       Wait(500);
+       rsense.NE = robot_sense(NUMSENSES);
+       Wait(1000);
+    
+       turnLeft(25);
+
+//    }
+//    else {
+//       rsense = sense;
+//    }
 
     return rsense;
 }
@@ -287,6 +515,9 @@ task main(){
      string line;
      int target, dest; /* records the target and destination coordinates for use
                           after finding the robot's position */
+
+     int nColor;
+     int heading = NORTH;
      
      /* sensor initialization */
      SetSensorColorFull(IN_1);
@@ -435,8 +666,24 @@ task main(){
    while (robp < THRESHOLD){ /* run the update loop until an acceptable
                                probability is obtained */
       /* implement me */
+      nColor = robot_sense(200);
+      move_robot(nColor);
+      //scan - maybe pass color and it does nothing if color != yellow
+      if (nColor == 4) {
+         rsense = scan_surroundings(nColor);
+         Wait(500);
+         moveForward(8);
+         Wait(500);
+         int dir = Random(3);
+         if(dir == 0) {
+             turnRight(90);
+         }
+         else if(dir == 1) {
+             turnLeft(90);
+         }
+      }
    }
-   PlayToneEx(Random(1000) + 200, 400, 3, FALSE);
+//   PlayToneEx(Random(1000) + 200, 400, 3, FALSE);
    
    /* When we are fairly confident about the robot's position, we can move on
       to the task given.
