@@ -1,0 +1,172 @@
+#define VOL 5
+#define QUARTER 429
+#define QWAIT 529
+#define EIGHTTRIP 143
+#define ETWAIT 243
+#define DOTTEDHALF 1071
+#define DHWAIT 1171
+#define EIGHT 215
+#define EWAIT 315
+#define THREE 1287
+#define TWAIT 1387
+
+task main() {
+
+   //C
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //Ab
+   PlayToneEx(831,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //Bb
+   PlayToneEx(932,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   Wait(EIGHTTRIP);
+   PlayToneEx(932,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,DOTTEDHALF,VOL,FALSE);
+   Wait(DHWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F E
+   PlayToneEx(698,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // Bb Q
+   PlayToneEx(932,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // A E
+   PlayToneEx(880,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // E Q
+   PlayToneEx(659,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F E
+   PlayToneEx(698,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // D 3
+   PlayToneEx(587,THREE,VOL,FALSE);
+   Wait(TWAIT);
+
+   Wait(QWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F E
+   PlayToneEx(698,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // Bb Q
+   PlayToneEx(932,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // A E
+   PlayToneEx(880,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // C 3
+   PlayToneEx(1047,THREE,VOL,FALSE);
+   Wait(TWAIT);
+
+   Wait(QWAIT);
+
+
+
+
+
+}
+
+
+
