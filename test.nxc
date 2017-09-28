@@ -1,3 +1,5 @@
+#define NUMSENSES 200;
+
 sub moveForward(int seconds) {
    OnFwd(OUT_BC, 20);
    Wait(100 * seconds);
@@ -66,6 +68,10 @@ int sense(int iter) {
 
             sColor = "Yellow";
         }
+        else if(bestColor == 5) {
+
+            sColor = "Red";
+        }
         else if(bestColor == 6) {
             sColor = "white";
         }
@@ -83,22 +89,88 @@ int sense(int iter) {
 
 }
 
+sub adjust() {
+        int miss = 10, angle, c;
+    
+	while (true) {
+	    angle = 1;
+	    while(angle < miss) {
+	    // Check the right side for black.
+		turnRight(3);
+		c = sense(NUMSENSES);
+		if(c == 1 || c == 4) {
+                    turnRight(3);
+		    break;
+		}
+		angle += 1;
+	    }
+	    if(c == 1 || c == 4) {
+		break;
+	    }
+	    Wait(500);
+	    // If, after checking right side, black or yellow are
+	    // not found, check left.      
+	    // Check the left side.
+	    angle = 1;
+	    while(angle < 2 * miss) {
+	    // Check the right side for black.
+		turnLeft(3);
+		c = sense(NUMSENSES);
+		if(c == 1 || c == 4) {
+                    turnLeft(3);
+		    break;
+		}
+		angle += 1;
+	    }
+	    if(c == 1 || c == 4) {
+		break;
+	    }
+	    
+	    Wait(500);
+	    
+	    // If after checking left side, black or yellow are
+	    // not found, re-center the robot and try again with wider scan.
+	    angle = 1;
+	    while(angle < miss) {
+		turnRight(3);
+		c = sense(NUMSENSES);
+		if(c == 1 || c == 4) {
+                    turnRight(3);
+		    break;
+		}
+		angle += 1;
+	    }
+	    if(c == 1 || c == 4) {
+		break;
+	    }
+	    Wait(500);
+	    // Increment counter to increase scan zone.
+	    miss = miss + 10;
+	}
+}
+
 sub scan() {
     int NE;
     int SE;
     int SW;
     int NW;
+    int nColor;
 
-    moveBackward(5);
+    moveForward(10);
+    nColor = sense(NUMSENSES);
+    if(nColor != 1) {
+        adjust();
+    }
+    moveBackward(15);
     
     turnLeft(25);
     Wait(500);
-    SW = sense(200);
+    SW = sense(NUMSENSES);
     Wait(1000);
 
     turnRight(50);
     Wait(500);
-    SE = sense(200);
+    SE = sense(NUMSENSES);
     Wait(1000);
     
     turnLeft(25);
@@ -106,12 +178,12 @@ sub scan() {
     
     turnLeft(25);
     Wait(500);
-    NW = sense(200);
+    NW = sense(NUMSENSES);
     Wait(1000);
 
     turnRight(50);
     Wait(500);
-    NE = sense(200);
+    NE = sense(NUMSENSES);
     Wait(1000);
     
     turnLeft(25);
@@ -130,7 +202,7 @@ sub move(int color) {
     
         // If you hit yellow (i.e. an intersection,
         // scan it
-        if ( color == 4 ) {
+        if (color == 4) {
         
             scan();
             Wait(500);
@@ -152,63 +224,8 @@ sub move(int color) {
         }
         
     // If we see blue, green, or white then adjust back to black.
-    } else if ( color == 2 || color == 3 || color == 6 ) {
-    
-        int miss = 10, angle, c;
-    
-        while (true) {
-            angle = 1;
-            while(angle < miss) {
-            // Check the right side for black.
-                turnRight(3);
-                c = sense(200);
-                if(c == 1 || c == 4) {
-                    break;
-                }
-                angle += 1;
-            }
-            if(c == 1 || c == 4) {
-                break;
-            }
-            Wait(500);
-            // If, after checking right side, black or yellow are
-            // not found, check left.      
-            // Check the left side.
-            angle = 1;
-            while(angle < 2 * miss) {
-            // Check the right side for black.
-                turnLeft(3);
-                c = sense(200);
-                if(c == 1 || c == 4) {
-                    break;
-                }
-                angle += 1;
-            }
-            if(c == 1 || c == 4) {
-                break;
-            }
-            
-            Wait(500);
-            
-            // If after checking left side, black or yellow are
-            // not found, re-center the robot and try again with wider scan.
-            angle = 1;
-            while(angle < miss) {
-                turnRight(3);
-                c = sense(200);
-                if(c == 1 || c == 4) {
-                    break;
-                }
-                angle += 1;
-            }
-            if(c == 1 || c == 4) {
-                break;
-            }
-            Wait(500);
-            // Increment counter to increase scan zone.
-            miss = miss + 10;
-        }
-        
+    } else if (color == 2 || color == 3 || color == 6) {
+        adjust();
     }
                 
 }
@@ -220,7 +237,7 @@ task main() {
     
     while (true) {
     
-        color = sense(200);
+        color = sense(NUMSENSES);
         move(color);
         
     }
