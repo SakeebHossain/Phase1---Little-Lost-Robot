@@ -180,6 +180,38 @@ int robot_sense(int iter) {
 
 }
 
+int find_left() {
+    int fColor = robot_sense(200), rColor;
+    while(fColor == 1) {
+        turnLeft(3);
+        fColor = robot_sense(200);
+    }
+    Wait(500);
+    rColor = fColor;
+    while(rColor != 1) {
+        turnRight(3);
+        rColor = robot_sense(200);
+    }
+    turnRight(6);
+    return fColor;
+}
+
+int find_right() {
+    int fColor = robot_sense(200), rColor;
+    while(fColor == 1) {
+        turnRight(3);
+        fColor = robot_sense(200);
+    }
+    Wait(500);
+    rColor = fColor;
+    while(rColor != 1) {
+        turnLeft(3);
+        rColor = robot_sense(200);
+    }
+    turnLeft(6);
+    return fColor;
+}
+
 sub adjust() {
         int miss = 10, angle, c;
     
@@ -190,7 +222,7 @@ sub adjust() {
 		turnRight(3);
 		c = robot_sense(NUMSENSES);
 		if(c == 1 || c == 4) {
-                    turnRight(3);
+                    turnRight(6);
 		    break;
 		}
 		angle += 1;
@@ -208,7 +240,7 @@ sub adjust() {
 		turnLeft(3);
 		c = robot_sense(NUMSENSES);
 		if(c == 1 || c == 4) {
-                    turnLeft(3);
+                    turnLeft(6);
 		    break;
 		}
 		angle += 1;
@@ -226,7 +258,7 @@ sub adjust() {
 		turnRight(3);
 		c = robot_sense(NUMSENSES);
 		if(c == 1 || c == 4) {
-                    turnRight(3);
+                    turnRight(6);
 		    break;
 		}
 		angle += 1;
@@ -315,44 +347,33 @@ intersection scan_surroundings(int color){
 
     int nColor;
 
-//    if (color == 4) {
-
        moveForward(10);
        nColor = robot_sense(NUMSENSES);
        if(nColor != 1) {
           adjust();
        }
+       Wait(100);
        moveBackward(15);
     
-       turnLeft(25);
-       Wait(500);
-       rsense.SW = robot_sense(NUMSENSES);
+       rsense.SW = find_left();
        Wait(1000);
 
-       turnRight(50);
-       Wait(500);
-       rsense.SE = robot_sense(NUMSENSES);
+       rsense.SE = find_right();
        Wait(1000);
     
-       turnLeft(25);
        moveForward(16);
-    
-       turnLeft(25);
-       Wait(500);
-       rsense.NW = robot_sense(NUMSENSES);
+       nColor = robot_sense(NUMSENSES);
+       if(nColor != 1) {
+          adjust();
+       }
+
+       rsense.NW = find_left();
        Wait(1000);
 
-       turnRight(50);
-       Wait(500);
-       rsense.NE = robot_sense(NUMSENSES);
+       rsense.NE = find_right();
        Wait(1000);
     
-       turnLeft(25);
-
-//    }
-//    else {
-//       rsense = sense;
-//    }
+  //     turnLeft(25);
 
     return rsense;
 }
