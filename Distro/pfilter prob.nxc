@@ -49,14 +49,27 @@
 
    decide these values for yourself
    */
-#define THRESHOLD 1
-#define MATCH
-#define MISMATCH
+#define THRESHOLD 0.8
+#define MATCH 0.8
+#define MISMATCH 0.2
 
 /* You may want to define macros to keep track of certain turning angles and
    speeds throughout your code. This provides an easy way to change them */
 
 #define NUMSENSES 200
+
+// Victory
+#define VOL 5
+#define QUARTER 429
+#define QWAIT 529
+#define EIGHTTRIP 143
+#define ETWAIT 243
+#define DOTTEDHALF 1071
+#define DHWAIT 1171
+#define EIGHT 215
+#define EWAIT 315
+#define THREE 1287
+#define TWAIT 1387
 
 /* Represents a single particle.
 
@@ -91,6 +104,160 @@ struct intersection{
 
 /* function prototypes, to be added if needed
 */
+
+sub victory() {
+
+   //C
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //Ab
+   PlayToneEx(831,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //Bb
+   PlayToneEx(932,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   PlayToneEx(1047,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   Wait(EIGHTTRIP);
+   PlayToneEx(932,EIGHTTRIP,VOL,FALSE);
+   Wait(ETWAIT);
+   PlayToneEx(1047,DOTTEDHALF,VOL,FALSE);
+   Wait(DHWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F E
+   PlayToneEx(698,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // Bb Q
+   PlayToneEx(932,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // A E
+   PlayToneEx(880,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // E Q
+   PlayToneEx(659,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F E
+   PlayToneEx(698,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // D 3
+   PlayToneEx(587,THREE,VOL,FALSE);
+   Wait(TWAIT);
+
+   Wait(QWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   //G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F E
+   PlayToneEx(698,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // Bb Q
+   PlayToneEx(932,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // A Q
+   PlayToneEx(880,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // A E
+   PlayToneEx(880,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // F Q
+   PlayToneEx(698,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // G Q
+   PlayToneEx(784,QUARTER,VOL,FALSE);
+   Wait(QWAIT);
+
+   // Bb E
+   PlayToneEx(932,EIGHT,VOL,FALSE);
+   Wait(EWAIT);
+
+   // C 3
+   PlayToneEx(1047,THREE,VOL,FALSE);
+   Wait(TWAIT);
+
+   Wait(QWAIT);
+
+}
 
 sub moveForward(int seconds) {
    OnFwd(OUT_BC, 20);
@@ -291,7 +458,7 @@ sub move_robot(int color){
     int dir;
     // If we see red, turn 180.
     if (color == 5) {
-    
+        moveForward(10);
         turnRight(175);
         
     // If we see black or yellow...
@@ -473,6 +640,51 @@ particle move(particle p){
          //
          ///////////////////////////////////////////////////////////////////////
 
+
+         if(p.theta == NORTH) {
+
+            if((p.y - 1) == -1){
+               p.theta = SOUTH;
+            }
+            else {
+               p.y--;
+            }
+
+
+         }
+         else if(p.theta == EAST) {
+
+            if((p.x + 1) == 3){
+               p.theta = WEST;
+            }
+            else {
+               p.x++;
+            }
+
+         }
+         else if(p.theta == SOUTH) {
+
+            if((p.y + 1) == 5){
+               p.theta = NORTH;
+            }
+            else {
+               p.y++;
+            }
+
+
+         }
+         else if(p.theta == WEST) {
+
+            if((p.x - 1) == -1){
+               p.theta = EAST;
+            }
+            else {
+               p.x--;
+            }
+
+
+         }
+
          return p;
 }
 
@@ -508,7 +720,30 @@ int sense(intersection map[], int x, int y, int dir, int heading){
     ////////////////////////////////////////////////////////////////////////////
 
 
-    return -1; // you may need to remove this
+    intersection curr;
+
+    int func;
+
+    func = ((5 * x) + y);
+
+
+    curr = map[func];
+
+
+    int out = (dir - 1000 + heading - 100) % 4;
+
+    if (out == 0) {
+        return curr.NE;
+    }
+    else if (out == 1) {
+        return curr.SE;
+    }
+    else if (out == 2) {
+        return curr.SW;
+    }
+    else if (out == 3) {
+        return curr.NW;
+    }
 }
 
 /* The main task which initializes data
@@ -687,14 +922,67 @@ task main(){
    while (robp < THRESHOLD){ /* run the update loop until an acceptable
                                probability is obtained */
       /* implement me */
+      maxprob = 0.0;
+      totalprob = 0.0;
       nColor = robot_sense(200);
       move_robot(nColor);
       //scan - maybe pass color and it does nothing if color != yellow
       if (nColor == 4) {
+
+         // Move all particles forward by 1
+         for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1){
+            list[i] = move(list[i]);
+
+         }
+
          rsense = scan_surroundings(nColor);
+
+
+         for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1){
+
+             int pNE = sense(map, list[i].x, list[i].y, NORTHEAST, list[i].theta);
+             int pNW = sense(map, list[i].x, list[i].y, NORTHWEST, list[i].theta);
+             int pSE = sense(map, list[i].x, list[i].y, SOUTHEAST, list[i].theta);
+             int pSW = sense(map, list[i].x, list[i].y, SOUTHWEST, list[i].theta);
+
+             if(pNE == rsense.NE && pNW == rsense.NW && pSE == rsense.SE && pSW == rsense.SW) {
+                list[i].prob = list[i].prob*MATCH;
+             }
+             else {
+                list[i].prob = list[i].prob*MISMATCH;
+             }
+
+             totalprob = totalprob + list[i].prob;
+
+             if(maxprob < list[i].prob) {
+                maxprob = list[i].prob;
+                guess[0] = list[i].x;
+                guess[1] = list[i].y;
+                guess[2] = list[i].theta;
+
+                // It does update guess every time but it doesn't actually change
+
+             }
+
+         }
+
+         maxprob = maxprob / totalprob;
+         robp = maxprob;
+
+        ClearScreen();
+        TextOut(0, 56, "x=" + NumToStr(guess[0]) + " y=" + NumToStr(guess[1]) + " " + NumToStr(robp));
+        Wait(2000);
+
+         for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1){
+            list[i].prob = list[i].prob / totalprob;
+         }
+
+
          Wait(500);
          moveForward(8);
          Wait(500);
+
+         // need to update particle direction
          int dir = Random(3);
          if(dir == 0) {
              turnRight(90);
@@ -702,9 +990,23 @@ task main(){
          else if(dir == 1) {
              turnLeft(90);
          }
+
+         for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1) {
+
+            if(dir == 0) {
+               list[i].theta = ((((list[i].theta - 100) + 1) % 4) + 100);
+            }
+            else if(dir == 1) {
+               list[i].theta = ((((list[i].theta - 100) - 1) % 4) + 100);
+            }
+         }
+
       }
    }
 //   PlayToneEx(Random(1000) + 200, 400, 3, FALSE);
+    ClearScreen();
+    TextOut(0, 56, "x = " + NumToStr(guess[0]) + " y = " + NumToStr(guess[1]) + " dir = " + NumToStr(guess[2]));
+    victory();
    
    /* When we are fairly confident about the robot's position, we can move on
       to the task given.
