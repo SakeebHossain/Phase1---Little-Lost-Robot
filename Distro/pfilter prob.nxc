@@ -59,7 +59,7 @@
 #define NUMSENSES 200
 
 // Victory
-#define VOL 5
+#define VOL 2
 #define QUARTER 429
 #define QWAIT 529
 #define EIGHTTRIP 143
@@ -342,7 +342,7 @@ int robot_sense(int iter) {
     TextOut(0, 56, NumToStr(bestColor) + ". " + sColor);
     
     // Play a tone based on the color seen.
-    PlayToneEx(684 + (bestColor * 400), 30, 3, FALSE);
+    PlayToneEx(684 + (bestColor * 400), 30, VOL, FALSE);
     return bestColor;
 
 }
@@ -455,7 +455,6 @@ sub move_robot(int color){
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    int dir;
     // If we see red, turn 180.
     if (color == 5) {
         moveForward(10);
@@ -464,29 +463,10 @@ sub move_robot(int color){
     // If we see black or yellow...
     } else if ( color == 1 || color == 4 ) {
     
-        // If you hit yellow (i.e. an intersection,
-        // scan it
-//        if (color == 4) {
-        
-//            scan_surroundings();
-//            Wait(500);
-//            moveForward(8);
-//            Wait(500);
-//            dir = Random(3);
-//            if(dir == 0) {
-//                turnRight(90);
-//            }
-//            else if(dir == 1) {
-//                turnLeft(90);
-//            }
-
-        // Move forward if you see black.
-//        } else {
         if (color == 1) {
             moveForward(1);
-         }
+        }
             
-//        }
         
     // If we see blue, green, or white then adjust back to black.
     } else if (color == 2 || color == 3 || color == 6) {
@@ -539,8 +519,6 @@ intersection scan_surroundings(int color){
 
        rsense.NE = find_right();
        Wait(1000);
-    
-  //     turnLeft(25);
 
     return rsense;
 }
@@ -563,19 +541,25 @@ sub change_direction(int orig, int new){
     /* selects the appropriate turn based on the headings given*/
     switch (change){
            case 3:
+               turnLeft(90);
            case -1:
                 //turn left 90 degrees
                 /* code solution here */
+               turnLeft(90);
                 break;
            case -3:
+               turnRight(90);
            case 1:
                 //turn right 90 degrees
                 /* code solution here */
+               turnRight(90);
                 break;
            case 2:
+               turnLeft(180);
 	   case -2:		
                 // 180 degree turn
                 /* code solution here */
+               turnLeft(180);
                 break;
     }
 }
@@ -594,7 +578,8 @@ sub change_direction(int orig, int new){
 */
 int move_to(int s, int f, int h){
     int sx, sy, fx, fy, tx, ty;
-    int heading;
+    int heading, nColor;
+    intersection rsense;
     // extract coordinates from given information
     sx = s/GHEIGHT;
     sy = s%GHEIGHT;
@@ -614,8 +599,51 @@ int move_to(int s, int f, int h){
     // makes turns.
     //
     ////////////////////////////////////////////////////////////////////////////
-
-
+    while(tx != 0 && ty != 0) {
+        //Sense
+        nColor = robot_sense(200);
+        //Move
+        move_robot(nColor);
+        //If found intersection
+        if(nColor == 4) {
+            moveForward(20);
+            //Update distance
+            switch(h) {
+                case NORTH:
+                    sy -= 1;
+                case SOUTH:
+                    sy += 1;
+                case EAST:
+                    sx += 1;
+                case WEST:
+                    sx -= 1;
+            }
+            tx = fx - sx;
+            ty = fy - sy;
+            //Change heading
+            if(nColor != 1) {
+               adjust();
+            }
+            if(tx < 0) {
+                change_direction(h, WEST);
+                h = WEST;
+            }
+            else if (tx > 0) {
+                change_direction(h, EAST);
+                h = EAST;
+            }
+            else if (ty < 0) {
+                change_direction(h, SOUTH);
+                h = SOUTH;
+            }
+            else {
+                change_direction(h, NORTH);
+                h = NORTH;
+            }
+        }
+        ClearScreen();
+        TextOut(0, 56, "Curr: (" + NumToStr(sx) + "," + NumToStr(sy) + ")\nDest: (" + NumToStr(fx) + "," + NumToStr(fy));
+    }
     return heading;
 }
 
@@ -1003,7 +1031,6 @@ task main(){
 
       }
    }
-//   PlayToneEx(Random(1000) + 200, 400, 3, FALSE);
     ClearScreen();
     TextOut(0, 56, "x = " + NumToStr(guess[0]) + " y = " + NumToStr(guess[1]) + " dir = " + NumToStr(guess[2]));
     victory();
