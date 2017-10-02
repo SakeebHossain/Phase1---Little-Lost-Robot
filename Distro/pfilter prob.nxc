@@ -57,9 +57,9 @@
    speeds throughout your code. This provides an easy way to change them */
 
 #define NUMSENSES 200
+#define VOL 5
 
 // Victory
-#define VOL 5
 #define QUARTER 429
 #define QWAIT 529
 #define EIGHTTRIP 143
@@ -70,6 +70,17 @@
 #define EWAIT 315
 #define THREE 1287
 #define TWAIT 1387
+
+// Got Package! :D
+#define NOTES 300
+#define NWAIT 400
+
+// Found Ourselves!
+#define DOTQ 833
+#define ST 139
+#define STWAIT 239
+#define LAST 972
+#define LWAIT 1072
 
 /* Represents a single particle.
 
@@ -259,6 +270,52 @@ sub victory() {
 
 }
 
+sub package() {
+
+   // A
+   PlayToneEx(880,NOTES,VOL,FALSE);
+   Wait(NWAIT);
+
+   // Bb
+   PlayToneEx(932,NOTES,VOL,FALSE);
+   Wait(NWAIT);
+
+   // B
+   PlayToneEx(988,NOTES,VOL,FALSE);
+   Wait(NWAIT);
+
+   // C
+   PlayToneEx(1047,NOTES,VOL,FALSE);
+   Wait(NWAIT);
+
+}
+
+sub found() {
+   // D
+   PlayToneEx(1175,ST,VOL,FALSE);
+   Wait(STWAIT);
+
+   // G
+   PlayToneEx(1568,ST,VOL,FALSE);
+   Wait(STWAIT);
+
+   // A
+   PlayToneEx(1760,ST,VOL,FALSE);
+   Wait(STWAIT);
+
+   // D
+   PlayToneEx(2349,ST,VOL,FALSE);
+   Wait(STWAIT);
+
+   // A
+   PlayToneEx(1760,ST,VOL,FALSE);
+   Wait(STWAIT);
+
+   // B
+   PlayToneEx(1976,LAST,VOL,FALSE);
+   Wait(LWAIT);
+}
+
 sub moveForward(int seconds) {
    OnFwd(OUT_BC, 20);
    Wait(100 * seconds);
@@ -349,7 +406,7 @@ int robot_sense(int iter) {
 
 int find_left() {
     int fColor = robot_sense(200), rColor;
-    while(fColor == 1) {
+    while(fColor == 1 || fColor == 4) {
         turnLeft(3);
         fColor = robot_sense(200);
     }
@@ -365,7 +422,7 @@ int find_left() {
 
 int find_right() {
     int fColor = robot_sense(200), rColor;
-    while(fColor == 1) {
+    while(fColor == 1 || fColor == 4) {
         turnRight(3);
         fColor = robot_sense(200);
     }
@@ -565,17 +622,20 @@ sub change_direction(int orig, int new){
            case 3:
            case -1:
                 //turn left 90 degrees
-                /* code solution here */
+                turnLeft(90);
+                adjust();
                 break;
            case -3:
            case 1:
                 //turn right 90 degrees
-                /* code solution here */
+                turnRight(90);
+                adjust();
                 break;
            case 2:
 	   case -2:		
                 // 180 degree turn
-                /* code solution here */
+                turnRight(175);
+                adjust();
                 break;
     }
 }
@@ -615,6 +675,66 @@ int move_to(int s, int f, int h){
     //
     ////////////////////////////////////////////////////////////////////////////
 
+    int newHeading;
+    int increment;
+    int nColor;
+
+    if(tx != 0) {
+
+       if(tx < 0) {
+           newHeading = WEST;
+           increment = 1;
+       }
+       else {
+           newHeading = EAST;
+           increment = -1;
+       }
+    }
+
+    change_direction(heading, newHeading);
+    heading = newHeading;
+
+    while(tx != 0) {
+
+      nColor = robot_sense(200);
+      move_robot(nColor);
+
+      if (nColor == 4) {
+          tx = tx + increment;
+          moveForward(16);
+          adjust();
+      }
+
+    }
+
+
+    if(ty != 0) {
+
+       if(ty < 0) {
+           newHeading = NORTH;
+           increment = 1;
+       }
+       else {
+           newHeading = SOUTH;
+           increment = -1;
+       }
+    }
+
+    change_direction(heading, newHeading);
+    heading = newHeading;
+
+    while(ty != 0) {
+
+      nColor = robot_sense(200);
+      move_robot(nColor);
+
+      if (nColor == 4) {
+          ty = ty + increment;
+          moveForward(16);
+          adjust();
+      }
+
+    }
 
     return heading;
 }
@@ -772,7 +892,7 @@ task main(){
      int target, dest; /* records the target and destination coordinates for use
                           after finding the robot's position */
 
-     int nColor;
+     int nColor, dir;
      int heading = NORTH;
      
      /* sensor initialization */
@@ -971,7 +1091,7 @@ task main(){
 
         ClearScreen();
         TextOut(0, 56, "x=" + NumToStr(guess[0]) + " y=" + NumToStr(guess[1]) + " " + NumToStr(robp));
-        Wait(2000);
+        Wait(1000);
 
          for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1){
             list[i].prob = list[i].prob / totalprob;
@@ -983,7 +1103,7 @@ task main(){
          Wait(500);
 
          // need to update particle direction
-         int dir = Random(3);
+         dir = Random(3);
          if(dir == 0) {
              turnRight(90);
          }
@@ -1003,10 +1123,20 @@ task main(){
 
       }
    }
-//   PlayToneEx(Random(1000) + 200, 400, 3, FALSE);
+
+
+   if(dir == 0) {
+      guess[2] = ((((guess[2] - 100) + 1) % 4) + 100);
+   }
+   else if(dir == 1) {
+      guess[2] = ((((guess[2] - 100) - 1) % 4) + 100);
+   }
+
+
+// Might need to increase scope of dir to allow move forward if no turn randomly picked
     ClearScreen();
     TextOut(0, 56, "x = " + NumToStr(guess[0]) + " y = " + NumToStr(guess[1]) + " dir = " + NumToStr(guess[2]));
-    victory();
+    found();
    
    /* When we are fairly confident about the robot's position, we can move on
       to the task given.
@@ -1018,8 +1148,8 @@ task main(){
       
    */
    guess[2] = move_to(guess[0]*GHEIGHT + guess[1], target, guess[2]);
-   PlayToneEx(Random(1000) + 200, 400, 3, FALSE);
+   package();
    move_to(target, dest,guess[2]);
-   PlayToneEx(Random(1000) + 200, 400, 3, FALSE);
+   victory();
 }
 
