@@ -57,7 +57,7 @@
    speeds throughout your code. This provides an easy way to change them */
 
 #define NUMSENSES 200
-#define VOL 5
+#define VOL 2
 #define FULLTURN 155
 #define TURN 80
 #define FINETURN 6
@@ -415,7 +415,7 @@ int find_left() {
         turnLeft(FINETURN);
         fColor = robot_sense(NUMSENSES);
         
-        if(fColor == 3 || fColor == 2) {
+        if(fColor == 3 || fColor == 2 || fColor == 6) {
            turnLeft(FINETURN);
            fColor = robot_sense(NUMSENSES);
         }
@@ -461,15 +461,70 @@ int find_right() {
 }
 
 sub adjust() {
-        int miss = 10, angle, c, c2;
+  int miss = 10, angle, c, c2;
 
 	while (true) {
 	    angle = 1;
 	    while(angle < miss) {
 	    // Check the right side for black.
-		turnRight(3);
+	  	turnRight(3);
+	  	c = robot_sense(NUMSENSES);
+      if(c == 6) {
+         moveForward(1);
+         c2 = robot_sense(NUMSENSES);
+         if(c2 == 4) {
+             c = c2;
+         }
+         else {
+             moveBackward(1);
+         }
+      }
+	  	if(c == 1 || c == 4) {
+          turnRight(6);
+		      break;
+		  }
+	  	angle += 1;
+  }
+  if(c == 1 || c == 4) {
+	   break;
+  }
+  Wait(500);
+	// If, after checking right side, black or yellow are
+	// not found, check left.
+	// Check the left side.
+	angle = 1;
+	while(angle < 2 * miss) {
+    // Check the right side for black.
+		turnLeft(3);
 		c = robot_sense(NUMSENSES);
-    if(c == 6) {
+		if(c == 6) {
+        moveForward(1);
+        c2 = robot_sense(NUMSENSES);
+        if(c2 == 4) {
+            c = c2;
+        }
+        else {
+            moveBackward(1);
+        }
+    }
+		if(c == 1 || c == 4) {
+        turnLeft(6);
+		    break;
+		}
+		angle += 1;
+  }
+  if(c == 1 || c == 4) {
+		break;
+  }
+  Wait(500);
+
+	// If after checking left side, black or yellow are
+	// not found, re-center the robot and try again with wider scan.
+	angle = 1;
+	while(angle < miss) {
+	  turnRight(3);
+		c = robot_sense(NUMSENSES);
+		if(c == 6) {
         moveForward(1);
         c2 = robot_sense(NUMSENSES);
         if(c2 == 4) {
@@ -484,69 +539,13 @@ sub adjust() {
 		    break;
 		}
 		angle += 1;
-	    }
-	    if(c == 1 || c == 4) {
-		    break;
-	    }
-	    Wait(500);
-	    // If, after checking right side, black or yellow are
-	    // not found, check left.
-	    // Check the left side.
-	    angle = 1;
-	    while(angle < 2 * miss) {
-	    // Check the right side for black.
-		turnLeft(3);
-		c = robot_sense(NUMSENSES);
-		if(c == 6) {
-        moveForward(1);
-        c2 = robot_sense(NUMSENSES);
-        if(c2 == 4) {
-            c = c2;
-        }
-        else {
-            moveBackward(1);
-        }
-    }
-		if(c == 1 || c == 4) {
-                    turnLeft(6);
-		    break;
-		}
-		angle += 1;
-	    }
-	    if(c == 1 || c == 4) {
+  }
+  if(c == 1 || c == 4) {
 		break;
-	    }
-
-	    Wait(500);
-
-	    // If after checking left side, black or yellow are
-	    // not found, re-center the robot and try again with wider scan.
-	    angle = 1;
-	    while(angle < miss) {
-		turnRight(3);
-		c = robot_sense(NUMSENSES);
-		if(c == 6) {
-        moveForward(1);
-        c2 = robot_sense(NUMSENSES);
-        if(c2 == 4) {
-            c = c2;
-        }
-        else {
-            moveBackward(1);
-        }
-    }
-		if(c == 1 || c == 4) {
-                    turnRight(6);
-		    break;
-		}
-		angle += 1;
-	    }
-	    if(c == 1 || c == 4) {
-		break;
-	    }
-	    Wait(500);
-	    // Increment counter to increase scan zone.
-	    miss = miss + 10;
+	}
+	Wait(500);
+	// Increment counter to increase scan zone.
+	miss = miss + 10;
 	}
 }
 
