@@ -399,7 +399,7 @@ int robot_sense(int iter) {
     TextOut(0, 56, NumToStr(bestColor) + ". " + sColor);
     
     // Play a tone based on the color seen.
-    PlayToneEx(684 + (bestColor * 400), 30, 3, FALSE);
+    PlayToneEx(684 + (bestColor * 400), 30, VOL, FALSE);
     return bestColor;
 
 }
@@ -512,7 +512,6 @@ sub move_robot(int color){
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    int dir;
     // If we see red, turn 180.
     if (color == 5) {
         moveForward(10);
@@ -521,29 +520,10 @@ sub move_robot(int color){
     // If we see black or yellow...
     } else if ( color == 1 || color == 4 ) {
     
-        // If you hit yellow (i.e. an intersection,
-        // scan it
-//        if (color == 4) {
-        
-//            scan_surroundings();
-//            Wait(500);
-//            moveForward(8);
-//            Wait(500);
-//            dir = Random(3);
-//            if(dir == 0) {
-//                turnRight(90);
-//            }
-//            else if(dir == 1) {
-//                turnLeft(90);
-//            }
-
-        // Move forward if you see black.
-//        } else {
         if (color == 1) {
             moveForward(1);
-         }
+        }
             
-//        }
         
     // If we see blue, green, or white then adjust back to black.
     } else if (color == 2 || color == 3 || color == 6) {
@@ -596,8 +576,6 @@ intersection scan_surroundings(int color){
 
        rsense.NE = find_right();
        Wait(1000);
-    
-  //     turnLeft(25);
 
     return rsense;
 }
@@ -620,18 +598,21 @@ sub change_direction(int orig, int new){
     /* selects the appropriate turn based on the headings given*/
     switch (change){
            case 3:
+               turnLeft(90);
            case -1:
                 //turn left 90 degrees
                 turnLeft(90);
                 adjust();
                 break;
            case -3:
+               turnRight(90);
            case 1:
                 //turn right 90 degrees
                 turnRight(90);
                 adjust();
                 break;
            case 2:
+               turnLeft(180);
 	   case -2:		
                 // 180 degree turn
                 turnRight(175);
@@ -654,7 +635,8 @@ sub change_direction(int orig, int new){
 */
 int move_to(int s, int f, int h){
     int sx, sy, fx, fy, tx, ty;
-    int heading;
+    int heading, nColor;
+
     // extract coordinates from given information
     sx = s/GHEIGHT;
     sy = s%GHEIGHT;
@@ -844,7 +826,7 @@ int sense(intersection map[], int x, int y, int dir, int heading){
 
     int func;
 
-    func = ((5 * x) + y);
+    func = ((GHEIGHT * x) + y);
 
 
     curr = map[func];
@@ -1041,7 +1023,7 @@ task main(){
    /////////////////////////////////////////////////////////////////////////////
    while (robp < THRESHOLD){ /* run the update loop until an acceptable
                                probability is obtained */
-      /* implement me */
+
       maxprob = 0.0;
       totalprob = 0.0;
       nColor = robot_sense(200);
@@ -1080,8 +1062,6 @@ task main(){
                 guess[1] = list[i].y;
                 guess[2] = list[i].theta;
 
-                // It does update guess every time but it doesn't actually change
-
              }
 
          }
@@ -1109,7 +1089,7 @@ task main(){
          }
          else if(dir == 1) {
              turnLeft(90);
-         }
+         }GHEIGHT
 
          for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1) {
 
@@ -1124,7 +1104,6 @@ task main(){
       }
    }
 
-
    if(dir == 0) {
       guess[2] = ((((guess[2] - 100) + 1) % 4) + 100);
    }
@@ -1132,8 +1111,6 @@ task main(){
       guess[2] = ((((guess[2] - 100) - 1) % 4) + 100);
    }
 
-
-// Might need to increase scope of dir to allow move forward if no turn randomly picked
     ClearScreen();
     TextOut(0, 56, "x = " + NumToStr(guess[0]) + " y = " + NumToStr(guess[1]) + " dir = " + NumToStr(guess[2]));
     found();
