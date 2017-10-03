@@ -1089,7 +1089,7 @@ task main(){
          }
          else if(dir == 1) {
              turnLeft(90);
-         }GHEIGHT
+         }
 
          for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1) {
 
