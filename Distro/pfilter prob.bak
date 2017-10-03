@@ -58,9 +58,6 @@
 
 #define NUMSENSES 200
 #define VOL 2
-#define FULLTURN 155
-#define TURN 80
-#define FINETURN 6
 
 // Victory
 #define QUARTER 429
@@ -404,148 +401,100 @@ int robot_sense(int iter) {
     TextOut(0, 56, NumToStr(bestColor) + ". " + sColor);
 
     // Play a tone based on the color seen.
-    PlayToneEx(684 + (bestColor * 400), 30, VOL, FALSE);
+    PlayToneEx(684 + (bestColor * 400), 30, 3, FALSE);
     return bestColor;
 
 }
 
 int find_left() {
-    int fColor = robot_sense(NUMSENSES), rColor, angle = 0;
+    int fColor = robot_sense(200), rColor;
     while(fColor == 1 || fColor == 4) {
-        turnLeft(FINETURN);
-        fColor = robot_sense(NUMSENSES);
-        
-        if(fColor == 3 || fColor == 2 || fColor == 6) {
-           turnLeft(FINETURN);
-           fColor = robot_sense(NUMSENSES);
-        }
+        turnLeft(3);
+        fColor = robot_sense(200);
     }
     Wait(500);
     rColor = fColor;
-    while(rColor != 1 && angle < 5) {
-        turnRight(FINETURN);
-        rColor = robot_sense(NUMSENSES);
-        angle++;
-    }
-    
     while(rColor != 1) {
-       turnLeft(FINETURN);
-       rColor = robot_sense(NUMSENSES);
+        turnRight(3);
+        rColor = robot_sense(200);
     }
-    
     turnRight(6);
     return fColor;
 }
 
 int find_right() {
-    int fColor = robot_sense(NUMSENSES), rColor, angle = 0;
+    int fColor = robot_sense(200), rColor;
     while(fColor == 1 || fColor == 4) {
-        turnRight(FINETURN);
-        fColor = robot_sense(NUMSENSES);
+        turnRight(3);
+        fColor = robot_sense(200);
     }
     Wait(500);
     rColor = fColor;
-    while(rColor != 1 && angle < 5) {
-        turnLeft(FINETURN);
-        rColor = robot_sense(NUMSENSES);
-        angle++;
-    }
-    
     while(rColor != 1) {
-       turnRight(FINETURN);
-       rColor = robot_sense(NUMSENSES);
+        turnLeft(3);
+        rColor = robot_sense(200);
     }
-    
     turnLeft(6);
     return fColor;
 }
 
 sub adjust() {
-  int miss = 10, angle, c, c2;
+        int miss = 10, angle, c;
 
 	while (true) {
 	    angle = 1;
 	    while(angle < miss) {
 	    // Check the right side for black.
-	  	turnRight(3);
-	  	c = robot_sense(NUMSENSES);
-      if(c == 6) {
-         moveForward(1);
-         c2 = robot_sense(NUMSENSES);
-         if(c2 == 4) {
-             c = c2;
-         }
-         else {
-             moveBackward(1);
-         }
-      }
-	  	if(c == 1 || c == 4) {
-          turnRight(6);
-		      break;
-		  }
-	  	angle += 1;
-  }
-  if(c == 1 || c == 4) {
-	   break;
-  }
-  Wait(500);
-	// If, after checking right side, black or yellow are
-	// not found, check left.
-	// Check the left side.
-	angle = 1;
-	while(angle < 2 * miss) {
-    // Check the right side for black.
+		turnRight(3);
+		c = robot_sense(NUMSENSES);
+		if(c == 1 || c == 4) {
+                    turnRight(6);
+		    break;
+		}
+		angle += 1;
+	    }
+	    if(c == 1 || c == 4) {
+		break;
+	    }
+	    Wait(500);
+	    // If, after checking right side, black or yellow are
+	    // not found, check left.
+	    // Check the left side.
+	    angle = 1;
+	    while(angle < 2 * miss) {
+	    // Check the right side for black.
 		turnLeft(3);
 		c = robot_sense(NUMSENSES);
-		if(c == 6) {
-        moveForward(1);
-        c2 = robot_sense(NUMSENSES);
-        if(c2 == 4) {
-            c = c2;
-        }
-        else {
-            moveBackward(1);
-        }
-    }
 		if(c == 1 || c == 4) {
-        turnLeft(6);
+                    turnLeft(6);
 		    break;
 		}
 		angle += 1;
-  }
-  if(c == 1 || c == 4) {
+	    }
+	    if(c == 1 || c == 4) {
 		break;
-  }
-  Wait(500);
+	    }
 
-	// If after checking left side, black or yellow are
-	// not found, re-center the robot and try again with wider scan.
-	angle = 1;
-	while(angle < miss) {
-	  turnRight(3);
+	    Wait(500);
+
+	    // If after checking left side, black or yellow are
+	    // not found, re-center the robot and try again with wider scan.
+	    angle = 1;
+	    while(angle < miss) {
+		turnRight(3);
 		c = robot_sense(NUMSENSES);
-		if(c == 6) {
-        moveForward(1);
-        c2 = robot_sense(NUMSENSES);
-        if(c2 == 4) {
-            c = c2;
-        }
-        else {
-            moveBackward(1);
-        }
-    }
 		if(c == 1 || c == 4) {
-        turnRight(6);
+                    turnRight(6);
 		    break;
 		}
 		angle += 1;
-  }
-  if(c == 1 || c == 4) {
+	    }
+	    if(c == 1 || c == 4) {
 		break;
-	}
-	Wait(500);
-	// Increment counter to increase scan zone.
-	miss = miss + 10;
+	    }
+	    Wait(500);
+	    // Increment counter to increase scan zone.
+	    miss = miss + 10;
 	}
 }
 
@@ -565,18 +514,38 @@ sub move_robot(int color){
     //
     ////////////////////////////////////////////////////////////////////////////
 
+    int dir;
     // If we see red, turn 180.
     if (color == 5) {
         moveForward(10);
-        turnRight(FULLTURN);
+        turnRight(175);
 
     // If we see black or yellow...
     } else if ( color == 1 || color == 4 ) {
 
+        // If you hit yellow (i.e. an intersection,
+        // scan it
+//        if (color == 4) {
+
+//            scan_surroundings();
+//            Wait(500);
+//            moveForward(8);
+//            Wait(500);
+//            dir = Random(3);
+//            if(dir == 0) {
+//                turnRight(90);
+//            }
+//            else if(dir == 1) {
+//                turnLeft(90);
+//            }
+
+        // Move forward if you see black.
+//        } else {
         if (color == 1) {
             moveForward(1);
-        }
+         }
 
+//        }
 
     // If we see blue, green, or white then adjust back to black.
     } else if (color == 2 || color == 3 || color == 6) {
@@ -610,11 +579,7 @@ intersection scan_surroundings(int color){
           adjust();
        }
        Wait(100);
-       moveBackward(13);
-       
-       if(nColor != 1) {
-          adjust();
-       }
+       moveBackward(15);
 
        rsense.SW = find_left();
        Wait(1000);
@@ -622,7 +587,7 @@ intersection scan_surroundings(int color){
        rsense.SE = find_right();
        Wait(1000);
 
-       moveForward(13);
+       moveForward(16);
        nColor = robot_sense(NUMSENSES);
        if(nColor != 1) {
           adjust();
@@ -633,6 +598,8 @@ intersection scan_surroundings(int color){
 
        rsense.NE = find_right();
        Wait(1000);
+
+  //     turnLeft(25);
 
     return rsense;
 }
@@ -655,30 +622,21 @@ sub change_direction(int orig, int new){
     /* selects the appropriate turn based on the headings given*/
     switch (change){
            case 3:
-               turnLeft(TURN);
-               adjust();
-               break;
            case -1:
                 //turn left 90 degrees
-                turnLeft(TURN);
+                turnLeft(90);
                 adjust();
                 break;
            case -3:
-               turnRight(TURN);
-               adjust();
-               break;
            case 1:
                 //turn right 90 degrees
-                turnRight(TURN);
+                turnRight(90);
                 adjust();
                 break;
            case 2:
-               turnLeft(FULLTURN);
-               adjust();
-               break;
-	         case -2:
+	   case -2:
                 // 180 degree turn
-                turnRight(FULLTURN);
+                turnRight(175);
                 adjust();
                 break;
     }
@@ -698,8 +656,7 @@ sub change_direction(int orig, int new){
 */
 int move_to(int s, int f, int h){
     int sx, sy, fx, fy, tx, ty;
-    int heading, nColor;
-
+    int heading;
     // extract coordinates from given information
     sx = s/GHEIGHT;
     sy = s%GHEIGHT;
@@ -722,6 +679,7 @@ int move_to(int s, int f, int h){
 
     int newHeading;
     int increment;
+    int nColor;
 
     if(tx != 0) {
 
@@ -740,13 +698,15 @@ int move_to(int s, int f, int h){
 
     while(tx != 0) {
 
-      nColor = robot_sense(NUMSENSES);
+      nColor = robot_sense(200);
       move_robot(nColor);
 
       if (nColor == 4) {
           tx = tx + increment;
           moveForward(16);
-          adjust();
+          if(robot_sense(NUMSENSES) != 1) {
+              adjust();
+          }
       }
 
     }
@@ -769,13 +729,15 @@ int move_to(int s, int f, int h){
 
     while(ty != 0) {
 
-      nColor = robot_sense(NUMSENSES);
+      nColor = robot_sense(200);
       move_robot(nColor);
 
       if (nColor == 4) {
           ty = ty + increment;
           moveForward(16);
-          adjust();
+          if(robot_sense(NUMSENSES) != 1) {
+              adjust();
+          }
       }
 
     }
@@ -888,7 +850,7 @@ int sense(intersection map[], int x, int y, int dir, int heading){
 
     int func;
 
-    func = ((GHEIGHT * x) + y);
+    func = ((5 * x) + y);
 
 
     curr = map[func];
@@ -1085,10 +1047,10 @@ task main(){
    /////////////////////////////////////////////////////////////////////////////
    while (robp < THRESHOLD){ /* run the update loop until an acceptable
                                probability is obtained */
-
+      /* implement me */
       maxprob = 0.0;
       totalprob = 0.0;
-      nColor = robot_sense(NUMSENSES);
+      nColor = robot_sense(200);
       move_robot(nColor);
       //scan - maybe pass color and it does nothing if color != yellow
       if (nColor == 4) {
@@ -1124,6 +1086,8 @@ task main(){
                 guess[1] = list[i].y;
                 guess[2] = list[i].theta;
 
+                // It does update guess every time but it doesn't actually change
+
              }
 
          }
@@ -1132,7 +1096,7 @@ task main(){
          robp = maxprob;
 
         ClearScreen();
-        TextOut(0, 56, "x=" + NumToStr(guess[0]) + " y=" + NumToStr(guess[1]) + " " + NumToStr(robp) + " " + NumToStr(guess[2]));
+        TextOut(0, 56, "x=" + NumToStr(guess[0]) + " y=" + NumToStr(guess[1]) + " " + NumToStr(robp));
         Wait(1000);
 
          for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1){
@@ -1147,10 +1111,10 @@ task main(){
          // need to update particle direction
          dir = Random(3);
          if(dir == 0) {
-             turnRight(TURN);
+             turnRight(90);
          }
          else if(dir == 1) {
-             turnLeft(TURN);
+             turnLeft(90);
          }
 
          for (i = 0; i < GWIDTH*GHEIGHT*4;i = i + 1) {
@@ -1166,6 +1130,7 @@ task main(){
       }
    }
 
+
    if(dir == 0) {
       guess[2] = ((((guess[2] - 100) + 1) % 4) + 100);
    }
@@ -1173,8 +1138,10 @@ task main(){
       guess[2] = ((((guess[2] - 100) - 1) % 4) + 100);
    }
 
+
+// Might need to increase scope of dir to allow move forward if no turn randomly picked
     ClearScreen();
-    TextOut(0, 56, "x = " + NumToStr(guess[0]) + " y = " + NumToStr(guess[1]) + " " + NumToStr(guess[2]));
+    TextOut(0, 56, "x = " + NumToStr(guess[0]) + " y = " + NumToStr(guess[1]) + " dir = " + NumToStr(guess[2]));
     found();
 
    /* When we are fairly confident about the robot's position, we can move on

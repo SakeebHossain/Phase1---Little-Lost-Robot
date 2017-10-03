@@ -74,8 +74,12 @@
 // Got Package! :D
 #define NOTES 300
 #define N3 900
+#define N2 150
+#define N4 100
 #define NWAIT 400
+#define N2WAIT 250
 #define N3WAIT 1000
+#define N4WAIT 200
 
 // Found Ourselves!
 #define DOTQ 833
@@ -274,6 +278,155 @@ sub victory() {
 
 sub package() {
 
+   // G
+   PlayToneEx(784,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // A
+   PlayToneEx(880,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // B
+   PlayToneEx(988,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // C#
+   PlayToneEx(1109,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+
+   // Ab
+   PlayToneEx(831,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // Bb
+   PlayToneEx(932,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // C
+   PlayToneEx(1047,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // D
+   PlayToneEx(1175,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+
+
+   // A
+   PlayToneEx(880,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // B
+   PlayToneEx(988,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // C#
+   PlayToneEx(1109,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // D#
+   PlayToneEx(1245,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+
+
+   // Bb
+   PlayToneEx(932,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // C
+   PlayToneEx(1047,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // D
+   PlayToneEx(1175,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+   // E
+   PlayToneEx(1319,N2,VOL,FALSE);
+   Wait(N2WAIT);
+
+
+
+   // B
+   PlayToneEx(988,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // C#
+   PlayToneEx(1109,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // D#
+   PlayToneEx(1245,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // F
+   PlayToneEx(1397,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+
+
+   // C
+   PlayToneEx(1047,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // D
+   PlayToneEx(1175,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // E
+   PlayToneEx(1319,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // F#
+   PlayToneEx(1480,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+
+   // C#
+   PlayToneEx(1109,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // D#
+   PlayToneEx(1245,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // F
+   PlayToneEx(1397,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // G
+   PlayToneEx(1568,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+
+
+   // D
+   PlayToneEx(1175,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // E
+   PlayToneEx(1319,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // F#
+   PlayToneEx(1480,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+   // G#
+   PlayToneEx(1661,N4,VOL,FALSE);
+   Wait(N4WAIT);
+
+
+
+
+   Wait(NOTES*2);
+
+
+
+
+
    // A
    PlayToneEx(880,NOTES,VOL,FALSE);
    Wait(NWAIT);
@@ -291,6 +444,7 @@ sub package() {
    Wait(N3WAIT);
 
 }
+
 
 sub found() {
    // D
@@ -691,6 +845,9 @@ int move_to(int s, int f, int h){
            newHeading = EAST;
            increment = -1;
        }
+    } else {
+        newHeading = heading;
+
     }
 
     change_direction(heading, newHeading);
