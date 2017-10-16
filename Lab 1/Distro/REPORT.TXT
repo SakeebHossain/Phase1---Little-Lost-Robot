@@ -1,0 +1,86 @@
+CSC C85 - Fall 2017 - Lab #1 Report
+
+Particle Filters for Robot Localization
+______________________________________________________________________
+
+Team name:
+
+Name 1 (last, first):
+Student number 1:
+
+Name 2 (last, first):
+Student number 2:
+
+Name 3 (last, first):
+Student number 3:
+
+(special: Lose marks for not completing the above information)
+_______________________________________________________________________
+
+Please note below what parts of your task were completed, and for
+incomplete tasks, give a brief description of progress and how
+you think the task could be completed
+
+a) Implemented randomized particle initialization
+
+
+
+b) Implemented particle likelihood computation using Gaussian 
+   noise model.
+
+
+c) Implemented Step 1 in the starter code
+
+
+
+d) Implemented Step 3 in the starter code
+
+
+
+e) Implemented Step 4 in the starter code
+  
+
+_______________________________________________________________________
+
+Questions:
+
+1) For each of the maps provided, give your estimate of the minimum
+   number of particles required for reliably successful localization
+   (i.e. the robot succeeds almost always).
+
+2) What properties of the map make the localization task difficult?
+
+
+3) What is the effect of a non-Gaussian noise model in the performance
+   of the particle filter?
+
+
+4) What would you do to improve the sensor model?
+
+
+5) The motion model is noisy. Each time the robot moves, the direction
+   of motion is slightly altered in a random manner. This is why the
+   robot wanders around instead of moving in a straight line.
+
+   a) Is this something we can avoid in the real world?
+
+  
+   b) Is it a bug or a feature?
+
+   
+   c) Would the particle filter work with noiseless motion?
+      if yes, under what conditions...
+      if no, why?
+
+________________________________________________________________
+
+Grading:
+
+- Lab attendance and work			/15
+- Particle Filter solution			/70  (includes style and commenting of code)
+- Answers in this report			/15
+
+Total for the session				/100 (*)
+
+(*) Mark is conditional on all members of the team being able
+    to explain any component of the solution when asked.
