@@ -1,0 +1,631 @@
+#SYMBOLS
+Index	Identifier	Type	Flag	Data	Size	RefCount
+0	__D0robot_move_forward	6	1	0	4	2
+1	__D0robot_read_color	6	1	4	4	25
+2	__D0robot_turn_left	6	1	8	4	4
+3	__SPTArgsMutex	9	0	12	4	4
+4	__D0main	6	1	16	4	57
+5	__D0robot_adjust	6	1	20	4	4
+6	__D0robot_turn_right	6	1	24	4	4
+7	__signed_stack_003robot_read_color	6	1	28	4	6
+8	__Wait_7qG2_ms_7qG2_000_inline_robot_turn_around	5	1	32	4	2
+9	__Wait_7qG2_ms_7qG2_000_inline_main	5	1	36	4	2
+10	__signed_stack_001main	6	1	40	4	22
+11	__signed_stack_001robot_read_color	6	1	44	4	14
+12	__signed_stack_002robot_read_color	6	1	48	4	10
+13	__OnRevMutex	9	0	52	4	4
+14	__main_7qG2_degree_count_7qG2_000	4	1	56	2	13
+15	__main_7qG2_lost_7qG2_000	4	1	58	2	5
+16	__robot_adjust_7qG2_turn_switch_7qG2_000	4	1	60	2	4
+17	__main_7qG2_turn_switch_7qG2_000	4	1	62	2	10
+18	__main_7qG2_degree_7qG2_000	4	1	64	2	10
+19	__main_7qG2_ncolor_7qG2_000	4	1	66	2	5
+20	__constVal200	4	0	68	2	2
+21	__robot_read_color_7qG2_ncolor_7qG2_000	4	1	70	2	7
+22	__robot_move_forward_return	1	1	72	1	4
+23	__constVal63	2	0	73	1	6
+24	__robot_turn_left_return	1	1	74	1	4
+25	__constVal96	2	0	75	1	6
+26	__constVal32	2	0	76	1	18
+27	__robot_read_color_return	1	1	77	1	5
+28	__constValNeg1	2	0	78	1	1
+29	__robot_adjust_return	1	1	79	1	5
+30	__robot_turn_right_return	1	1	80	1	3
+31	____initialize_global_data_return	1	1	81	1	3
+32	__OnRev_Tmp	2	1	82	1	4
+33	__robot_turn_around_return	1	1	83	1	3
+34	__constVal1	2	0	84	1	5
+35	____ResetSensorSubroutine_return	1	1	85	1	3
+36	__SetSensorColorFull_7qG2_port_7qG2_000_inline_main	1	1	86	1	4
+37	__ResetSensorTmp	1	1	87	1	2
+38	__constVal2	2	0	88	1	3
+39	__constVal13	2	0	89	1	1
+40	__PFTmp	1	1	90	1	1
+41	__constVal6	2	0	91	1	1
+42	__constVal3	2	0	92	1	7
+43	__constVal0	2	1	93	1	22
+44	__constVal4	2	0	94	1	1
+45	__constVal5	2	0	95	1	1
+46	__ResetSensorPort	1	1	96	1	3
+47	__PointOutArgs	8	0	3	12	4
+48	__PointOutArgs.Result	2	1	100	1	4
+49	__PointOutArgs.Location	8	0	2	4	4
+50	__PointOutArgs.Location.X	4	1	104	2	4
+51	__PointOutArgs.Location.Y	4	1	106	2	4
+52	__PointOutArgs.Options	5	1	108	4	4
+53	__TextOutArgs	8	0	4	16	12
+54	__TextOutArgs.Result	2	1	112	1	12
+55	__TextOutArgs.Location	8	0	2	4	12
+56	__TextOutArgs.Location.X	4	1	116	2	12
+57	__TextOutArgs.Location.Y	4	1	118	2	12
+58	__TextOutArgs.Text	7	0	120	4	12
+59	__TextOutArgs.Text.Text_type	1	0	0	1	0
+60	__TextOutArgs.Options	5	1	124	4	12
+61	__SPTArgs	8	0	5	8	12
+62	__SPTArgs.Result	2	1	128	1	12
+63	__SPTArgs.Frequency	3	1	130	2	12
+64	__SPTArgs.Duration	3	1	132	2	12
+65	__SPTArgs.Loop	1	1	134	1	12
+66	__SPTArgs.Volume	1	1	135	1	12
+67	__OUT_BC	7	0	136	4	2
+68	__OUT_BC.__OUT_BC_type	1	0	0	1	0
+69	__strbufrobot_read_color	7	0	138	4	8
+70	__strbufrobot_read_color.__strbufrobot_read_color_type	1	0	0	1	0
+71	__strretvalrobot_read_color	7	0	140	4	4
+72	__strretvalrobot_read_color.__strretvalrobot_read_color_type	1	0	0	1	0
+73	__robot_read_color_7qG2_colors_7qG2_000	7	0	142	4	2
+74	__robot_read_color_7qG2_colors_7qG2_000.__robot_read_color_7qG2_colors_7qG2_000_type	7	0	0	4	0
+75	__robot_read_color_7qG2_colors_7qG2_000.__robot_read_color_7qG2_colors_7qG2_000_type.__robot_read_color_7qG2_colors_7qG2_000_type_type	1	0	0	1	0
+76	__ArrHelper__robot_read_color_244_2	7	0	144	4	2
+77	__ArrHelper__robot_read_color_244_2.__ArrHelper__robot_read_color_244_2_type	1	0	0	1	0
+78	__ArrHelper__robot_read_color_244_0	7	0	146	4	2
+79	__ArrHelper__robot_read_color_244_0.__ArrHelper__robot_read_color_244_0_type	1	0	0	1	0
+80	__ArrHelper__robot_read_color_244_1	7	0	148	4	4
+81	__ArrHelper__robot_read_color_244_1.__ArrHelper__robot_read_color_244_1_type	1	0	0	1	0
+82	__ArrHelper__robot_read_color_83_0	7	0	150	4	2
+83	__ArrHelper__robot_read_color_83_0.__ArrHelper__robot_read_color_83_0_type	1	0	0	1	0
+84	__constStr0009	7	0	152	4	1
+85	__constStr0009.__constStr0009_type	1	1	0	1	0
+86	__constStr0014	7	0	154	4	1
+87	__constStr0014.__constStr0014_type	1	1	0	1	0
+88	__constStr0015	7	0	156	4	1
+89	__constStr0015.__constStr0015_type	1	1	0	1	0
+90	__constStr0016	7	0	158	4	1
+91	__constStr0016.__constStr0016_type	1	1	0	1	0
+92	__constStr0013	7	0	160	4	1
+93	__constStr0013.__constStr0013_type	1	1	0	1	0
+94	__constStr0010	7	0	162	4	1
+95	__constStr0010.__constStr0010_type	1	1	0	1	0
+96	__constStr0011	7	0	164	4	1
+97	__constStr0011.__constStr0011_type	1	1	0	1	0
+98	__constStr0012	7	0	166	4	1
+99	__constStr0012.__constStr0012_type	1	1	0	1	0
+#SOURCES
+Clump	Line	PC	Source
+0	52	0	#line 52 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	53	0		subcall __initialize_global_data, ____initialize_global_data_return
+0	52	2	#line 52 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	52	2	#line 52 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	53	2		set __main_7qG2_ncolor_7qG2_000, 0
+0	52	5	#line 52 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	52	5	#line 52 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	53	5		set __main_7qG2_turn_switch_7qG2_000, 0
+0	52	8	#line 52 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	53	8	#line 53 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	54	8		set __main_7qG2_lost_7qG2_000, 0
+0	53	11	#line 53 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	53	11	#line 53 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	54	11		set __SetSensorColorFull_7qG2_port_7qG2_000_inline_main, 0
+0	53	14	#line 53 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	4386	14	#line 4386 "NXCDefs.h"
+0	4387	14	#pragma macro 6
+0	4387	14		setin __constVal13, __SetSensorColorFull_7qG2_port_7qG2_000_inline_main, 0
+0	4387	18		setin __constVal0, __SetSensorColorFull_7qG2_port_7qG2_000_inline_main, 1
+0	4387	22		mov __ResetSensorPort, __SetSensorColorFull_7qG2_port_7qG2_000_inline_main
+0	4387	24		subcall __ResetSensorSubroutine, ____ResetSensorSubroutine_return
+0	4303	26	#line 4303 "NXCDefs.h"
+0	4386	26	#line 4386 "NXCDefs.h"
+0	55	26	#line 55 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	55	26	#line 55 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	56	26		mov __signed_stack_001main, __main_7qG2_ncolor_7qG2_000
+0	55	28	#line 55 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	55	28	#line 55 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	56	28		set __D0main, 7
+0	55	31	#line 55 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	56	31		cmp 5, __D0main, __signed_stack_001main, __D0main
+0	57	35	#line 57 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	58	35		brtst 4, __ASM_Label_553, __D0main
+0	58	38	#line 58 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	59	38		subcall robot_read_color, __robot_read_color_return
+0	58	40	#line 58 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	59	40		mov __main_7qG2_ncolor_7qG2_000, __D0robot_read_color
+0	58	42	#line 58 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	58	42	#line 58 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	58	42	#line 58 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	59	42		mov __D0main, __main_7qG2_lost_7qG2_000
+0	58	44	#line 58 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	59	44		not __D0main, __D0main
+0	60	47	#line 60 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	61	47		tst 5, __D0main, __D0main
+0	60	50	#line 60 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	61	50		brtst 4, __ASM_Label_560, __D0main
+0	62	53	#line 62 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	63	53		set __main_7qG2_degree_7qG2_000, 1
+0	62	56	#line 62 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	62	56	#line 62 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	63	56	#line 63 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	64	56		set __main_7qG2_degree_count_7qG2_000, 1
+0	63	59	#line 63 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	63	59	#line 63 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	65	59	#line 65 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	65	59	#line 65 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	66	59		getin __signed_stack_001main, __constVal0, 4
+0	65	63	#line 65 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	65	63	#line 65 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	66	63		mov __D0main, __main_7qG2_ncolor_7qG2_000
+0	65	65	#line 65 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	66	65		cmp 4, __D0main, __signed_stack_001main, __D0main
+0	67	69	#line 67 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	68	69		brtst 4, __ASM_Label_566, __D0main
+0	67	72	#line 67 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	68	72		mov __D0main, __main_7qG2_ncolor_7qG2_000
+0	71	74		brcmp 4, __ASM_Label_572, __constVal1, __D0main
+0	72	78		brcmp 4, __ASM_Label_575, __constVal2, __D0main
+0	73	82		brcmp 4, __ASM_Label_593, __constVal3, __D0main
+0	74	86		brcmp 4, __ASM_Label_611, __constVal4, __D0main
+0	75	90		brcmp 4, __ASM_Label_612, __constVal5, __D0main
+0	76	94		brcmp 4, __ASM_Label_613, __constVal6, __D0main
+0	77	98		jmp __ASM_Label_629
+0	70	100	#line 70 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	71	100	#line 71 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	72	100		subcall robot_move_forward, __robot_move_forward_return
+0	71	102	#line 71 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	73	102	#line 73 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	74	102		set __main_7qG2_lost_7qG2_000, 0
+0	73	105	#line 73 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	73	105	#line 73 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	74	105	#line 74 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	75	105	#line 75 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	76	105		set __main_7qG2_lost_7qG2_000, 1
+0	75	108	#line 75 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	75	108	#line 75 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	75	108	#line 75 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	76	108		mov __robot_adjust_7qG2_turn_switch_7qG2_000, __main_7qG2_turn_switch_7qG2_000
+0	75	110	#line 75 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	76	110	#line 76 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	77	110		subcall robot_adjust, __robot_adjust_return
+0	76	112	#line 76 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	77	112	#line 77 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	78	112		set __D0main, 1
+0	77	115	#line 77 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	78	115		add __main_7qG2_degree_count_7qG2_000, __main_7qG2_degree_count_7qG2_000, __D0main
+0	77	119	#line 77 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	77	119	#line 77 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	78	119		mov __signed_stack_001main, __main_7qG2_degree_count_7qG2_000
+0	77	121	#line 77 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	77	121	#line 77 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	78	121		mov __D0main, __main_7qG2_degree_7qG2_000
+0	77	123	#line 77 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	78	123		cmp 1, __D0main, __signed_stack_001main, __D0main
+0	78	127	#line 78 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	79	127		brtst 4, __ASM_Label_584, __D0main
+0	78	130	#line 78 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	79	130		mov __signed_stack_001main, __main_7qG2_turn_switch_7qG2_000
+0	78	132	#line 78 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	78	132	#line 78 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	79	132		set __D0main, 1
+0	78	135	#line 78 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	79	135		add __signed_stack_001main, __signed_stack_001main, __D0main
+0	78	139	#line 78 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	79	139	#line 79 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	80	139		set __D0main, 2
+0	79	142	#line 79 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	80	142		mod __main_7qG2_turn_switch_7qG2_000, __signed_stack_001main, __D0main
+0	79	146	#line 79 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	79	146	#line 79 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	80	146	#line 80 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	81	146		set __D0main, 1
+0	80	149	#line 80 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	81	149		add __main_7qG2_degree_7qG2_000, __main_7qG2_degree_7qG2_000, __D0main
+0	80	153	#line 80 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	81	153	#line 81 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	82	153		set __main_7qG2_degree_count_7qG2_000, 1
+0	81	156	#line 81 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	81	156	#line 81 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	83	156	#line 83 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	84	156	#line 84 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	85	156	#line 85 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	86	156		set __main_7qG2_lost_7qG2_000, 1
+0	85	159	#line 85 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	85	159	#line 85 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	85	159	#line 85 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	86	159		mov __robot_adjust_7qG2_turn_switch_7qG2_000, __main_7qG2_turn_switch_7qG2_000
+0	85	161	#line 85 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	86	161	#line 86 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	87	161		subcall robot_adjust, __robot_adjust_return
+0	86	163	#line 86 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	87	163	#line 87 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	88	163		set __D0main, 1
+0	87	166	#line 87 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	88	166		add __main_7qG2_degree_count_7qG2_000, __main_7qG2_degree_count_7qG2_000, __D0main
+0	87	170	#line 87 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	87	170	#line 87 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	88	170		mov __signed_stack_001main, __main_7qG2_degree_count_7qG2_000
+0	87	172	#line 87 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	87	172	#line 87 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	88	172		mov __D0main, __main_7qG2_degree_7qG2_000
+0	87	174	#line 87 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	88	174		cmp 1, __D0main, __signed_stack_001main, __D0main
+0	88	178	#line 88 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	89	178		brtst 4, __ASM_Label_602, __D0main
+0	88	181	#line 88 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	89	181		mov __signed_stack_001main, __main_7qG2_turn_switch_7qG2_000
+0	88	183	#line 88 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	88	183	#line 88 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	89	183		set __D0main, 1
+0	88	186	#line 88 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	89	186		add __signed_stack_001main, __signed_stack_001main, __D0main
+0	88	190	#line 88 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	89	190	#line 89 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	90	190		set __D0main, 2
+0	89	193	#line 89 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	90	193		mod __main_7qG2_turn_switch_7qG2_000, __signed_stack_001main, __D0main
+0	89	197	#line 89 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	89	197	#line 89 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	90	197	#line 90 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	91	197		set __D0main, 1
+0	90	200	#line 90 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	91	200		add __main_7qG2_degree_7qG2_000, __main_7qG2_degree_7qG2_000, __D0main
+0	90	204	#line 90 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	91	204	#line 91 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	92	204		set __main_7qG2_degree_count_7qG2_000, 1
+0	91	207	#line 91 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	91	207	#line 91 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	93	207	#line 93 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	94	207	#line 94 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	96	207	#line 96 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	97	207		subcall robot_move_forward, __robot_move_forward_return
+0	96	209	#line 96 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	97	209	#line 97 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	99	209	#line 99 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	100	209		subcall robot_turn_around, __robot_turn_around_return
+0	99	211	#line 99 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	100	211	#line 100 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	100	211	#line 100 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	101	211		mov __robot_adjust_7qG2_turn_switch_7qG2_000, __main_7qG2_turn_switch_7qG2_000
+0	100	213	#line 100 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	101	213	#line 101 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	102	213		subcall robot_adjust, __robot_adjust_return
+0	101	215	#line 101 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	102	215	#line 102 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	103	215		set __D0main, 1
+0	102	218	#line 102 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	103	218		add __main_7qG2_degree_count_7qG2_000, __main_7qG2_degree_count_7qG2_000, __D0main
+0	102	222	#line 102 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	102	222	#line 102 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	103	222		mov __signed_stack_001main, __main_7qG2_degree_count_7qG2_000
+0	102	224	#line 102 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	102	224	#line 102 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	103	224		mov __D0main, __main_7qG2_degree_7qG2_000
+0	102	226	#line 102 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	103	226		cmp 1, __D0main, __signed_stack_001main, __D0main
+0	103	230	#line 103 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	104	230		brtst 4, __ASM_Label_620, __D0main
+0	103	233	#line 103 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	104	233		mov __signed_stack_001main, __main_7qG2_turn_switch_7qG2_000
+0	103	235	#line 103 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	103	235	#line 103 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	104	235		set __D0main, 1
+0	103	238	#line 103 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	104	238		add __signed_stack_001main, __signed_stack_001main, __D0main
+0	103	242	#line 103 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	104	242	#line 104 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	105	242		set __D0main, 2
+0	104	245	#line 104 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	105	245		mod __main_7qG2_turn_switch_7qG2_000, __signed_stack_001main, __D0main
+0	104	249	#line 104 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	104	249	#line 104 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	105	249	#line 105 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	106	249		set __D0main, 1
+0	105	252	#line 105 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	106	252		add __main_7qG2_degree_7qG2_000, __main_7qG2_degree_7qG2_000, __D0main
+0	105	256	#line 105 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	106	256	#line 106 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	107	256		set __main_7qG2_degree_count_7qG2_000, 1
+0	106	259	#line 106 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	106	259	#line 106 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	108	259	#line 108 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	109	259	#line 109 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	109	259	#line 109 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	110	259		set __Wait_7qG2_ms_7qG2_000_inline_main, 100
+0	109	262	#line 109 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	8551	262	#line 8551 "NXCDefs.h"
+0	8552	262		wait2 NA, __Wait_7qG2_ms_7qG2_000_inline_main
+0	8551	265	#line 8551 "NXCDefs.h"
+0	110	265	#line 110 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	111	265	#line 111 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	112	265	#pragma macro 7
+0	112	265		setout __OUT_BC, 2, __constVal0, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+0	4624	288	#line 4624 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	111	288	#line 111 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	113	288	#line 113 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	114	288	#line 114 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	115	288		jmp __ASM_Label_565
+0	114	290	#line 114 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	116	290	#line 116 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	117	290		jmp __ASM_Label_552
+0	116	292	#line 116 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+0	117	292		exit -1, -1
+1	5476	0		setin __constVal1, __ResetSensorPort, 5
+1	5478	4		getin __ResetSensorTmp, __ResetSensorPort, 5
+1	5479	8		brtst 5, __SensorStillInvalid, __ResetSensorTmp
+1	5480	11		subret ____ResetSensorSubroutine_return
+2	8	0	#line 8 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	9	0		arrbuild __robot_read_color_7qG2_colors_7qG2_000, __constStr0009, __constStr0010, __constStr0011, __constStr0012, __constStr0013, __constStr0014
+2	8	9	#line 8 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	9	9		getin __robot_read_color_7qG2_ncolor_7qG2_000, __constVal0, 4
+2	8	13	#line 8 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	6678	13	#line 6678 "NXCDefs.h"
+2	6679	13	#pragma macro 6
+2	6679	13		mov __PointOutArgs.Location.X, __constVal200
+2	6679	15		mov __PointOutArgs.Location.Y, __constVal200
+2	6679	17		mov __PointOutArgs.Options, __constVal1
+2	6679	19		syscall 14, __PointOutArgs
+2	3926	22	#line 3926 "NXCDefs.h"
+2	6678	22	#line 6678 "NXCDefs.h"
+2	11	22	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	11	22	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	22		mov __signed_stack_001robot_read_color, __robot_read_color_7qG2_ncolor_7qG2_000
+2	11	24	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	11	24	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	24		mov __D0robot_read_color, __constValNeg1
+2	11	26	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	26		cmp 1, __D0robot_read_color, __signed_stack_001robot_read_color, __D0robot_read_color
+2	11	30	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	30		brtst 4, __ASM_Label_492, __D0robot_read_color
+2	11	33	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	33		mov __signed_stack_001robot_read_color, __robot_read_color_7qG2_ncolor_7qG2_000
+2	11	35	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	11	35	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	35		set __D0robot_read_color, 7
+2	11	38	#line 11 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	38		cmp 0, __D0robot_read_color, __signed_stack_001robot_read_color, __D0robot_read_color
+2	12	42	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	42		brtst 4, __ASM_Label_493, __D0robot_read_color
+2	12	45	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	45		set __signed_stack_001robot_read_color, 0
+2	12	48	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	48	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	48		set __signed_stack_002robot_read_color, 56
+2	12	51	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	51	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	51		mov __D0robot_read_color, __robot_read_color_7qG2_ncolor_7qG2_000
+2	12	53	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	53		numtostr __strretvalrobot_read_color, __D0robot_read_color
+2	12	56	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	56		mov __ArrHelper__robot_read_color_244_0, __strretvalrobot_read_color
+2	12	58	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	58		mov __ArrHelper__robot_read_color_244_1, __constStr0015
+2	12	60	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	60		mov __signed_stack_003robot_read_color, __robot_read_color_7qG2_ncolor_7qG2_000
+2	12	62	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	12	62	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	62		index __ArrHelper__robot_read_color_83_0, __robot_read_color_7qG2_colors_7qG2_000, __signed_stack_003robot_read_color
+2	12	66	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	66		strcat __strretvalrobot_read_color, __ArrHelper__robot_read_color_83_0
+2	12	70	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	70		strcat __strbufrobot_read_color, __strretvalrobot_read_color
+2	12	74	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	74		mov __ArrHelper__robot_read_color_244_2, __strbufrobot_read_color
+2	12	76	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	76		strcat __strbufrobot_read_color, __ArrHelper__robot_read_color_244_1, __ArrHelper__robot_read_color_244_2
+2	12	81	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	81		mov __ArrHelper__robot_read_color_244_1, __strbufrobot_read_color
+2	12	83	#line 12 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	83		strcat __strbufrobot_read_color, __ArrHelper__robot_read_color_244_0, __ArrHelper__robot_read_color_244_1
+2	13	88	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	88	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	88		mov __TextOutArgs.Location.X, __signed_stack_001robot_read_color
+2	13	90	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	90		mov __TextOutArgs.Location.Y, __signed_stack_002robot_read_color
+2	13	92	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	92		set __TextOutArgs.Options, 0
+2	13	95	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	95		mov __TextOutArgs.Text, __strbufrobot_read_color
+2	13	97	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	97		syscall 13, __TextOutArgs
+2	13	100	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	100		mov __D0robot_read_color, __TextOutArgs.Result
+2	13	102	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	102	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	102	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	102		set __signed_stack_001robot_read_color, 500
+2	13	105	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	105	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	105		set __signed_stack_002robot_read_color, 100
+2	13	108	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	108	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	108		mov __D0robot_read_color, __robot_read_color_7qG2_ncolor_7qG2_000
+2	13	110	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	110		mul __D0robot_read_color, __signed_stack_002robot_read_color, __D0robot_read_color
+2	13	114	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	114		add __signed_stack_001robot_read_color, __signed_stack_001robot_read_color, __D0robot_read_color
+2	13	118	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	118	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	118		set __signed_stack_002robot_read_color, 80
+2	13	121	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	121	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	121		set __signed_stack_003robot_read_color, 4
+2	13	124	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	13	124	#line 13 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	14	124		set __D0robot_read_color, 0
+2	14	127	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	127		acquire __SPTArgsMutex
+2	14	128	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	128		mov __SPTArgs.Frequency, __signed_stack_001robot_read_color
+2	14	130	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	130		mov __SPTArgs.Duration, __signed_stack_002robot_read_color
+2	14	132	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	132		mov __SPTArgs.Volume, __signed_stack_003robot_read_color
+2	14	134	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	134		mov __SPTArgs.Loop, __D0robot_read_color
+2	14	136	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	136		syscall 10, __SPTArgs
+2	14	139	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	139		mov __D0robot_read_color, __SPTArgs.Result
+2	14	141	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	141		release __SPTArgsMutex
+2	14	142	#line 14 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	15	142	#line 15 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	16	142		mov __D0robot_read_color, __robot_read_color_7qG2_ncolor_7qG2_000
+2	15	144	#line 15 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	16	144		subret __robot_read_color_return
+2	15	146	#line 15 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	17	146	#line 17 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	17	146	#line 17 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	146		set __signed_stack_001robot_read_color, 0
+2	17	149	#line 17 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	17	149	#line 17 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	149		set __signed_stack_002robot_read_color, 56
+2	17	152	#line 17 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	17	152	#line 17 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	152		strcat __strbufrobot_read_color, __constStr0016
+2	18	156	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	156	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	156		mov __TextOutArgs.Location.X, __signed_stack_001robot_read_color
+2	18	158	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	158		mov __TextOutArgs.Location.Y, __signed_stack_002robot_read_color
+2	18	160	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	160		set __TextOutArgs.Options, 0
+2	18	163	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	163		mov __TextOutArgs.Text, __strbufrobot_read_color
+2	18	165	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	165		syscall 13, __TextOutArgs
+2	18	168	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	168		mov __D0robot_read_color, __TextOutArgs.Result
+2	18	170	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	170	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	170	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	170		set __signed_stack_001robot_read_color, 1
+2	18	173	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	173	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	173		set __signed_stack_002robot_read_color, 1000
+2	18	176	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	176	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	176		set __signed_stack_003robot_read_color, 4
+2	18	179	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	18	179	#line 18 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	19	179		set __D0robot_read_color, 0
+2	19	182	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	182		acquire __SPTArgsMutex
+2	19	183	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	183		mov __SPTArgs.Frequency, __signed_stack_001robot_read_color
+2	19	185	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	185		mov __SPTArgs.Duration, __signed_stack_002robot_read_color
+2	19	187	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	187		mov __SPTArgs.Volume, __signed_stack_003robot_read_color
+2	19	189	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	189		mov __SPTArgs.Loop, __D0robot_read_color
+2	19	191	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	191		syscall 10, __SPTArgs
+2	19	194	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	194		mov __D0robot_read_color, __SPTArgs.Result
+2	19	196	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	196		release __SPTArgsMutex
+2	19	197	#line 19 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	20	197	#line 20 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	21	197		set __D0robot_read_color, 7
+2	20	200	#line 20 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	21	200		subret __robot_read_color_return
+2	20	202	#line 20 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	22	202	#line 22 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+2	23	202		subret __robot_read_color_return
+3	23	0	#line 23 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+3	24	0		set __D0robot_move_forward, 20
+3	24	3	#line 24 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+3	25	3	#pragma macro 7
+3	25	3		setout __OUT_BC, 2, __D0robot_move_forward, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+3	4173	26	#line 4173 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+3	24	26	#line 24 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+3	26	26	#line 26 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+3	27	26		subret __robot_move_forward_return
+4	27	0	#line 27 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	28	0		set __D0robot_turn_left, 1
+4	28	3	#line 28 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	29	3	#pragma macro 7
+4	29	3		setout __constVal2, 2, __D0robot_turn_left, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	4183	26	#line 4183 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	28	26	#line 28 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	28	26	#line 28 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	29	26		set __D0robot_turn_left, 1
+4	29	29	#line 29 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	30	29	#pragma macro 10
+4	30	29		acquire __OnRevMutex
+4	30	30		neg __OnRev_Tmp, __D0robot_turn_left
+4	30	33		setout __constVal1, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	30	56		release __OnRevMutex
+4	4188	57	#line 4188 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	29	57	#line 29 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	31	57	#line 31 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+4	32	57		subret __robot_turn_left_return
+5	32	0	#line 32 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	33	0		set __D0robot_turn_right, 1
+5	33	3	#line 33 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	34	3	#pragma macro 7
+5	34	3		setout __constVal1, 2, __D0robot_turn_right, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	4198	26	#line 4198 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	33	26	#line 33 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	33	26	#line 33 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	34	26		set __D0robot_turn_right, 1
+5	34	29	#line 34 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	35	29	#pragma macro 10
+5	35	29		acquire __OnRevMutex
+5	35	30		neg __OnRev_Tmp, __D0robot_turn_right
+5	35	33		setout __constVal2, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	35	56		release __OnRevMutex
+5	4203	57	#line 4203 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	34	57	#line 34 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	36	57	#line 36 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+5	37	57		subret __robot_turn_right_return
+6	38	0	#line 38 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	39	0		mov __D0robot_adjust, __robot_adjust_7qG2_turn_switch_7qG2_000
+6	39	2	#line 39 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	40	2		tst 5, __D0robot_adjust, __D0robot_adjust
+6	39	5	#line 39 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	40	5		brtst 4, __ASM_Label_540, __D0robot_adjust
+6	40	8	#line 40 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	41	8		subcall robot_turn_left, __robot_turn_left_return
+6	40	10	#line 40 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	42	10	#line 42 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	43	10		jmp __ASM_Label_541
+6	43	12	#line 43 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	44	12		subcall robot_turn_right, __robot_turn_right_return
+6	43	14	#line 43 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	46	14	#line 46 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	46	14	#line 46 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+6	47	14		subret __robot_adjust_return
+7	48	0	#line 48 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+7	49	0		subcall robot_turn_left, __robot_turn_left_return
+7	48	2	#line 48 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+7	48	2	#line 48 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+7	49	2		set __Wait_7qG2_ms_7qG2_000_inline_robot_turn_around, 18000
+7	48	5	#line 48 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+7	8551	5	#line 8551 "NXCDefs.h"
+7	8552	5		wait2 NA, __Wait_7qG2_ms_7qG2_000_inline_robot_turn_around
+7	8551	8	#line 8551 "NXCDefs.h"
+7	49	8	#line 49 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+7	51	8	#line 51 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+7	52	8		subret __robot_turn_around_return
+8	117	0	#line 117 "C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc"
+8	118	0		subret ____initialize_global_data_return
+#CLUMPS
+Clump	Name	Offset	File
+0	main	0	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
+1	__ResetSensorSubroutine	295	NXTDefs.h
+2	robot_read_color	308	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
+3	robot_move_forward	512	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
+4	robot_turn_left	540	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
+5	robot_turn_right	599	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
+6	robot_adjust	658	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
+7	robot_turn_around	674	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
+8	__initialize_global_data	684	C:\Users\Sakeeb\Documents\School\Fall 2017\CSCC85\Phase 1\Phase1---Little-Lost-Robot\test.nxc
