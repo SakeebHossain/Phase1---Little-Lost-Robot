@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
    Where:
     map_name is the name of a .ppm file containing the map. The map
              should be BLACK on empty (free) space, and coloured
-             wherever there are obstacles or walls. Anythin not
+             wherever there are obstacles or walls. Anything not
              black is an obstacle.
 
     n_particles is the number of particles to simulate in [100, 50000]
@@ -129,6 +129,32 @@ int main(int argc, char *argv[])
 
 }
 
+struct particle *addParticle(struct particle *head, double prob) {
+ struct particle *current, *new_p = (struct particle*) malloc(sizeof(struct particle));
+  new_p = (struct particle*) malloc(sizeof(struct particle));
+  new_p->x = (double) (rand() / double(RAND_MAX)) * (sx - 1);
+  new_p->y = (double) (rand() / double(RAND_MAX)) * (sy - 1);
+  while(hit(new_p, map, sx, sy)) {
+   new_p->x = (double) (rand() / double(RAND_MAX)) * (sx - 1);
+   new_p->y = (double) (rand() / double(RAND_MAX)) * (sy - 1);
+  }
+  new_p->theta = (double) (rand() / double(RAND_MAX)) * 359;
+  new_p->prob = prob;
+  sonar_measurement(new_p, map, sx, sy);
+  new_p->next = NULL;
+  if(head == NULL) {
+   head = new_p;
+  }
+  else {
+   current = head;
+   while(current->next != NULL) {
+    current = current->next;
+   }
+   current->next = new_p;
+  }
+  return head;
+}
+
 void initParticles(void)
 {
  /*
@@ -139,41 +165,18 @@ void initParticles(void)
    There is a utility function to help you find whether a particle
    is on top of a wall.
 
-   Use the global pointer 'list' to keep trak of the *HEAD* of the
+   Use the global pointer 'list' to keep track of the *HEAD* of the
    linked list.
 
    Probabilities should be uniform for the initial set.
  */
 
- list=NULL;
-
  /***************************************************************
  // TO DO: Complete this function to generate an initially random
  //        list of particles.
  ***************************************************************/
- struct particle *new_particle, *latest;
- list = initRobot(map, sx, sy);
- double init_prob = (1.0 / (double)n_particles);
-
- list->prob = init_prob;
-
- // We officially know that initRobot sets p->next = NULL
-
-// fprintf(stderr,"Init particles prob = %f\n", list->prob);
-
- for (int i = 0; i < (n_particles - 1); i++) {
-
-     if(list->next == NULL) {
-         new_particle = initRobot(map, sx, sy);
-         new_particle->prob = init_prob;
-         list->next = new_particle;
-     } else {
-         new_particle = initRobot(map, sx, sy);
-         new_particle->prob = init_prob;
-         latest->next = new_particle;
-     }
-
-     latest = new_particle;
+ for(int i = 0; i < 5; i++) {
+  list = addParticle(list, (1.0 / (double) n_particles));
  }
 }
 
