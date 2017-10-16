@@ -1,0 +1,121 @@
+#define FORWARDPOWER 20
+#define TURNPOWER 65
+#define TIME 100
+
+
+sub moveForward(int move) {
+   OnRev(OUT_BC, FORWARDPOWER);
+   Wait(TIME*move);
+   Off(OUT_BC);
+}
+
+sub turnRight(int times) {
+ int degree = 90*times;
+ OnRev(OUT_B, TURNPOWER);
+ OnFwd(OUT_C, TURNPOWER);
+ Wait(degree * 7);
+ Off(OUT_BC);
+}
+
+string colorSelect(int nColor, int prevColor) {
+    string sColor;
+
+    if (nColor == 1) {
+        sColor = "Black";
+    }
+    else if (nColor == 2) {
+        sColor = "Blue";
+    }
+    else if (nColor == 3) {
+        sColor = "Green";
+    }
+    else if (nColor == 4) {
+        sColor = "Yellow";
+    }
+    else if (nColor == 5) {
+        sColor = "Red";
+    }
+    else if (nColor == 6) {
+        sColor = "White";
+    }
+    else {
+        sColor = "Unknown";
+    }
+
+    if (nColor != prevColor) {
+        PlayTone(684 + (nColor * 100), 30);
+        ClearScreen();
+        TextOut(0, 56, NumToStr(nColor) + ". " + sColor);
+    }
+
+    return sColor;
+}
+
+int motionSelect(int nColor) {
+
+    int turn = 0;
+
+    if(nColor == 5) {
+        turn = 2;
+    }
+    else if(nColor == 4) {
+        turn = -1;
+    }
+    else if(nColor == 1) {
+        turn = 0;
+    }
+    else {
+        turn = -2;
+    }
+
+    return turn;
+}
+
+//Motion
+//Motion Prob Update
+//Scan Intersection
+//Agreement Prob Update
+
+task main() {
+    string sColor;
+    int nColor = Sensor(S1);
+    int prevColor;
+    int motion = 0;
+    int move = 1;
+
+    // Turn on the sensor
+    SetSensorColorFull(S1);
+    
+    while(true) {
+
+        //Sensor Reading Section
+        prevColor = nColor;
+        nColor = Sensor(S1);
+        sColor = colorSelect(nColor, prevColor);
+
+
+        //Move Section
+        motion = motionSelect(nColor);        
+
+        if(motion == 0) {
+            moveForward(move);
+        }
+        else if(motion == -1) {
+            Wait(1000);
+            moveForward(move*17);
+            Wait(500);
+            turnRight(1);
+            motion = 0;
+        }
+        else if(motion == -2) {
+	
+        }
+        else if(motion > 1) {
+            turnRight(motion);
+            motion = 0;
+        }
+
+        
+    }
+    
+}
