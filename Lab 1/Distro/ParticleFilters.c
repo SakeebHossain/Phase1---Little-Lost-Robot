@@ -209,6 +209,21 @@ void computeLikelihood(struct particle *p, struct particle *rob, double noise_si
  // TO DO: Complete this function to calculate the particle's
  //        likelihood given the robot's measurements
  ****************************************************************/
+ double sum = 0;
+ for (int i = 0; i < 16; i++) {
+     double error_i = abs((p->measureD[i])-(rob->measureD[i]));
+     sum += log(GaussEval(error_i, noise_sigma));
+ }
+
+ printf("%f\n", sum);
+
+ if (exp(sum) < pow(10.0, -15.0)) {
+  p->prob = pow(10.0, -15.0);
+ }
+ 
+ else {
+  p->prob = exp(sum);
+ }
 
 }
 
