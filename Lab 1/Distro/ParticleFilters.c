@@ -141,7 +141,7 @@ struct particle *addParticle(struct particle *head, double prob) {
   }
   new_p->theta = (double) (rand() / double(RAND_MAX)) * 359;
   new_p->prob = prob;
-  sonar_measurement(new_p, map, sx, sy);
+  ground_truth(new_p, map, sx, sy);
   new_p->next = NULL;
   if(head == NULL) {
    head = new_p;
@@ -202,6 +202,7 @@ struct particle *addParticle(struct particle *head, struct particle *next) {
  (*new_p).y = (*next).y;
  (*new_p).theta = (*next).theta;
  (*new_p).prob = (*next).prob;
+ ground_truth(new_p, map, sx, sy);
  new_p->next = NULL;
  if(head == NULL) {
   head = new_p;
@@ -258,15 +259,7 @@ void computeLikelihood(struct particle *p, struct particle *rob, double noise_si
      sum += log(GaussEval(error_i, noise_sigma));
  }
 
- printf("%f\n", sum);
-
- if (exp(sum) < pow(10.0, -15.0)) {
-  p->prob = pow(10.0, -15.0);
-}
- 
-else {
  p->prob = exp(sum);
-}
 
 }
 
@@ -307,7 +300,7 @@ void ParticleFilterLoop(void)
    //        a set of moving particles.
    ******************************************************************/
    int turn = 0;
-   double move_dist = 10;
+   double move_dist = 4;
    move(robot, move_dist);
    if(hit(robot, map, sx, sy)) {
     if(robot->theta >= 180) {
@@ -401,8 +394,6 @@ void ParticleFilterLoop(void)
     } 
     p = p->next;
    }
-
-   printf("min %f\n", minimum);
 
    p = NULL;
    struct particle *best;

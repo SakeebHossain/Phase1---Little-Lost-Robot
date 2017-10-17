@@ -3,16 +3,16 @@ CSC C85 - Fall 2017 - Lab #1 Report
 Particle Filters for Robot Localization
 ______________________________________________________________________
 
-Team name:
+Team name: AWSHAW
 
-Name 1 (last, first):
-Student number 1:
+Name 1 (last, first): Ahnaf Sakeeb Hossain
+Student number 1: 1001537483
 
-Name 2 (last, first):
-Student number 2:
+Name 2 (last, first): Alexander Wall
+Student number 2: 999995037
 
-Name 3 (last, first):
-Student number 3:
+Name 3 (last, first): Adam Watchorn
+Student number 3: 1000867788
 
 (special: Lose marks for not completing the above information)
 _______________________________________________________________________
@@ -21,23 +21,23 @@ Please note below what parts of your task were completed, and for
 incomplete tasks, give a brief description of progress and how
 you think the task could be completed
 
-a) Implemented randomized particle initialization
+a) Implemented randomized particle initialization: YES
 
 
 
 b) Implemented particle likelihood computation using Gaussian 
-   noise model.
+   noise model.: YES
 
 
-c) Implemented Step 1 in the starter code
-
-
-
-d) Implemented Step 3 in the starter code
+c) Implemented Step 1 in the starter code: YES
 
 
 
-e) Implemented Step 4 in the starter code
+d) Implemented Step 3 in the starter code: YES
+
+
+
+e) Implemented Step 4 in the starter code: YES
   
 
 _______________________________________________________________________
