@@ -212,6 +212,16 @@ void computeLikelihood(struct particle *p, struct particle *rob, double noise_si
 
 }
 
+struct particle *obtainParticle(struct particle *list, double prob) {
+ struct particle *p = list;
+ double running_prob = p->prob;
+ while(p->next != NULL && (running_prob + (100 * p->next->prob)) < prob) {
+  p = p->next;
+  running_prob += p->prob;
+ }
+ return p;
+}
+
 void ParticleFilterLoop(void)
 {
  /*
@@ -248,7 +258,33 @@ void ParticleFilterLoop(void)
    //        You should see a moving robot and sonar figure with
    //        a set of moving particles.
    ******************************************************************/
-
+   move(robot, 10);
+   if(hit(robot, map, sx, sy)) {
+    if(robot->theta < 180) {
+     robot->theta += 180;
+    }
+    else {
+     robot->theta -= 180;
+    }
+    move(robot, 10);
+    robot->theta = (double) (rand() / double(RAND_MAX)) * 359;
+   }
+   p = list;
+   while(p != NULL) {
+    move(p, 10);
+    if(hit(p, map, sx, sy)) {
+     if(p->theta < 180) {
+      p->theta += 180;
+     }
+     else {
+      p->theta -= 180;
+     }
+     move(p, 10);
+     p->theta = (double) (rand() / double(RAND_MAX)) * 359;
+    }
+    ground_truth(p, map, sx, sy);
+    p = p->next;
+   }
    // Step 2 - The robot makes a measurement - use the sonar
    sonar_measurement(robot,map,sx,sy);
 
@@ -266,7 +302,18 @@ void ParticleFilterLoop(void)
    //        that agree with the robot's position/direction
    //        should be brightest.
    *******************************************************************/
-
+   double sum_prob = 0;
+   p = list;
+   while(p != NULL) {
+    computeLikelihood(p, robot, 20);
+    sum_prob += p->prob;
+    p = p->next;
+   }
+   p = list;
+   while(p != NULL) {
+    p->prob /= sum_prob;
+    p = p->next;
+   }
    // Step 4 - Resample particle set based on the probabilities. The goal
    //          of this is to obtain a particle set that better reflect our
    //          current belief on the location and direction of motion
@@ -297,7 +344,39 @@ void ParticleFilterLoop(void)
    //        Hopefully the largest cluster will be on and around
    //        the robot's actual location/direction.
    *******************************************************************/
-
+   struct particle *latest, *current, *next;
+   sum_prob = 0;
+   next = obtainParticle(list, (double)(rand() / double(RAND_MAX)) * 99);
+   p = (struct particle*) malloc(sizeof(struct particle));
+   p->x = next->x;
+   p->y = next->y;
+   p->theta = next->theta;
+   p->prob = next->prob;
+   p->next = NULL;
+   for(int i = 0; i < (n_particles - 1); i++) {
+    next = obtainParticle(list, (double)(rand() / double(RAND_MAX)) * 99);
+    current = (struct particle*) malloc(sizeof(struct particle));
+    current->x = next->x;
+    current->y = next->y;
+    current->theta = next->theta;
+    current->prob = next->prob;
+    current->next = NULL;
+    fprintf(stderr, "%f\n", current->x);
+    sum_prob += current->prob;
+    if(p->next == NULL) {
+     p->next = current;
+    }
+    else {
+     latest->next = current;
+    }
+    latest = current;
+   }
+   deleteList(list);
+   list = p;
+   while(p != NULL) {
+    p->prob /= sum_prob;
+    p = p->next;
+   }
   }  // End if (!first_frame)
 
   /***************************************************
