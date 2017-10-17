@@ -129,6 +129,54 @@ int main(int argc, char *argv[])
 
 }
 
+//Creates a randomly generated particle with probability prob to be added to particle list head
+struct particle *addParticle(struct particle *head, double prob) {
+ struct particle *current, *new_p;
+//, *new_p = (struct particle*) malloc(sizeof(struct particle));
+
+  new_p = initRobot(map, sx, sy);
+
+  new_p->prob = prob;
+  ground_truth(new_p, map, sx, sy);
+  new_p->next = NULL;
+
+  if(head == NULL) {
+   head = new_p;
+  }
+  else {
+   current = head;
+   while(current->next != NULL) {
+    current = current->next;
+   }
+   current->next = new_p;
+  }
+  return head;
+}
+
+//Add a particle to the list head, given another particle
+//Creates a new particle from next to add to head
+struct particle *addParticle(struct particle *head, struct particle *next) {
+ struct particle *current, *new_p = (struct particle*) malloc(sizeof(struct particle));
+ (*new_p).x = (*next).x;
+ (*new_p).y = (*next).y;
+ (*new_p).theta = (*next).theta;
+ (*new_p).prob = (*next).prob;
+ ground_truth(new_p, map, sx, sy);
+ new_p->next = NULL;
+ if(head == NULL) {
+  head = new_p;
+ }
+ else {
+  current = head;
+  while(current->next != NULL) {
+   current = current->next;
+  }
+  current->next = new_p;
+ }
+ return head;
+}
+
+
 void initParticles(void)
 {
  /*
@@ -155,7 +203,10 @@ void initParticles(void)
  list = initRobot(map, sx, sy);
  double init_prob = (1.0 / (double)n_particles);
 
- list->prob = init_prob;
+  list->prob = init_prob;
+
+  ground_truth(list, map, sx, sy);
+  list->next = NULL;
 
  // We officially know that initRobot sets p->next = NULL
 
@@ -166,10 +217,16 @@ void initParticles(void)
      if(list->next == NULL) {
          new_particle = initRobot(map, sx, sy);
          new_particle->prob = init_prob;
+         ground_truth(new_particle, map, sx, sy);
+         new_particle->next = NULL;
+
          list->next = new_particle;
      } else {
          new_particle = initRobot(map, sx, sy);
          new_particle->prob = init_prob;
+         ground_truth(new_particle, map, sx, sy);
+         new_particle->next = NULL;
+
          latest->next = new_particle;
      }
 
@@ -209,13 +266,26 @@ void computeLikelihood(struct particle *p, struct particle *rob, double noise_si
  // TO DO: Complete this function to calculate the particle's
  //        likelihood given the robot's measurements
  ****************************************************************/
+ double sum = 0;
+ for (int i = 0; i < 16; i++) {
+     double error_i = abs((p->measureD[i])-(rob->measureD[i]));
+     sum += log(GaussEval(error_i, noise_sigma));
+ }
+
+/* if (exp(sum) < pow(10.0, -15.0)) {
+  p->prob = pow(10.0, -15.0);
+ }
+ 
+ else {*/
+  p->prob = exp(sum);
+// }
 
 }
 
 struct particle *obtainParticle(struct particle *list, double prob) {
  struct particle *p = list;
  double running_prob = p->prob;
- while(p->next != NULL && (running_prob + (100 * p->next->prob)) < prob) {
+ while(p->next != NULL && (running_prob < prob)) {
   p = p->next;
   running_prob += p->prob;
  }
@@ -344,39 +414,39 @@ void ParticleFilterLoop(void)
    //        Hopefully the largest cluster will be on and around
    //        the robot's actual location/direction.
    *******************************************************************/
-   struct particle *latest, *current, *next;
+
+   p = list;
+   double minimum = 1; 
+   while(p != NULL) {
+    if (p->prob < minimum) {
+        minimum = p->prob;
+    } 
+    p = p->next;
+   }
+
+
+   p = NULL;
+   struct particle *best;
    sum_prob = 0;
-   next = obtainParticle(list, (double)(rand() / double(RAND_MAX)) * 99);
-   p = (struct particle*) malloc(sizeof(struct particle));
-   p->x = next->x;
-   p->y = next->y;
-   p->theta = next->theta;
-   p->prob = next->prob;
-   p->next = NULL;
-   for(int i = 0; i < (n_particles - 1); i++) {
-    next = obtainParticle(list, (double)(rand() / double(RAND_MAX)) * 99);
-    current = (struct particle*) malloc(sizeof(struct particle));
-    current->x = next->x;
-    current->y = next->y;
-    current->theta = next->theta;
-    current->prob = next->prob;
-    current->next = NULL;
-    fprintf(stderr, "%f\n", current->x);
-    sum_prob += current->prob;
-    if(p->next == NULL) {
-     p->next = current;
-    }
-    else {
-     latest->next = current;
-    }
-    latest = current;
+
+   for(int i = 0; i < 0.95 * n_particles; i++) {
+    
+    best = obtainParticle(list, (double) rand() / double(RAND_MAX));
+    sum_prob += best->prob;
+    p = addParticle(p, best);
+   }
+   for(int i = 0; i < n_particles - (0.95 * n_particles); i++) {
+    sum_prob += minimum;
+    p = addParticle(p, minimum);
    }
    deleteList(list);
    list = p;
+   p = list;
    while(p != NULL) {
     p->prob /= sum_prob;
     p = p->next;
    }
+
   }  // End if (!first_frame)
 
   /***************************************************
