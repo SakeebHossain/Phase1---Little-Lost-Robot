@@ -248,6 +248,25 @@ void computeLikelihood(struct particle *p, struct particle *rob, double noise_si
  // TO DO: Complete this function to calculate the particle's
  //        likelihood given the robot's measurements
  ****************************************************************/
+ // get sonor reading
+ // initiate sum = 0
+ // iterate through measureD, find gaussian error, and add to sum
+ // prob = prob * sum
+ double sum = 0;
+ for (int i = 0; i < 16; i++) {
+     double error_i = abs((p->measureD[i])-(rob->measureD[i]));
+     sum += log(GaussEval(error_i, noise_sigma));
+ }
+
+ printf("%f\n", sum);
+
+ if (exp(sum) < pow(10.0, -15.0)) {
+  p->prob = pow(10.0, -15.0);
+}
+ 
+else {
+ p->prob = exp(sum);
+}
 
 }
 
@@ -288,7 +307,7 @@ void ParticleFilterLoop(void)
    //        a set of moving particles.
    ******************************************************************/
    int turn = 0;
-   double move_dist = 1;
+   double move_dist = 10;
    move(robot, move_dist);
    if(hit(robot, map, sx, sy)) {
     if(robot->theta >= 180) {
@@ -302,7 +321,7 @@ void ParticleFilterLoop(void)
    p = list;
    while(p != NULL) {
     move(p, move_dist);
-    if(turn || hit(p, map, sx, sy)) {
+    if(hit(p, map, sx, sy)) {
      if(p->theta >= 180) {
       p->theta -= 180;
      }
@@ -310,6 +329,7 @@ void ParticleFilterLoop(void)
       p->theta += 180;
      }
     }
+    ground_truth(p, map, sx, sy);
     p = p->next;
    }
    // Step 2 - The robot makes a measurement - use the sonar
@@ -330,12 +350,13 @@ void ParticleFilterLoop(void)
    //        should be brightest.
    *******************************************************************/
    p = list;
-   double sigma = 10, sum_prob = 0;
+   double sigma = 20, sum_prob = 0;
    while(p != NULL) {
     computeLikelihood(p, robot, sigma);
     sum_prob += p->prob;
     p = p->next;
    }
+
    p = list;
    while(p != NULL) {
     p->prob /= sum_prob;
@@ -371,20 +392,37 @@ void ParticleFilterLoop(void)
    //        Hopefully the largest cluster will be on and around
    //        the robot's actual location/direction.
    *******************************************************************/
+
+   p = list;
+   double minimum = 1; 
+   while(p != NULL) {
+    if (p->prob < minimum) {
+        minimum = p->prob;
+    } 
+    p = p->next;
+   }
+
+   printf("min %f\n", minimum);
+
    p = NULL;
    struct particle *best;
    sum_prob = 0;
-   for(int i = 0; i < n_particles; i++) {
+
+   for(int i = 0; i < 0.95 * n_particles; i++) {
+    
     best = selectParticle(list, (double) rand() / double(RAND_MAX));
     sum_prob += best->prob;
     p = addParticle(p, best);
+   }
+   for(int i = 0; i < n_particles - (0.95 * n_particles); i++) {
+    sum_prob += minimum;
+    p = addParticle(p, minimum);
    }
    deleteList(list);
    list = p;
    p = list;
    while(p != NULL) {
     p->prob /= sum_prob;
-    count++;
     p = p->next;
    }
   }  // End if (!first_frame)
