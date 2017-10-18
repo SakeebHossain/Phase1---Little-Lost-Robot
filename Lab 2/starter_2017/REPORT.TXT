@@ -1,0 +1,104 @@
+CSCC85 - Embedded Systems
+
+Project 2 - Lander Control
+______________________________________________________________________
+
+Team name:
+
+Name 1 (last, first):
+Student number 1:
+
+Name 2 (last, first):
+Student number 2:
+
+Name 3 (last, first):
+Student number 3:
+
+(special: Lose marks for not completing the above information)
+_______________________________________________________________________
+
+Please note below what parts of your task were completed, and for
+incomplete tasks, give a brief description of progress and how
+you think the task could be completed
+
+a) The program can land the craft safely in mode '1'
+  
+   - for the 'easy.ppm' map (yes/no)
+   - for the 'hard.ppm' map (yes/no)
+
+   If it fails, describe the conditions in which it fails and how
+   you think this could be resolved
+
+b) The program can land the craft safely in mode '2'
+  
+   - for the 'easy.ppm' map (yes/no)
+   - for the 'hard.ppm' map (yes/no)
+
+   If it fails, describe the conditions in which it fails and how
+   you think this could be resolved
+
+_______________________________________________________________________
+
+Questions:
+
+1) What was the impact of having noisy sensors in your ability to
+   determine the state of the craft and ultimately control it 
+   properly?
+
+2) Describe the technique(s) you used to deal with sensor noise
+
+3) Describe your strategy for dealing with thruster failures
+
+4) Describe your strategy for dealing with sensor malfunctions:
+
+   - Position sensors
+   - Velocity sensors
+   - Angle
+   - Sonar
+
+   What if you have multiple failures? what could you do if, for
+   example both position and velocity sensors became inoperative?
+
+5) What was the hardest failure type to deal with (i.e. which is
+   the component, either sensor or control that makes the lander
+   harder to handle?)?
+
+6) Assume a human pilot was in charge of controlling the craft 
+   (i.e. the pilot has control of thrusters and rotation).
+   How would you change Safety_Override() so that it prevents
+   the pilot from accidentally crashing the lander?
+   
+7) Do you think it is reasonable to write such a control function?
+   (i.e. a routine that takes control from a human for their
+    own safety)
+
+8) Should the pilot be aware that this software is present?
+   (yes or no, and tell me why you think so!)
+
+9) Would you buy/drive a car that you know has control software
+   that will take control from you if it estimates you are
+   doing something dangerous?
+
+10) Can you as an embedded systems designer think of every 
+    possible scenario that could go wrong so as to write 
+    control software that ALWAYS works?
+
+    Think about that...
+________________________________________________________________
+
+Grading:
+
+- First progress review				/ 25
+  * Craft can handle thruster failure
+  * Started work on managing sensor failures
+- Second project review				/ 50
+  * Craft can handle sensor failures
+  * Craft can handle multiple component failures
+  * Answers in this report
+
+Total for Project #3				/ 75 (*) The remaining 25 marks will be
+							 earned in the individual quiz
+							 for this project
+
+(*) Mark is conditional on all members of the team being able
+    to explain any component of the solution when asked.
