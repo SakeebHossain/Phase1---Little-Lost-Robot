@@ -216,6 +216,7 @@ void Lander_Control(void)
 
  double VXlim;
  double VYlim;
+ int aligned;
 
  // Set velocity limits depending on distance to platform.
  // If the module is far from the platform allow it to
@@ -247,10 +248,12 @@ void Lander_Control(void)
 
  if (Angle()>1&&Angle()<359)
  {
+  aligned = 0;
   if (Angle()>=180) Rotate(360-Angle());
   else Rotate(-Angle());
   return;
  }
+ else aligned=1;
 
  // Module is oriented properly, check for horizontal position
  // and set thrusters appropriately.
@@ -258,24 +261,26 @@ void Lander_Control(void)
  {
   // Lander is to the LEFT of the landing platform, use Right thrusters to move
   // lander to the left.
-  Left_Thruster(0);	// Make sure we're not fighting ourselves here!
-  if (Velocity_X()>(-VXlim)) Right_Thruster((VXlim+fmin(0,Velocity_X()))/VXlim);
-  else
-  {
-   // Exceeded velocity limit, brake
-   Right_Thruster(0);
-   Left_Thruster(fabs(VXlim-Velocity_X()));
+  if(LT_OK && RT_OK) {
+   Left_Thruster(0);	// Make sure we're not fighting ourselves here!
+   if (Velocity_X()>(-VXlim)) Right_Thruster((VXlim+fmin(0,Velocity_X()))/VXlim);
+   else
+   {
+    // Exceeded velocity limit, brake
+    Right_Thruster(0);
+    Left_Thruster(fabs(VXlim-Velocity_X()));
+   }
   }
- }
- else
- {
-  // Lander is to the RIGHT of the landing platform, opposite from above
-  Right_Thruster(0);
-  if (Velocity_X()<VXlim) Left_Thruster((VXlim-fmax(0,Velocity_X()))/VXlim);
   else
   {
-   Left_Thruster(0);
-   Right_Thruster(fabs(VXlim-Velocity_X()));
+   // Lander is to the RIGHT of the landing platform, opposite from above
+   Right_Thruster(0);
+   if (Velocity_X()<VXlim) Left_Thruster((VXlim-fmax(0,Velocity_X()))/VXlim);
+   else
+   {
+    Left_Thruster(0);
+    Right_Thruster(fabs(VXlim-Velocity_X()));
+   }
   }
  }
 
