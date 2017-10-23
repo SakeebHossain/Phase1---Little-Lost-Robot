@@ -161,6 +161,63 @@
 #include <math.h>
 
 #include "Lander_Control.h"
+#include <iostream>
+
+using namespace std;
+
+void Set_Angle(double angle) {
+ if(angle == 0) {
+   if(Angle()>1&&Angle()<359)
+   {
+    if(Angle()>=180) Rotate(360-Angle());
+    else Rotate(-Angle());
+    return;
+   }
+ }
+ else {
+  if(Angle()>(angle+1)||Angle()<(angle-1)) {
+   if(Angle()>angle){
+    if(Angle()-angle>=180) Rotate(360-(Angle()-angle));
+    else Rotate(angle-Angle());
+   }
+   else {
+    if(angle-Angle()>=180) Rotate(Angle()-(360-angle));
+    else Rotate(angle-Angle());
+   }
+   return;
+  }
+ }
+}
+
+//Dictates which thrusters to use: 1->main, 2->right, 3->left
+int Set_Main(void) {
+ if(MT_OK) return 1;
+ else if(RT_OK) return 2;
+ else return 3;
+}
+
+int Set_Right(void) {
+ if(RT_OK) return 2;
+ else if(MT_OK) return 1;
+ else return 3;
+}
+
+int Set_Left(void) {
+ if(LT_OK) return 3;
+ else if(MT_OK) return 1;
+ else return 2;
+}
+
+void Set_Thruster(int thruster, double power) {
+ if(thruster==1) Main_Thruster(power);
+ else if(thruster==2) Right_Thruster(power);
+ else Left_Thruster(power);
+}
+
+int In_Threshold(double angle) {
+ if(angle==0) return (Angle()<0.5)||(Angle()>359.5);
+ else return fabs(angle-Angle())<1;
+}
 
 void Lander_Control(void)
 {
@@ -216,7 +273,8 @@ void Lander_Control(void)
 
  double VXlim;
  double VYlim;
- int aligned;
+ double main_angle, count;
+ int m, l, r;
 
  // Set velocity limits depending on distance to platform.
  // If the module is far from the platform allow it to
@@ -246,49 +304,171 @@ void Lander_Control(void)
  // effect, i.e. the rotation angle does not accumulate
  // for successive calls.
 
- if (Angle()>1&&Angle()<359)
- {
-  aligned = 0;
-  if (Angle()>=180) Rotate(360-Angle());
-  else Rotate(-Angle());
-  return;
- }
- else aligned=1;
+ m=Set_Main();
+ l=Set_Left();
+ r=Set_Right();
+ main_angle=0;
+ count=1;
 
+ if(fabs(Position_X()-PLAT_X)<5) main_angle=0;
+ else {
+  count+=1;
+// if(fabs(Position_X()-PLAT_X)<1) main_angle=0;
  // Module is oriented properly, check for horizontal position
  // and set thrusters appropriately.
- if (Position_X()>PLAT_X)
- {
+  if (Position_X()>PLAT_X)
+  {
   // Lander is to the LEFT of the landing platform, use Right thrusters to move
   // lander to the left.
-  if(LT_OK && RT_OK) {
-   Left_Thruster(0);	// Make sure we're not fighting ourselves here!
-   if (Velocity_X()>(-VXlim)) Right_Thruster((VXlim+fmin(0,Velocity_X()))/VXlim);
-   else
-   {
-    // Exceeded velocity limit, brake
-    Right_Thruster(0);
-    Left_Thruster(fabs(VXlim-Velocity_X()));
+//  Set_Thruster(l, 0);	// Make sure we're not fighting ourselves here!
+//  if (Velocity_X()>(-VXlim)) Set_Thruster(r, (VXlim+fmin(0,Velocity_X()))/VXlim);
+//  else
+//  {
+   // Exceeded velocity limit, brake
+//   Set_Thruster(r, 0);
+//   Set_Thruster(l, fabs(VXlim-Velocity_X()));
+//  }
+   if(Velocity_X()>(-VXlim)) {
+    if(MT_OK && RT_OK && LT_OK) {
+     main_angle = 0;
+     Set_Thruster(l, 0);
+    }
+    else if(MT_OK && RT_OK) {
+     main_angle = 0;
+    }
+    else if(MT_OK && LT_OK) {
+     main_angle = 90;
+    }
+    else if(RT_OK && LT_OK) {
+     main_angle = 0;
+     Set_Thruster(l, 0);
+    }
+    else if(MT_OK) {
+     main_angle = 90;
+    }
+    else if(RT_OK) {
+     main_angle = 0;
+    }
+    else {
+     main_angle = 180;
+    }
+    Set_Thruster(r, (VXlim+fmin(0,Velocity_X()))/VXlim);
+   }
+   else {
+    if(MT_OK & RT_OK & LT_OK) {
+     main_angle = 0;
+     Set_Thruster(r, 0);
+    }
+    else if(MT_OK && RT_OK) {
+     main_angle = 270;
+    }
+    else if(MT_OK && LT_OK) {
+     main_angle = 0;
+    }
+    else if(RT_OK && LT_OK) {
+     main_angle = 0;
+     Set_Thruster(r, 0);
+    }
+    else if(MT_OK) {
+     main_angle = 270;
+    }
+    else if(RT_OK) {
+     main_angle = 180;
+    }
+    else {
+     main_angle = 0;
+    }
+    Set_Thruster(l, fabs(VXlim-Velocity_X()));
    }
   }
   else
   {
-   // Lander is to the RIGHT of the landing platform, opposite from above
-   Right_Thruster(0);
-   if (Velocity_X()<VXlim) Left_Thruster((VXlim-fmax(0,Velocity_X()))/VXlim);
-   else
-   {
-    Left_Thruster(0);
-    Right_Thruster(fabs(VXlim-Velocity_X()));
+  // Lander is to the RIGHT of the landing platform, opposite from above
+//  Set_Thruster(r, 0);
+//  if (Velocity_X()<VXlim) Set_Thruster(l, (VXlim-fmax(0,Velocity_X()))/VXlim);
+//  else
+//  {
+//   Set_Thruster(l, 0);
+//   Set_Thruster(r, fabs(VXlim-Velocity_X()));
+//  }
+   if(Velocity_X()<VXlim) {
+    if(MT_OK & RT_OK & LT_OK) {
+     main_angle = 0;
+     Set_Thruster(r, 0);
+    }
+    else if(MT_OK && RT_OK) {
+     main_angle = 270;
+    }
+    else if(MT_OK && LT_OK) {
+     main_angle = 0;
+    }
+    else if(RT_OK && LT_OK) {
+     main_angle = 0;
+     Set_Thruster(r, 0);
+    }
+    else if(MT_OK) {
+     main_angle = 270;
+    }
+    else if(RT_OK) {
+     main_angle = 180;
+    }
+    else {
+     main_angle = 0;
+    }
+    Set_Thruster(l, (VXlim-fmax(0,Velocity_X()))/VXlim);
+   }
+   else {
+    if(MT_OK & RT_OK & LT_OK) {
+     main_angle = 0;
+     Set_Thruster(l, 0);
+    }
+    else if(MT_OK && RT_OK) {
+     main_angle = 0;
+    }
+    else if(MT_OK && LT_OK) {
+     main_angle = 90;
+    }
+    else if(RT_OK && LT_OK) {
+     main_angle = 0;
+     Set_Thruster(l, 0);
+    }
+    else if(MT_OK) {
+     main_angle = 90;
+    }
+    else if(RT_OK) {
+     main_angle = 0;
+    }
+    else {
+     main_angle = 180;
+    }
+    Set_Thruster(r, fabs(VXlim-Velocity_X()));
    }
   }
  }
-
+ if(fabs(Position_Y()-PLAT_Y)<5 && Velocity_Y()<VYlim) main_angle+=0;
+ else {
  // Vertical adjustments. Basically, keep the module below the limit for
  // vertical velocity and allow for continuous descent. We trust
  // Safety_Override() to save us from crashing with the ground.
- if (Velocity_Y()<VYlim) Main_Thruster(1.0);
- else Main_Thruster(0);
+  if (Velocity_Y()<VYlim) {
+   if(MT_OK) {
+    main_angle += 0;
+   }
+   else if(RT_OK) {
+    main_angle += 90;
+   }
+   else {
+    main_angle += 270;
+   }
+   Set_Thruster(m, 1.0);
+  }
+  else {
+   main_angle += 0;
+   Set_Thruster(m, 0);
+  }
+ }
+ main_angle /= count;
+ Set_Angle(main_angle);
 }
 
 void Safety_Override(void)
@@ -362,12 +542,7 @@ void Safety_Override(void)
  // what is it?
  if (dmin<DistLimit*fmax(.25,fmin(fabs(Velocity_X())/5.0,1)))
  { // Too close to a surface in the horizontal direction
-  if (Angle()>1&&Angle()<359)
-  {
-   if (Angle()>=180) Rotate(360-Angle());
-   else Rotate(-Angle());
-   return;
-  }
+  Set_Angle(0);
 
   if (Velocity_X()>0){
    Right_Thruster(1.0);
@@ -396,12 +571,7 @@ void Safety_Override(void)
  }
  if (dmin<DistLimit)   // Too close to a surface in the horizontal direction
  {
-  if (Angle()>1||Angle()>359)
-  {
-   if (Angle()>=180) Rotate(360-Angle());
-   else Rotate(-Angle());
-   return;
-  }
+  Set_Angle(0);
   if (Velocity_Y()>2.0){
    Main_Thruster(0.0);
   }
