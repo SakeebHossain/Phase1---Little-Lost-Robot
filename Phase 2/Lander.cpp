@@ -166,7 +166,7 @@
 using namespace std;
 
 //Dictates which thruster to use, 0->main, 1->right, 2->left
-int main_thruster=0;
+int main_thruster=0, close=0;
 double angle, thrust;
 
 void Set_Angle(double angle) {
@@ -290,13 +290,16 @@ void Lander_Control(void)
  // Note that only the latest Rotate() command has any
  // effect, i.e. the rotation angle does not accumulate
  // for successive calls.
- if(fabs(PLAT_X-Position_X())<5 && fabs(PLAT_Y-Position_Y())<10 && Velocity_X()<0.5 && Velocity_Y()<0.1)
+ if(fabs(PLAT_X-Position_X())<10 && fabs(PLAT_Y-Position_Y())<40 && fabs(Velocity_X())<10 && fabs(Velocity_Y())<10)
  {
+  close=1;
+  cout << "here\n";
   angle=0;
   thrust=0;
  }
  else
  {
+  close=0;
   // Module is oriented properly, check for horizontal position
   // and set thrusters appropriately.
  // if (Position_X()>PLAT_X)
@@ -327,21 +330,23 @@ void Lander_Control(void)
   // vertical velocity and allow for continuous descent. We trust
   // Safety_Override() to save us from crashing with the ground.
 
-//  Right_Thruster(0);
-//  Left_Thruster(0);
-
   double conversion = 180.0 / PI;
 
-//  angle=90*((PLAT_X-Position_X())/PLAT_X);
-    angle = conversion* atan((PLAT_X-Position_X())/(PLAT_Y-Position_Y()));
-    cout << angle << "\n";
-    if (angle>0 && Velocity_X()<=(-VXlim)) angle=90;
-    if (angle<0 && Velocity_X()>=VXlim) angle=270;
+    angle=conversion*atan((PLAT_X-Position_X())/(PLAT_Y-Position_Y()));
+    if (Velocity_X()<=(-VXlim))
+    {
+     angle=90;
+     thrust=fabs(VXlim-Velocity_X());
+    }
+    if (Velocity_X()>=VXlim)
+    {
+     angle=270;
+     thrust=fabs(VXlim-Velocity_X());
+    }
   if (Velocity_Y()<VYlim) thrust=1.0;
-//  if (Velocity_Y()<VYlim) thrust=0.25;
   else thrust=0.0;
  }
- if(angle < 0) Set_Angle(360+angle);
+ if(angle<0) Set_Angle(360+angle);
  else Set_Angle(angle);
  Set_Thrust(thrust);
  Set_Angle(angle);
@@ -399,92 +404,87 @@ void Safety_Override(void)
  // array in the quadrant corresponding to the
  // ship's motion direction to find the entry
  // with the smallest registered distance
-
- // Horizontal direction.
- dmin=1000000;
- min_angle=180;
- if (Velocity_X()>0)
- {
-  for (int i=5;i<14;i++)
-   if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
-   {
-    dmin=SONAR_DIST[i];
-    min_angle=i*10;
-   }
- }
- else
- {
-  for (int i=22;i<32;i++)
-   if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
-   {
-    dmin=SONAR_DIST[i];
-    min_angle=i*10;
-   }
- }
- // Determine whether we're too close for comfort. There is a reason
- // to have this distance limit modulated by horizontal speed...
- // what is it?
- if (dmin<DistLimit*fmax(.25,fmin(fabs(Velocity_X())/5.0,1)))
- { // Too close to a surface in the horizontal direction
-//  if (Velocity_X()>0){
-//   Left_Thruster(1.0);
-//   Right_Thruster(0.0);
-//  }
-//  else
-//  {
-//   Right_Thruster(1.0);
-//   Left_Thruster(0.0);
-//  }
-  thrust=1.0;
- }
-
- // Vertical direction
- dmin=1000000;
- if (Velocity_Y()>5)      // Mind this! there is a reason for it...
- {
-  for (int i=0; i<5; i++)
-   if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
-   {
-    dmin=SONAR_DIST[i];
-    min_angle=i*10;
-   }
-  for (int i=32; i<36; i++)
-   if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
-   {
-    dmin=SONAR_DIST[i];
-    min_angle=i*10;
-   }
- }
- else
- {
-  for (int i=14; i<22; i++)
-   if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
-   {
-    dmin=SONAR_DIST[i];
-    min_angle=i*10;
-   }
- }
- if (dmin<DistLimit)   // Too close to a surface in the horizontal direction
- {
-//  if (Angle()>1||Angle()>359)
-//  {
-//   if (Angle()>=180) Rotate(360-Angle());
-//   else Rotate(-Angle());
-//   return;
-//  }
-  if (Velocity_Y()>2.0)
+ if(!close) {
+  // Horizontal direction.
+  dmin=1000000;
+  min_angle=180;
+  if (Velocity_X()>0)
   {
-   thrust=0.0;
+   for (int i=5;i<14;i++)
+    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
+    {
+     dmin=SONAR_DIST[i];
+     min_angle=i*10;
+    }
   }
   else
   {
+   for (int i=22;i<32;i++)
+    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
+    {
+     dmin=SONAR_DIST[i];
+     min_angle=i*10;
+    }
+  }
+  // Determine whether we're too close for comfort. There is a reason
+  // to have this distance limit modulated by horizontal speed...
+  // what is it?
+  if (dmin<DistLimit*fmax(.25,fmin(fabs(Velocity_X())/5.0,1)))
+  { // Too close to a surface in the horizontal direction
+ //  if (Velocity_X()>0){
+ //   Left_Thruster(1.0);
+ //   Right_Thruster(0.0);
+ //  }
+ //  else
+ //  {
+ //   Right_Thruster(1.0);
+ //   Left_Thruster(0.0);
+ //  }
    thrust=1.0;
   }
- }
- if(min_angle<=90 || min_angle>=270)
- {
-  if(min_angle<180) Set_Angle(min_angle);
-  else Set_Angle(min_angle-180);
+
+  // Vertical direction
+  dmin=1000000;
+  if (Velocity_Y()>5)      // Mind this! there is a reason for it...
+  {
+   for (int i=0; i<5; i++)
+    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
+    {
+     dmin=SONAR_DIST[i];
+     min_angle=i*10;
+    }
+   for (int i=32; i<36; i++)
+    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
+    {
+      dmin=SONAR_DIST[i];
+     min_angle=i*10;
+    }
+  }
+  else
+  {
+   for (int i=14; i<22; i++)
+    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
+    {
+     dmin=SONAR_DIST[i];
+     min_angle=i*10;
+    }
+  }
+  if (dmin<DistLimit)   // Too close to a surface in the horizontal direction
+  {
+ //  if (Angle()>1||Angle()>359)
+ //  {
+ //   if (Angle()>=180) Rotate(360-Angle());
+ //   else Rotate(-Angle());
+ //   return;
+ //  }
+   if (Velocity_Y()>2.0) thrust=0.0;
+   else thrust=1.0;
+  }
+  if(min_angle<=90||min_angle>=270)
+  {
+   if(min_angle<180) Set_Angle(min_angle);
+   else Set_Angle(min_angle-180);
+  }
   Set_Thrust(thrust);
  }
 }
