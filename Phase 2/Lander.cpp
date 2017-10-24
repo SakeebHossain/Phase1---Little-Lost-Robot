@@ -196,6 +196,17 @@ void Set_Angle(double angle) {
  }
 }
 
+void Set_Angle2(double angle) {
+  if (close) {
+        Set_Angle(0);
+        return;
+  }
+
+  if (MT_OK) Set_Angle(angle);
+  else if (RT_OK) Set_Angle((int)(angle + 90)%360);
+  else Set_Angle((int)(angle - 90)%360);
+}
+
 void Set_Thrust(double power) {
  if(MT_OK) Main_Thruster(power);
  else if(RT_OK) Right_Thruster(power);
@@ -262,6 +273,7 @@ void Lander_Control(void)
 
  double VXlim;
  double VYlim;
+ cout << thrust << " " << close << "\n";
 
  // Set velocity limits depending on distance to platform.
  // If the module is far from the platform allow it to
@@ -290,8 +302,9 @@ void Lander_Control(void)
  // Note that only the latest Rotate() command has any
  // effect, i.e. the rotation angle does not accumulate
  // for successive calls.
- if(fabs(PLAT_X-Position_X())<10 && fabs(PLAT_Y-Position_Y())<40 && fabs(Velocity_X())<10 && fabs(Velocity_Y())<10)
+ if(fabs(PLAT_X-Position_X())<10 && fabs(PLAT_Y-Position_Y())<100 && fabs(Velocity_X())<5 && fabs(Velocity_Y())<15)
  {
+
   close=1;
   cout << "here\n";
   angle=0;
@@ -300,35 +313,6 @@ void Lander_Control(void)
  else
  {
   close=0;
-  // Module is oriented properly, check for horizontal position
-  // and set thrusters appropriately.
- // if (Position_X()>PLAT_X)
- // {
-   // Lander is to the LEFT of the landing platform, use Right thrusters to move
-   // lander to the left.
- //  Left_Thruster(0);	// Make sure we're not fighting ourselves here!
- //  if (Velocity_X()>(-VXlim)) Right_Thruster((VXlim+fmin(0,Velocity_X()))/VXlim);
- //  else
- //  {
-    // Exceeded velocity limit, brake
- //   Right_Thruster(0);
- //   Left_Thruster(fabs(VXlim-Velocity_X()));
- //  }
- // }
- // else
- // {
-   // Lander is to the RIGHT of the landing platform, opposite from above
- //  Right_Thruster(0);
- //  if (Velocity_X()<VXlim) Left_Thruster((VXlim-fmax(0,Velocity_X()))/VXlim);
- //  else
- //  {
- //  Left_Thruster(0);
- //   Right_Thruster(fabs(VXlim-Velocity_X()));
- //  }
- // }
-  // Vertical adjustments. Basically, keep the module below the limit for
-  // vertical velocity and allow for continuous descent. We trust
-  // Safety_Override() to save us from crashing with the ground.
 
   double conversion = 180.0 / PI;
 
@@ -346,10 +330,11 @@ void Lander_Control(void)
   if (Velocity_Y()<VYlim) thrust=1.0;
   else thrust=0.0;
  }
- if(angle<0) Set_Angle(360+angle);
- else Set_Angle(angle);
+
+ if(angle<0) Set_Angle2(360+angle);
+ else Set_Angle2(angle);
  Set_Thrust(thrust);
- Set_Angle(angle);
+
 } 
 void Safety_Override(void)
 {
