@@ -166,7 +166,7 @@
 using namespace std;
 
 //Dictates which thruster to use, 0->main, 1->right, 2->left
-int main_thruster=0, close=0;
+int main_thruster=0, close=0, slowing=0;
 double angle, thrust;
 
 void Set_Angle(double angle) {
@@ -273,7 +273,6 @@ void Lander_Control(void)
 
  double VXlim;
  double VYlim;
- cout << thrust << " " << close << "\n";
 
  // Set velocity limits depending on distance to platform.
  // If the module is far from the platform allow it to
@@ -302,7 +301,7 @@ void Lander_Control(void)
  // Note that only the latest Rotate() command has any
  // effect, i.e. the rotation angle does not accumulate
  // for successive calls.
- if(fabs(PLAT_X-Position_X())<10 && fabs(PLAT_Y-Position_Y())<100 && fabs(Velocity_X())<5 && fabs(Velocity_Y())<15)
+ if(fabs(PLAT_X-Position_X())<10 && fabs(PLAT_Y-Position_Y())<10 && fabs(Velocity_X())<5 && fabs(Velocity_Y())<5)
  {
 
   close=1;
@@ -313,29 +312,33 @@ void Lander_Control(void)
  else
  {
   close=0;
+  slowing=0;
 
   double conversion = 180.0 / PI;
-
     angle=conversion*atan((PLAT_X-Position_X())/(PLAT_Y-Position_Y()));
     if (Velocity_X()<=(-VXlim))
     {
+     slowing=1;
      angle=90;
      thrust=fabs(VXlim-Velocity_X());
     }
     if (Velocity_X()>=VXlim)
     {
+     slowing=1;
      angle=270;
      thrust=fabs(VXlim-Velocity_X());
     }
-  if (Velocity_Y()<VYlim) thrust=1.0;
-  else thrust=0.0;
+  if (Velocity_Y()<VYlim) thrust+=1.0;
+  else thrust+=0.0;
+  thrust/=2;
  }
 
- if(angle<0) Set_Angle2(360+angle);
- else Set_Angle2(angle);
+ if(angle<0) angle+=360;
+ if(angle<0||angle>359) cout << angle << "\n";
+ Set_Angle(angle);
  Set_Thrust(thrust);
-
 } 
+
 void Safety_Override(void)
 {
  /*
@@ -389,10 +392,10 @@ void Safety_Override(void)
  // array in the quadrant corresponding to the
  // ship's motion direction to find the entry
  // with the smallest registered distance
- if(!close) {
+ if(!close&&!slowing) {
   // Horizontal direction.
   dmin=1000000;
-  min_angle=180;
+  min_angle=angle;
   if (Velocity_X()>0)
   {
    for (int i=5;i<14;i++)
@@ -456,20 +459,23 @@ void Safety_Override(void)
   }
   if (dmin<DistLimit)   // Too close to a surface in the horizontal direction
   {
- //  if (Angle()>1||Angle()>359)
- //  {
- //   if (Angle()>=180) Rotate(360-Angle());
- //   else Rotate(-Angle());
- //   return;
- //  }
-   if (Velocity_Y()>2.0) thrust=0.0;
-   else thrust=1.0;
+   if (Velocity_Y()>2.0) thrust+=0.0;
+   else thrust+=1.0;
+   thrust/=2;
   }
+//  if(min_angle<180) Set_Angle((angle+min_angle)/2);
+//  else Set_Angle((angle+(min_angle-180))/2);
   if(min_angle<=90||min_angle>=270)
   {
-   if(min_angle<180) Set_Angle(min_angle);
-   else Set_Angle(min_angle-180);
+   if(fabs(angle-min_angle)<180) angle+=min_angle;
+   else
+   {
+    if(360-angle>min_angle) angle=360+min_angle+angle;
+    else angle=min_angle-360+angle;
+   }
+   angle/=2;
   }
+  Set_Angle(angle);
   Set_Thrust(thrust);
  }
 }
