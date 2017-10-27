@@ -292,11 +292,14 @@ void Lander_Control(void)
  int sampleRate = 300;
  double xavg = 0, xsd=0, yavg = 0, vxavg = 0, vyavg = 0;
 
+// double x1, x2, x3, x4, x5;
+
 // if (counter == 10) {
 //  cout << "override: " << override  << " x: " << PLAT_X-Position_X()  << " y: " << PLAT_Y-Position_Y()  << " vx: " << Velocity_X() << " vy: " << Velocity_Y() << " result:"  << "\n";
 
 //  for(int j=0;j<3;j++) {
-  aavg=0;
+  aavg = 0;
+
   for(int i = 0; i < sampleRate; i++) {
    xavg += Position_X();
    vxavg += Velocity_X();
@@ -316,16 +319,18 @@ void Lander_Control(void)
   tint=(vyavg-pvyavg)/G_ACCEL;
 //  }
 
-  //x1 = Position_X();
-  //cout << "x1:" << x1 << "\n";
-  //x2 = Position_X();
-  //cout << "x2:" << x2 << "\n";
-  //x3 = Position_X();
-  //cout << "x3:" << x3 << "\n";
-  //x4 = Position_X();
-  //cout << "x4:" << x4 << "\n";
-  //x5 = Position_X();
-  //cout << "x5:" << x5 << "\n";
+/*
+  x1 = Position_X();
+  cout << "x1:" << x1 << "\n";
+  x2 = Position_X();
+  cout << "x2:" << x2 << "\n";
+  x3 = Position_X();
+  cout << "x3:" << x3 << "\n";
+  x4 = Position_X();
+  cout << "x4:" << x4 << "\n";
+  x5 = Position_X();
+  cout << "x5:" << x5 << "\n";
+*/
 
   //xavg = (x1 + x2 + x3 + x4 + x5) / 5;
   cout << "pxavg:" << pxavg << "--pyavg:" << pyavg << "--pvxavg:" << pvxavg << "--pvyavg:" << pvyavg << "--paavg: " << paavg << "\n";
@@ -467,7 +472,8 @@ void Safety_Override(void)
 
  double DistLimit;
  double Vmag;
- double dmin,min_angle;
+ double dmin, min_angle, min_angle_x, min_angle_y;
+ int close_right = 0, close_left = 0;
 
  // Establish distance threshold based on lander
  // speed (we need more time to rectify direction
@@ -491,14 +497,16 @@ void Safety_Override(void)
 
  // Horizontal direction.
  dmin=1000000;
- min_angle=180;
-/* if (Velocity_X()>0)
+ min_angle_x=180;
+ min_angle_y=180;
+
+ if (Velocity_X()>0)
  {
   for (int i=5;i<14;i++)
    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
    {
     dmin=SONAR_DIST[i];
-    min_angle=i*10;
+    min_angle_x=i*10;
    }
  }
  else
@@ -507,42 +515,47 @@ void Safety_Override(void)
    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
    {
     dmin=SONAR_DIST[i];
-    min_angle=i*10;
+    min_angle_x=i*10;
    }
- }*/
+ }
  // Determine whether we're too close for comfort. There is a reason
  // to have this distance limit modulated by horizontal speed...
  // what is it?
-/* if (dmin<DistLimit*fmax(.25,fmin(fabs(Velocity_X())/5.0,1)))
+ if (dmin<DistLimit*fmax(.25,fmin(fabs(Velocity_X())/5.0,1)))
  { // Too close to a surface in the horizontal direction
   if (Velocity_X()>0){
-   Left_Thruster(1.0);
+/*   Left_Thruster(1.0);
    Right_Thruster(0.0);
    Rotate(min_angle-Angle());
+*/
+   close_right = 1;
   }
   else
   {
+/*
    Right_Thruster(1.0);
    Left_Thruster(0.0);
+*/
+   close_left = 1;
   }
   thrust=1.0;
- }*/
+ }
 
  // Vertical direction
-/* dmin=1000000;
+ dmin=1000000;
  if (Velocity_Y()>5)      // Mind this! there is a reason for it...
  {
   for (int i=0; i<5; i++)
    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
    {
     dmin=SONAR_DIST[i];
-    min_angle=i*10;
+    min_angle_y=i*10;
    }
   for (int i=32; i<36; i++)
    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
    {
     dmin=SONAR_DIST[i];
-    min_angle=i*10;
+    min_angle_y=i*10;
    }
  }
  else
@@ -551,17 +564,28 @@ void Safety_Override(void)
    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
    {
     dmin=SONAR_DIST[i];
-    min_angle=i*10;
+    min_angle_y=i*10;
    }
  }
- if (dmin<DistLimit)   // Too close to a surface in the horizontal direction
+
+ min_angle = (min_angle_x + min_angle_y) / 2;
+
+// if (dmin<DistLimit)   // Too close to a surface in the horizontal direction
+ if (close_right || close_left)
  {
+
+  // new angle calc.
+
+/*
   if (Angle()>1||Angle()>359)
   {
    if (Angle()>=180) Rotate(360-Angle());
    else Rotate(-Angle());
    return;
   }
+*/
+  
+
   if (Velocity_Y()>2.0)
   {
    thrust=0.0;
@@ -570,14 +594,17 @@ void Safety_Override(void)
   {
    thrust=1.0;
   }
- }*/
- for (int i=0; i<36; i++) {
-   if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
+
+
+ }
+/* for (int i=0; i<36; i++) {
+   if (SONAR_DIST[i] > -1 && SONAR_DIST[i] < dmin)
    {
     dmin=SONAR_DIST[i];
     min_angle=i*10;
    }
- }
+ }*/
+
  if(dmin<100) {
  thrust=0;
  if(min_angle>=50&&min_angle<140&&Velocity_X()>0) thrust=1;
@@ -587,6 +614,7 @@ void Safety_Override(void)
  if(dmin<50) thrust=1;
  }
  else min_angle=angle+180;
+ //min_angle=angle+180;
 // if(min_angle<=90 || min_angle>=270)
 // {
   if(min_angle<180) Set_Angle2(min_angle + 180, override);
