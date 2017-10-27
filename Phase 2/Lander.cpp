@@ -167,32 +167,33 @@ using namespace std;
 
 //Dictates which thruster to use, 0->main, 1->right, 2->left
 int main_thruster=0;
-double angle, thrust;
+double angle, thrust, pxavg=0, pyavg=0, pvxavg=0, pvyavg=0, ptime=0, tint=0, aavg=0, paavg=0;
 int override = 0;
+int counter = 0;
 
 void Set_Angle(double angle) {
 
 //angle is 0
  if(angle == 0) {
 
-   if(Angle()>1&&Angle()<359)
+   if(aavg>1&&aavg<359)
    {
-    if(Angle()>=180) Rotate(360-Angle());
-    else Rotate(-Angle());
+    if(aavg>=180) Rotate(360-aavg);
+    else Rotate(-aavg);
     return;
    }
  }
 
 //otherwise
  else {
-  if(Angle()>(angle+1)||Angle()<(angle-1)) {
-   if(Angle()>angle){
-    if(Angle()-angle>=180) Rotate(360-(Angle()-angle));
-    else Rotate(angle-Angle());
+  if(aavg>(angle+1)||aavg<(angle-1)) {
+   if(aavg>angle){
+    if(aavg-angle>=180) Rotate(360-(aavg-angle));
+    else Rotate(angle-aavg);
    }
    else {
-    if(angle-Angle()>=180) Rotate(angle-Angle()-360);
-    else Rotate(angle-Angle());
+    if(angle-aavg>=180) Rotate(angle-aavg-360);
+    else Rotate(angle-aavg);
    }
    return;
   }
@@ -288,27 +289,82 @@ void Lander_Control(void)
 
  double VXlim;
  double VYlim;
+ int sampleRate = 300;
+ double xavg = 0, xsd=0, yavg = 0, vxavg = 0, vyavg = 0;
 
- cout << "override: " << override  << " x: " << PLAT_X-Position_X()  << " y: " << PLAT_Y-Position_Y()  << " vx: " << Velocity_X() << " vy: " << Velocity_Y() << " result:"  << "\n";
+// if (counter == 10) {
+//  cout << "override: " << override  << " x: " << PLAT_X-Position_X()  << " y: " << PLAT_Y-Position_Y()  << " vx: " << Velocity_X() << " vy: " << Velocity_Y() << " result:"  << "\n";
+
+//  for(int j=0;j<3;j++) {
+  aavg=0;
+  for(int i = 0; i < sampleRate; i++) {
+   xavg += Position_X();
+   vxavg += Velocity_X();
+   yavg += Position_Y();
+   vyavg += Velocity_Y();
+   aavg+=Angle();
+  }
+//  }
+
+//  for(int j=0;j<3;j++){
+  xavg /= sampleRate;
+  yavg /= sampleRate;
+  vxavg /= sampleRate;
+  vyavg /= sampleRate;
+  aavg /= sampleRate;
+  ptime=tint;
+  tint=(vyavg-pvyavg)/G_ACCEL;
+//  }
+
+  //x1 = Position_X();
+  //cout << "x1:" << x1 << "\n";
+  //x2 = Position_X();
+  //cout << "x2:" << x2 << "\n";
+  //x3 = Position_X();
+  //cout << "x3:" << x3 << "\n";
+  //x4 = Position_X();
+  //cout << "x4:" << x4 << "\n";
+  //x5 = Position_X();
+  //cout << "x5:" << x5 << "\n";
+
+  //xavg = (x1 + x2 + x3 + x4 + x5) / 5;
+  cout << "pxavg:" << pxavg << "--pyavg:" << pyavg << "--pvxavg:" << pvxavg << "--pvyavg:" << pvyavg << "--paavg: " << paavg << "\n";
+  cout << "xavg1:" << xavg << "\n";
+  cout << "yavg1:" << yavg << "\n";
+  cout << "vxavg1:" << vxavg << "\n";
+  cout << "vyavg1:" << vyavg << "\n";
+  cout << "aavg:" << aavg << "\n";
+  cout << "ptime:" << ptime << "---time:" << tint << "---deltat:" << fabs(ptime-tint) << "\n";
+  //xsd = sqrt(((xavg-x1)*(xavg-x1)+(xavg-x2)*(xavg-x2)+(xavg-x3)*(xavg-x3)+(xavg-x4)*(xavg-x4)+(xavg-x5)*(xavg-x5))/4);
+  //cout << "xsd:" << xsd << "\n\n";
+  cout << "\n";
+  counter = 0;
+
+  pxavg=xavg;
+  pyavg=yavg;
+  pvxavg=vxavg;
+  pvyavg=vyavg;
+  paavg = aavg;
+// }
 
  // Set velocity limits depending on distance to platform.
  // If the module is far from the platform allow it to
  // move faster, decrease speed limits as the module
  // approaches landing. You may need to be more conservative
  // with velocity limits when things fail.
- if (fabs(Position_X()-PLAT_X)>200) VXlim=25;
- else if (fabs(Position_X()-PLAT_X)>100) VXlim=15;
+ if (fabs(xavg-PLAT_X)>200) VXlim=25;
+ else if (fabs(xavg-PLAT_X)>100) VXlim=15;
  else VXlim=5;
 
- if (PLAT_Y-Position_Y()>200) VYlim=-20;
- else if (PLAT_Y-Position_Y()>100) VYlim=-10;  // These are negative because they
+ if (PLAT_Y-yavg>200) VYlim=-20;
+ else if (PLAT_Y-yavg>100) VYlim=-10;  // These are negative because they
  else VYlim=-4;              // limit descent velocity
 
   VXlim = VXlim/2;
   VYlim = VYlim/2;
 
  // Ensure we will be OVER the platform when we land
- if (fabs(PLAT_X-Position_X())/fabs(Velocity_X())>1.25*fabs(PLAT_Y-Position_Y())/fabs(Velocity_Y())) VYlim=0;
+ if (fabs(PLAT_X-xavg)/fabs(vxavg)>1.25*fabs(PLAT_Y-yavg)/fabs(vyavg)) VYlim=0;
 
  // IMPORTANT NOTE: The code below assumes all components working
  // properly. IT MAY OR MAY NOT BE USEFUL TO YOU when components
@@ -321,7 +377,7 @@ void Lander_Control(void)
  // Note that only the latest Rotate() command has any
  // effect, i.e. the rotation angle does not accumulate
  // for successive calls.
- if(fabs(PLAT_X-Position_X())<30 && fabs(PLAT_Y-Position_Y())<30 && Velocity_X()<3 && Velocity_Y()<3)
+ if(fabs(PLAT_X-xavg)<30 && fabs(PLAT_Y-yavg)<30 && vxavg<3 && vyavg<3)
  {
   override = 1;  //thrust will be 0, angle will make sure to straighten
  }
@@ -363,10 +419,10 @@ void Lander_Control(void)
   double conversion = 180.0 / PI;
 
 //  angle=90*((PLAT_X-Position_X())/PLAT_X);
-    angle = conversion* atan((PLAT_X-Position_X())/(PLAT_Y-Position_Y()));
-    if (angle>0 && Velocity_X()<=(-VXlim)) angle=90;
-    if (angle<0 && Velocity_X()>=VXlim) angle=270;
-  if (Velocity_Y()<VYlim) thrust=1.0;
+    angle = conversion* atan((PLAT_X-xavg)/(PLAT_Y-yavg));
+    if (angle>0 && vxavg<=(-VXlim)) angle=90;
+    if (angle<0 && vxavg>=VXlim) angle=270;
+  if (vyavg<VYlim) thrust=1.0;
 //  if (Velocity_Y()<VYlim) thrust=0.25;
   else thrust=0.0;
  }
@@ -374,7 +430,9 @@ void Lander_Control(void)
  if(angle < 0) Set_Angle2(360+angle, override);
  else Set_Angle2(angle, override);
  Set_Thrust(thrust, override);
- 
+
+// counter++; 
+
 
 } 
 void Safety_Override(void)
@@ -434,7 +492,7 @@ void Safety_Override(void)
  // Horizontal direction.
  dmin=1000000;
  min_angle=180;
- if (Velocity_X()>0)
+/* if (Velocity_X()>0)
  {
   for (int i=5;i<14;i++)
    if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
@@ -451,26 +509,27 @@ void Safety_Override(void)
     dmin=SONAR_DIST[i];
     min_angle=i*10;
    }
- }
+ }*/
  // Determine whether we're too close for comfort. There is a reason
  // to have this distance limit modulated by horizontal speed...
  // what is it?
- if (dmin<DistLimit*fmax(.25,fmin(fabs(Velocity_X())/5.0,1)))
+/* if (dmin<DistLimit*fmax(.25,fmin(fabs(Velocity_X())/5.0,1)))
  { // Too close to a surface in the horizontal direction
-//  if (Velocity_X()>0){
-//   Left_Thruster(1.0);
-//   Right_Thruster(0.0);
-//  }
-//  else
-//  {
-//   Right_Thruster(1.0);
-//   Left_Thruster(0.0);
-//  }
+  if (Velocity_X()>0){
+   Left_Thruster(1.0);
+   Right_Thruster(0.0);
+   Rotate(min_angle-Angle());
+  }
+  else
+  {
+   Right_Thruster(1.0);
+   Left_Thruster(0.0);
+  }
   thrust=1.0;
- }
+ }*/
 
  // Vertical direction
- dmin=1000000;
+/* dmin=1000000;
  if (Velocity_Y()>5)      // Mind this! there is a reason for it...
  {
   for (int i=0; i<5; i++)
@@ -497,12 +556,12 @@ void Safety_Override(void)
  }
  if (dmin<DistLimit)   // Too close to a surface in the horizontal direction
  {
-//  if (Angle()>1||Angle()>359)
-//  {
-//   if (Angle()>=180) Rotate(360-Angle());
-//   else Rotate(-Angle());
-//   return;
-//  }
+  if (Angle()>1||Angle()>359)
+  {
+   if (Angle()>=180) Rotate(360-Angle());
+   else Rotate(-Angle());
+   return;
+  }
   if (Velocity_Y()>2.0)
   {
    thrust=0.0;
@@ -511,11 +570,27 @@ void Safety_Override(void)
   {
    thrust=1.0;
   }
+ }*/
+ for (int i=0; i<36; i++) {
+   if (SONAR_DIST[i]>-1&&SONAR_DIST[i]<dmin)
+   {
+    dmin=SONAR_DIST[i];
+    min_angle=i*10;
+   }
  }
- if(min_angle<=90 || min_angle>=270)
- {
-  if(min_angle<180) Set_Angle(min_angle);
+ if(dmin<100) {
+ thrust=0;
+ if(min_angle>=50&&min_angle<140&&Velocity_X()>0) thrust=1;
+ if(min_angle>=220&&min_angle<320&&Velocity_X()<0) thrust=1;
+ if(min_angle>=0&&min_angle<50&&Velocity_Y()<=2) thrust=1;
+ if(min_angle>=320&&min_angle<360&&Velocity_Y()<=2) thrust=1;
+ if(dmin<50) thrust=1;
+ }
+ else min_angle=angle+180;
+// if(min_angle<=90 || min_angle>=270)
+// {
+  if(min_angle<180) Set_Angle2(min_angle + 180, override);
   else Set_Angle2(min_angle-180, override);
   Set_Thrust(thrust, override);
- }
+// }
 }
