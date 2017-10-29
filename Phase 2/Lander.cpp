@@ -171,7 +171,7 @@ int sampleRate = 300;
 double angle, thrust;
 double pxavg = 0, pyavg = 0, pvxavg = 0, pvyavg = 0, paavg = 0;
 double xavg = 0, yavg = 0, vxavg = 0, vyavg = 0, aavg = 0;
-double ax = 0, ay = 0;
+double ax = 0, ay = 0, pax = 0, pay = 0;
 int override = 0;
 int configuration = 0;
 double conversion = 180.0 / PI;
@@ -224,8 +224,10 @@ void Set_Angle(double angle) {
 
 void Set_Thrust(double power, int override) {
 
+ double qang;
+
  ax = 0;
- ay = 0;
+ ay = G_ACCEL;
 
  if (override) {
   Main_Thruster(0);
@@ -234,20 +236,48 @@ void Set_Thrust(double power, int override) {
   return;
  }
 
+/*
+ if(aavg > 90) {
+  qang = aavg - 90;
+ }
+ if(aavg > 180) {
+  qang = aavg - 270;
+ }
+ if(aavg > 270) {
+  qang = aavg - 360;
+ }
+*/
+
+
+// qang = aavg/2-90;
+  qang = aavg;
+
  if(MT_OK) {
   Main_Thruster(power);
-  ax += 35*sin(aavg);
-  ay += 35*cos(aavg);
+  ax += (power*35)*sin(qang);
+  ay -= (power*35)*cos(qang);
+//  ax += (power*35)*cos(qang);
+//  ay += (power*35)*sin(qang);
  }
- else if(RT_OK) {
+ else if(RT_OK) { // 270 is down
+
+  qang -= 90;
+
   Right_Thruster(power);
-  ax += 25*sin(aavg - 90);
-  ay += 25*cos(aavg - 90);
+  ax += (power*25)*sin(qang);
+  ay -= (power*25)*cos(qang);
+//  ax += (power*25)*cos(qang);
+//  ay += (power*25)*sin(qang);
  }
  else {
+
+  qang += 90;
+
   Left_Thruster(power);
-  ax += 25*sin(aavg + 90);
-  ay += 25*cos(aavg + 90);
+  ax += (power*25)*sin(qang);
+  ay -= (power*25)*cos(qang);
+//  ax += (power*25)*cos(qang);
+//  ay += (power*25)*sin(qang);
  }
 }
 
@@ -278,51 +308,83 @@ void configure() {
   double cx, cy, cvx, cvy, ca;
   double errx, erry, errvx, errvy, erra;
 
+  int fx = 0, fy = 0, fvx = 0, fvy = 0, fa = 0;
+
   configuration = 0;
 
   // First state ** BELOW DID NOTHING
-/*  if(pxavg == 0 && pyavg == 0 && pvxavg == 0 &&pvyavg == 0 && aavg == 0) {
+  if(pxavg == 0 && pyavg == 0 && pvxavg == 0 && pvyavg == 0 && paavg == 0) {
 
    return;
-  }*/
-
-  // Mostly does as expected
-  cvx = pvxavg + (ax * T_STEP);
-
-  errvx = fabs(vxavg - cvx);
-
-  if(errvx > 0.5) {
-    configuration = 4;
   }
 
   // Mostly does as expected
-  cvy = pvyavg + (ay * T_STEP);
+  cvx = pvxavg + (pax * T_STEP);
+
+  errvx = fabs(vxavg - cvx);
+//  errvx = vxavg - cvx;
+
+
+  if(errvx > 0.3) {
+    configuration = 4;
+    fvx = 1;
+    vxavg = cvx;
+  }
+
+  // Mostly does as expected
+  cvy = pvyavg + (pay * T_STEP);
 
   errvy = fabs(vyavg - cvy);
 
-  if(errvy > 0.5) {
+  if(errvy > 0.4) {
     configuration = 5;
+    fvy = 1;
+//    vyavg = cvy;
   }
 
 
   // Does as expected
-  cx = pxavg + (pvxavg * T_STEP) + (ax * T_STEP * T_STEP);
+  cx = pxavg + (pvxavg * T_STEP) + ((pax * T_STEP * T_STEP)/2);
 
   errx = fabs(xavg - cx);
 
   if(errx > 2) {
     configuration = 6;
+    fx = 1;
+//    xavg = cx;
   }
 
   // Mostly does as expected
-  cy = pyavg + (pvyavg * T_STEP) + (ay * T_STEP * T_STEP);
+  cy = pyavg - (pvyavg * T_STEP) - ((pay * T_STEP * T_STEP)/2);
 
   erry = fabs(yavg - cy);
 
   if(erry > 2) {
     configuration = 7;
+    fy = 1;
+//    yavg = cy;
   }
 
+
+  //if stuff
+/*  if(fvx && !fx) {
+   if(ax == 0) {
+    vxavg = (xavg - pxavg) / (1);
+   }
+   else {
+    vxavg = (xavg - pxavg) / (T_STEP * ax);
+   }
+  }
+
+  if(fvy && !fy) {
+   if(ay == 0) {
+    vyavg = (yavg - pyavg) / (1);
+   }
+   else {
+    vyavg = (yavg - pyavg) / (T_STEP * ay);
+   }
+  }
+*/
 }
 
 void Set_Main_Thruster(void) {
@@ -414,17 +476,21 @@ void Lander_Control(void)
   cout << "vxavg1:" << vxavg << "\n";
   cout << "vyavg1:" << vyavg << "\n";
   cout << "aavg:" << aavg << "\n";
+  cout << "ax:" << ax << "\n";
+  cout << "ay:" << ay << "\n";
   //xsd = sqrt(((xavg-x1)*(xavg-x1)+(xavg-x2)*(xavg-x2)+(xavg-x3)*(xavg-x3)+(xavg-x4)*(xavg-x4)+(xavg-x5)*(xavg-x5))/4);
   //cout << "xsd:" << xsd << "\n\n";
   cout << "config: " << configuration << "\n";
   cout << "\n";
 
 
-  pxavg=xavg;
-  pyavg=yavg;
-  pvxavg=vxavg;
-  pvyavg=vyavg;
+  pxavg = xavg;
+  pyavg = yavg;
+  pvxavg = vxavg;
+  pvyavg = vyavg;
   paavg = aavg;
+  pax = ax;
+  pay = ay;
 // }
 
  // Set velocity limits depending on distance to platform.
@@ -496,12 +562,10 @@ void Lander_Control(void)
 //  Right_Thruster(0);
 //  Left_Thruster(0);
 
-//  angle=90*((PLAT_X-Position_X())/PLAT_X);
   angle = conversion * atan((PLAT_X-xavg)/(PLAT_Y-yavg));
   if (angle>0 && vxavg<=(-VXlim)) angle=90;
   if (angle<0 && vxavg>=VXlim) angle=270;
   if (vyavg<VYlim) thrust=1.0;
-//  if (Velocity_Y()<VYlim) thrust=0.25;
   else thrust=0.0;
  }
 
