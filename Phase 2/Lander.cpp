@@ -236,10 +236,10 @@ void Set_Thrust(double power, int override) {
   return;
  }
 
+
+ 
+
 /*
- if(aavg > 90) {
-  qang = aavg - 90;
- }
  if(aavg > 180) {
   qang = aavg - 270;
  }
@@ -249,23 +249,39 @@ void Set_Thrust(double power, int override) {
 */
 
 
-// qang = aavg/2-90;
-  qang = aavg;
+ qang = aavg;
+
+/*
+ if(aavg > 0 && aavg < 90) {
+  qang = 90 - aavg;
+ }
+ if(aavg > 90 && aavg < 180) {
+  qang = 180 - aavg;
+ }
+ if(aavg > 180 && aavg < 270) {
+  qang = 270 - aavg;
+ }
+ if(aavg > 270 && aavg < 360) {
+  qang = 360 - aavg;
+ }
+*/
+
+
 
  if(MT_OK) {
   Main_Thruster(power);
-  ax += (power*35)*sin(qang);
-  ay -= (power*35)*cos(qang);
-//  ax += (power*35)*cos(qang);
-//  ay += (power*35)*sin(qang);
+  ax += (power*35)*sin(qang*(1/conversion));
+  ay -= (power*35)*cos(qang*(1/conversion));
+//  ax += (power*35)*(-cos(qang));
+//  ay += (power*35)*(-sin(qang));
  }
  else if(RT_OK) { // 270 is down
 
   qang -= 90;
 
   Right_Thruster(power);
-  ax += (power*25)*sin(qang);
-  ay -= (power*25)*cos(qang);
+  ax += (power*25)*sin(qang*(1/conversion));
+  ay -= (power*25)*cos(qang*(1/conversion));
 //  ax += (power*25)*cos(qang);
 //  ay += (power*25)*sin(qang);
  }
@@ -274,8 +290,8 @@ void Set_Thrust(double power, int override) {
   qang += 90;
 
   Left_Thruster(power);
-  ax += (power*25)*sin(qang);
-  ay -= (power*25)*cos(qang);
+  ax += (power*25)*sin(qang*(1/conversion));
+  ay -= (power*25)*cos(qang*(1/conversion));
 //  ax += (power*25)*cos(qang);
 //  ay += (power*25)*sin(qang);
  }
@@ -332,14 +348,14 @@ void configure() {
   }
 
   // Mostly does as expected
-  cvy = pvyavg + (pay * T_STEP);
+  cvy = pvyavg - (pay * T_STEP);
 
   errvy = fabs(vyavg - cvy);
 
   if(errvy > 0.4) {
     configuration = 5;
     fvy = 1;
-//    vyavg = cvy;
+    vyavg = cvy;
   }
 
 
@@ -351,7 +367,7 @@ void configure() {
   if(errx > 2) {
     configuration = 6;
     fx = 1;
-//    xavg = cx;
+    xavg = cx;
   }
 
   // Mostly does as expected
@@ -362,7 +378,7 @@ void configure() {
   if(erry > 2) {
     configuration = 7;
     fy = 1;
-//    yavg = cy;
+    yavg = cy;
   }
 
 
