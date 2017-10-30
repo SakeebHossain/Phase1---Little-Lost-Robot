@@ -167,7 +167,7 @@ using namespace std;
 
 //Dictates which thruster to use, 0->main, 1->right, 2->left
 int main_thruster = 0;
-int sampleRate = 300;
+int sampleRate = 10000;
 double angle, thrust;
 double pxavg = 0, pyavg = 0, pvxavg = 0, pvyavg = 0, paavg = 0;
 double xavg = 0, yavg = 0, vxavg = 0, vyavg = 0, aavg = 0;
@@ -314,7 +314,7 @@ void filter() {
    vxavg += Velocity_X();
    yavg += Position_Y();
    vyavg += Velocity_Y();
-   aavg+=Angle();
+   aavg += Angle();
   }
 
   xavg /= sampleRate;
@@ -346,10 +346,10 @@ void configure() {
 //  errvx = vxavg - cvx;
 
 
-  if(errvx > 0.3) {
+  if(errvx > 0.03) {
     configuration = 4;
     fvx = 1;
-    //vxavg = cvx;
+    vxavg = cvx;
   }
 
   // Mostly does as expected
@@ -357,7 +357,7 @@ void configure() {
 
   errvy = fabs(vyavg - cvy);
 
-  if(errvy > 0.4) {
+  if(errvy > 0.04) {
     configuration = 5;
     fvy = 1;
     //vyavg = cvy;
@@ -365,11 +365,11 @@ void configure() {
 
 
   // Does as expected
-  cx = pxavg + (pvxavg * T_STEP) + ((pax * T_STEP * T_STEP)/2);
+  cx = pxavg + (pvxavg * T_STEP) + (((pax * T_STEP) * T_STEP)/2);
 
   errx = fabs(xavg - cx);
 
-  if(errx > 2) {
+  if(errx > .2) {
     configuration = 6;
     fx = 1;
     //xavg = cx;
@@ -426,7 +426,7 @@ void checkSensorState(void) {
 
 void print_status (void) {
 
-  //cout << "\n";  
+  cout << "\n";  
   /*
   x1 = Position_X();
   cout << "x1:" << x1 << "\n";
@@ -441,24 +441,24 @@ void print_status (void) {
 */
 
   // //xavg = (x1 + x2 + x3 + x4 + x5) / 5;
-  // cout << "pxavg:" << pxavg << "--pyavg:" << pyavg << "--pvxavg:" << pvxavg << "--pvyavg:" << pvyavg << "--paavg: " << paavg << "\n";
-  // cout << "xavg1:" << xavg << "\n";
-  // cout << "yavg1:" << yavg << "\n";
-  // cout << "vxavg1:" << vxavg << "\n";
-  // cout << "vyavg1:" << vyavg << "\n";
-  // cout << "aavg:" << aavg << "\n";
-  // cout << "ax:" << ax << "\n";
-  // cout << "ay:" << ay << "\n";
-  // //xsd = sqrt(((xavg-x1)*(xavg-x1)+(xavg-x2)*(xavg-x2)+(xavg-x3)*(xavg-x3)+(xavg-x4)*(xavg-x4)+(xavg-x5)*(xavg-x5))/4);
-  // //cout << "xsd:" << xsd << "\n\n";
-  // cout << "config: " << configuration << "\n";
+  cout << "pxavg:" << pxavg << "--pyavg:" << pyavg << "--pvxavg:" << pvxavg << "--pvyavg:" << pvyavg << "--paavg: " << paavg << "\n";
+  cout << "xavg1:" << xavg << "\n";
+  cout << "yavg1:" << yavg << "\n";
+  cout << "vxavg1:" << vxavg << "\n";
+  cout << "vyavg1:" << vyavg << "\n";
+  cout << "aavg:" << aavg << "\n";
+  cout << "ax:" << ax << "\n";
+  cout << "ay:" << ay << "\n";
+  //xsd = sqrt(((xavg-x1)*(xavg-x1)+(xavg-x2)*(xavg-x2)+(xavg-x3)*(xavg-x3)+(xavg-x4)*(xavg-x4)+(xavg-x5)*(xavg-x5))/4);
+  //cout << "xsd:" << xsd << "\n\n";
+  cout << "config: " << configuration << "\n";
 
 
   /* Sensor outputs */
   //cout << "X: " << Angle() << "\n";
 
 
-  //cout << "\n";
+  cout << "\n";
 
 }
 
@@ -668,13 +668,13 @@ void Safety_Override(void)
 //   Set_Thrust(thrust, override); 
 // ----------------------------------------------------
   if (dmin < 70) {
-    cout << dmin << " Near wall! " << wall_count << "\n";
+    //cout << dmin << " Near wall! " << wall_count << "\n";
     wall_count++;
     Set_Angle3(0);
     //thrust = 1;
 
   } else {
-    cout << dmin << " NOT Near wall! " << wall_count << "\n";
+    //cout << dmin << " NOT Near wall! " << wall_count << "\n";
     wall_count++;
     Set_Angle3(1);
 //    if (vyavg<VYlim) thrust=1.0;
