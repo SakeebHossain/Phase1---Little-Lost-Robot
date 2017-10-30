@@ -362,19 +362,37 @@ void configure() {
   if(errvy > 0.04) {
     configuration = 5;
     fvy = 1;
-    vyavg = cvy + 0.002;
+
+    if((vyavg - cvy) > 0) {
+
+      vyavg = cvy + 0.0025;
+
+    }
+    else if((vyavg - cvy) < 0) {
+
+      vyavg = cvy - 0.0025;
+
+    }
+
   }
 
 
   // Does as expected
   cx = pxavg + (pvxavg * quack) + (((pax * quack) * quack)/2);
+//  cx = pxavg + (((pvxavg + (pax * quack))/2) * quack);
 
   errx = fabs(xavg - cx);
 
-  if(errx > .2) {
+  if(errx > 2) {
     configuration = 6;
     fx = 1;
-   // xavg = cx;
+
+   /* if((xavg - cx) > 0) {
+     xavg = cx + (0.0025 / quack);
+    }
+    else if((xavg - cx) < 0) {
+     xavg = cx - (0.0025 / quack);
+    } */
   }
 
   // Mostly does as expected
@@ -386,6 +404,12 @@ void configure() {
     configuration = 7;
     fy = 1;
 //    yavg = cy;
+    if((yavg - cy) > 0) {
+     yavg = cy + (0.0025 / quack);
+    }
+    else if((yavg - cy) < 0) {
+     yavg = cy - (0.0025 / quack);
+    }
   }
 
 
@@ -495,21 +519,21 @@ void Lander_Control(void)
  // move faster, decrease speed limits as the module
  // approaches landing. You may need to be more conservative
  // with velocity limits when things fail.
- if (fabs(xavg-PLAT_X)>200) VXlim=25;
- else if (fabs(xavg-PLAT_X)>100) VXlim=15;
- else VXlim=5;
+ if (fabs(xavg-PLAT_X)>200) VXlim=25/2;
+ else if (fabs(xavg-PLAT_X)>100) VXlim=15/2;
+ else VXlim=5/2;
 
- if (PLAT_Y-yavg>200) VYlim=-20;
- else if (PLAT_Y-yavg>100) VYlim=-10;  // These are negative because they
+ if (PLAT_Y-yavg>200) VYlim=-20/2;
+ else if (PLAT_Y-yavg>100) VYlim=-10/2;  // These are negative because they
  else VYlim=-4;              // limit descent velocity
 
-  VXlim = VXlim/2;
-  VYlim = VYlim/2;
+//  VXlim = VXlim/2;
+//  VYlim = VYlim/2;
 
  // Ensure we will be OVER the platform when we land
- if (fabs(PLAT_X-xavg)/fabs(vxavg)>1.25*fabs(PLAT_Y-yavg)/fabs(vyavg)) VYlim=0;
+// if (fabs(PLAT_X-xavg)/fabs(vxavg)>1.25*fabs(PLAT_Y-yavg)/fabs(vyavg)) VYlim=0;
 
-
+ // Free Falling
  if(fabs(PLAT_X-xavg)<30 && fabs(PLAT_Y-yavg)<30 && vxavg<3 && vyavg<3)
  {
   override = 1;  //thrust will be 0, angle will make sure to straighten
@@ -578,6 +602,8 @@ void Safety_Override(void)
   cout << "close to platform: safetyOverride disabled" << "\n";
   return;
 }
+
+  cout << "Beep Boop" << "\n";
 
  // Determine the closest surfaces in the direction
  // of motion. This is done by checking the sonar
