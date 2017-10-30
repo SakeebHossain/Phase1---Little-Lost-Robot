@@ -374,7 +374,7 @@ void configure() {
   if(errx > .2) {
     configuration = 6;
     fx = 1;
-    //xavg = cx;
+   // xavg = cx;
   }
 
   // Mostly does as expected
@@ -385,7 +385,7 @@ void configure() {
   if(erry > 2) {
     configuration = 7;
     fy = 1;
-    //yavg = cy;
+//    yavg = cy;
   }
 
 
