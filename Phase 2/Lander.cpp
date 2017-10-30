@@ -167,7 +167,7 @@ using namespace std;
 
 //Dictates which thruster to use, 0->main, 1->right, 2->left
 int main_thruster = 0;
-int sampleRate = 10000;
+int sampleRate = 300;
 double angle, thrust;
 double pxavg = 0, pyavg = 0, pvxavg = 0, pvyavg = 0, paavg = 0;
 double xavg = 0, yavg = 0, vxavg = 0, vyavg = 0, aavg = 0;
@@ -178,6 +178,8 @@ double conversion = 180.0 / PI;
 int wall_count = 0;
  double VXlim;
  double VYlim;
+
+double quack = 0.005;
 
 /****** Sensor State Variables ******/
 //float ANG_OK = 1;
@@ -340,7 +342,7 @@ void configure() {
   }
 
   // Mostly does as expected
-  cvx = pvxavg + (pax * T_STEP);
+  cvx = pvxavg + (pax * quack);
 
   errvx = fabs(vxavg - cvx);
 //  errvx = vxavg - cvx;
@@ -353,19 +355,19 @@ void configure() {
   }
 
   // Mostly does as expected
-  cvy = pvyavg - (pay * T_STEP);
+  cvy = pvyavg - (pay * quack);
 
   errvy = fabs(vyavg - cvy);
 
   if(errvy > 0.04) {
     configuration = 5;
     fvy = 1;
-    //vyavg = cvy;
+    vyavg = cvy + 0.002;
   }
 
 
   // Does as expected
-  cx = pxavg + (pvxavg * T_STEP) + (((pax * T_STEP) * T_STEP)/2);
+  cx = pxavg + (pvxavg * quack) + (((pax * quack) * quack)/2);
 
   errx = fabs(xavg - cx);
 
@@ -376,7 +378,7 @@ void configure() {
   }
 
   // Mostly does as expected
-  cy = pyavg - (pvyavg * T_STEP) - ((pay * T_STEP * T_STEP)/2);
+  cy = pyavg - (pvyavg * quack) - ((pay * quack * quack)/2);
 
   erry = fabs(yavg - cy);
 
@@ -394,7 +396,7 @@ void configure() {
     vxavg = (xavg - pxavg) / (1);
    }
    else {
-    vxavg = (xavg - pxavg) / (T_STEP * ax);
+    vxavg = (xavg - pxavg) / (quack * ax);
    }
   }
 
@@ -403,7 +405,7 @@ void configure() {
     vyavg = (yavg - pyavg) / (1);
    }
    else {
-    vyavg = (yavg - pyavg) / (T_STEP * ay);
+    vyavg = (yavg - pyavg) / (quack * ay);
    }
   }
 */
