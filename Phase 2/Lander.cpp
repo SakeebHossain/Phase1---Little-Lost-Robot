@@ -277,7 +277,7 @@ void Set_Angle3(int state){
   // State 0: moving away from wall.
   if (state == 0) {
 
-   Set_Angle(0);
+   Set_Angle2(0, override);
    thrust = 1;
   }
 
@@ -387,12 +387,12 @@ void configure() {
     configuration = 6;
     fx = 1;
 
-   /* if((xavg - cx) > 0) {
+   if((xavg - cx) > 0) {
      xavg = cx + (0.0025 / quack);
     }
     else if((xavg - cx) < 0) {
      xavg = cx - (0.0025 / quack);
-    } */
+    } 
   }
 
   // Mostly does as expected
@@ -411,28 +411,6 @@ void configure() {
      yavg = cy - (0.0025 / quack);
     }
   }
-
-
-
-  //if stuff
-/*  if(fvx && !fx) {
-   if(ax == 0) {
-    vxavg = (xavg - pxavg) / (1);
-   }
-   else {
-    vxavg = (xavg - pxavg) / (quack * ax);
-   }
-  }
-
-  if(fvy && !fy) {
-   if(ay == 0) {
-    vyavg = (yavg - pyavg) / (1);
-   }
-   else {
-    vyavg = (yavg - pyavg) / (quack * ay);
-   }
-  }
-*/
 }
 
 void Set_Main_Thruster(void) {
@@ -673,28 +651,6 @@ void Safety_Override(void)
  }
 
 
-
-
- // ------------------ Alex's code---------------------
-//  if(dmin<100) {
-//  thrust=1;
-//  if(min_angle>=50&&min_angle<140&&vxavg>0) thrust=1;
-//  if(min_angle>=220&&min_angle<320&&vxavg<0) thrust=1;
-//  if(min_angle>=0&&min_angle<50&&vyavg<=2) thrust=1;
-//  if(min_angle>=320&&min_angle<360&&vyavg<=2) thrust=1;
-//  if(dmin<50) thrust=1;
-//  }
-//  else min_angle=angle+180;
-//  //min_angle=angle+180;
-// // if(min_angle<=90 || min_angle>=270)
-// // {
-
-// // thrust = 1;
-
-//   if(min_angle<180) Set_Angle2(min_angle + 180, override);
-//   else Set_Angle2(min_angle-180, override);
-//   Set_Thrust(thrust, override); 
-// ----------------------------------------------------
   if (dmin < 70) {
     //cout << dmin << " Near wall! " << wall_count << "\n";
     wall_count++;
