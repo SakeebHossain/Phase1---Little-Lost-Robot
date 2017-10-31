@@ -170,7 +170,7 @@ int main_thruster = 0;
 int sampleRate = 300;
 double angle, thrust;
 double pxavg = 0, pyavg = 0, pvxavg = 0, pvyavg = 0, paavg = 0;
-double xavg = 0, yavg = 0, vxavg = 0, vyavg = 0, aavg = 0;
+double xavg = 0, yavg = 0, vxavg = 0, vyavg = 0, aavg = 0, havg = 0;
 double ax = 0, ay = 0, pax = 0, pay = 0;
 int override = 0;
 int configuration = 0;
@@ -239,14 +239,15 @@ void Set_Thrust(double power, int override) {
  double qang;
 
  ax = 0;
- ay = G_ACCEL;
+ ay = G_ACCEL; 
 
- if (override) {
+ if(override) {
   Main_Thruster(0);
   Left_Thruster(0);
   Right_Thruster(0);
   return;
  }
+
 
  qang = aavg;
 
@@ -310,6 +311,7 @@ void filter() {
   vxavg = 0;
   vyavg = 0;
   aavg = 0;
+  havg = 0;
 
   for(int i = 0; i < sampleRate; i++) {
    xavg += Position_X();
@@ -317,6 +319,7 @@ void filter() {
    yavg += Position_Y();
    vyavg += Velocity_Y();
    aavg += Angle();
+   havg += RangeDist();
   }
 
   xavg /= sampleRate;
@@ -324,6 +327,7 @@ void filter() {
   vxavg /= sampleRate;
   vyavg /= sampleRate;
   aavg /= sampleRate;
+  havg /= sampleRate;
 }
 
 void configure() {
@@ -432,6 +436,18 @@ void configure() {
     xavg = pxavg + (pvxavg * 0.022);
 
 /*
+    if(fabs(PLAT_X-xavg<100) {
+
+      phi = conversion * atan(xavg / yavg);
+
+      if(phi != aavg) {
+        
+      }
+
+    }
+*/
+
+/*
     if(errx > 0) {
      xavg += 0.0005;
     }
@@ -450,17 +466,18 @@ void configure() {
     if(fabs(PLAT_X-xavg)<100) {
 
 
-      height = RangeDist();
+//      height = RangeDist();
+
       ang = aavg;
 
       if(ang > 90) {
         ang -= 360;
       }
 
-      if(fabs(1024 - PLAT_Y - height) < yavg && fabs(ang) < 15) {
+      if(fabs(1024 - PLAT_Y - havg) < yavg && fabs(ang) < 15) {
 
        cout << "hello?\n";
-       yavg = fabs(PLAT_Y - height);
+       yavg = fabs(PLAT_Y - havg);
       }
     }
 
