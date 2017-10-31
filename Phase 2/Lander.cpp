@@ -328,7 +328,7 @@ void filter() {
 
 void configure() {
 
-  double cx, cy, cvx, cvy, ca;
+  double cx, cy, cvx, cvy, ca, height, ang;
   double errx, erry, errvx, errvy, erra;
 
   int fx = 0, fy = 0, fvx = 0, fvy = 0, fa = 0;
@@ -351,7 +351,17 @@ void configure() {
   if(errvx > 0.03) {
     configuration = 4;
     fvx = 1;
-    vxavg = cvx;
+//    vxavg = cvx;
+    if((vxavg - cvx) > 0) {
+
+      vxavg = cvx + 0.0010;
+
+    }
+    else if((vxavg - cvx) < 0) {
+
+      vxavg = cvx - 0.0010;
+
+    }
   }
 
   // Mostly does as expected
@@ -380,19 +390,23 @@ void configure() {
   // Does as expected
   cx = pxavg + (pvxavg * quack) + (((pax * quack) * quack)/2);
 //  cx = pxavg + (((pvxavg + (pax * quack))/2) * quack);
+  cx = pxavg + (pvxavg * quack);
 
-  errx = fabs(xavg - cx);
+  errx = xavg - cx;
 
-  if(errx > 2) {
+  if(fabs(errx) > 2) {
     configuration = 6;
     fx = 1;
 
-   if((xavg - cx) > 0) {
-     xavg = cx + (0.0025 / quack);
+/*   if((xavg - cx) > 0) {
+//     xavg = pxavg + (0.15 * pvxavg * quack);
+     xavg = cx;
     }
     else if((xavg - cx) < 0) {
-     xavg = cx - (0.0025 / quack);
-    } 
+//     xavg = pxavg - (0.15 * pvxavg * quack);
+     xavg = cx;
+    } */
+
   }
 
   // Mostly does as expected
@@ -404,13 +418,55 @@ void configure() {
     configuration = 7;
     fy = 1;
 //    yavg = cy;
-    if((yavg - cy) > 0) {
+/*    if((yavg - cy) > 0) {
      yavg = cy + (0.0025 / quack);
     }
     else if((yavg - cy) < 0) {
      yavg = cy - (0.0025 / quack);
-    }
+    }*/
   }
+
+
+  if(fx == 1) {
+    cout << "Loooooop\n";	
+    xavg = pxavg + (pvxavg * 0.022);
+
+/*
+    if(errx > 0) {
+     xavg += 0.0005;
+    }
+    else if(errx < 0) {
+     xavg -= 0.0005;
+    }
+
+*/
+  }
+
+
+  if(fy == 1) {
+    cout << "Scoooooop\n";	
+    yavg = pyavg - (pvyavg * 0.0235);
+
+    if(fabs(PLAT_X-xavg)<100) {
+
+
+      height = RangeDist();
+      ang = aavg;
+
+      if(ang > 90) {
+        ang -= 360;
+      }
+
+      if(fabs(1024 - PLAT_Y - height) < yavg && fabs(ang) < 15) {
+
+       cout << "hello?\n";
+       yavg = fabs(PLAT_Y - height);
+      }
+    }
+
+  }
+
+
 }
 
 void Set_Main_Thruster(void) {
@@ -503,7 +559,7 @@ void Lander_Control(void)
 
  if (PLAT_Y-yavg>200) VYlim=-20/2;
  else if (PLAT_Y-yavg>100) VYlim=-10/2;  // These are negative because they
- else VYlim=-4;              // limit descent velocity
+ else VYlim=-3;              // limit descent velocity
 
 //  VXlim = VXlim/2;
 //  VYlim = VYlim/2;
@@ -576,7 +632,7 @@ void Safety_Override(void)
  // safety override (close to the landing platform
  // the Control_Policy() should be trusted to
  // safely land the craft)
- if (fabs(PLAT_X-xavg)<150&&fabs(PLAT_Y-yavg)<150) { 
+ if (fabs(PLAT_X-xavg)<100&&fabs(PLAT_Y-yavg)<200) { 
   cout << "close to platform: safetyOverride disabled" << "\n";
   return;
 }
