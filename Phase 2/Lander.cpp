@@ -176,10 +176,9 @@ int override = 0;
 int configuration = 0;
 double conversion = 180.0 / PI;
 int wall_count = 0;
- double VXlim;
- double VYlim;
+double VXlim;
+double VYlim;
 
-double quack = 0.005;
 
 /****** Sensor State Variables ******/
 //float ANG_OK = 1;
@@ -295,10 +294,7 @@ void Set_Angle3(int state){
 
   }
 
-
-
   Set_Thrust(thrust,override);
-
 }
 
 void filter() {
@@ -345,17 +341,15 @@ void configure() {
    return;
   }
 
-  // Mostly does as expected
-  cvx = pvxavg + (pax * quack);
+
+  cvx = pvxavg + (pax * T_STEP);
 
   errvx = fabs(vxavg - cvx);
-//  errvx = vxavg - cvx;
-
 
   if(errvx > 0.03) {
     configuration = 4;
     fvx = 1;
-//    vxavg = cvx;
+
     if((vxavg - cvx) > 0) {
 
       vxavg = cvx + 0.0010;
@@ -368,8 +362,8 @@ void configure() {
     }
   }
 
-  // Mostly does as expected
-  cvy = pvyavg - (pay * quack);
+
+  cvy = pvyavg - (pay * T_STEP);
 
   errvy = fabs(vyavg - cvy);
 
@@ -391,82 +385,37 @@ void configure() {
   }
 
 
-  // Does as expected
-  cx = pxavg + (pvxavg * quack) + (((pax * quack) * quack)/2);
-//  cx = pxavg + (((pvxavg + (pax * quack))/2) * quack);
-  cx = pxavg + (pvxavg * quack);
+
+//  cx = pxavg + (pvxavg * T_STEP) + (((pax * T_STEP) * T_STEP)/2);
+  cx = pxavg + (pvxavg * T_STEP);
 
   errx = xavg - cx;
 
   if(fabs(errx) > 2) {
     configuration = 6;
     fx = 1;
-
-/*   if((xavg - cx) > 0) {
-//     xavg = pxavg + (0.15 * pvxavg * quack);
-     xavg = cx;
-    }
-    else if((xavg - cx) < 0) {
-//     xavg = pxavg - (0.15 * pvxavg * quack);
-     xavg = cx;
-    } */
-
   }
 
-  // Mostly does as expected
-  cy = pyavg - (pvyavg * quack) - ((pay * quack * quack)/2);
+
+  cy = pyavg - (pvyavg * T_STEP) - ((pay * T_STEP * T_STEP)/2);
 
   erry = fabs(yavg - cy);
 
   if(erry > 2) {
     configuration = 7;
     fy = 1;
-//    yavg = cy;
-/*    if((yavg - cy) > 0) {
-     yavg = cy + (0.0025 / quack);
-    }
-    else if((yavg - cy) < 0) {
-     yavg = cy - (0.0025 / quack);
-    }*/
   }
 
 
   if(fx == 1) {
-    cout << "Loooooop\n";	
     xavg = pxavg + (pvxavg * 0.022);
-
-/*
-    if(fabs(PLAT_X-xavg<100) {
-
-      phi = conversion * atan(xavg / yavg);
-
-      if(phi != aavg) {
-        
-      }
-
-    }
-*/
-
-/*
-    if(errx > 0) {
-     xavg += 0.0005;
-    }
-    else if(errx < 0) {
-     xavg -= 0.0005;
-    }
-
-*/
   }
 
 
   if(fy == 1) {
-    cout << "Scoooooop\n";	
     yavg = pyavg - (pvyavg * 0.0235);
 
     if(fabs(PLAT_X-xavg)<100) {
-
-
-//      height = RangeDist();
 
       ang = aavg;
 
@@ -475,8 +424,6 @@ void configure() {
       }
 
       if(fabs(1024 - PLAT_Y - havg) < yavg && fabs(ang) < 15) {
-
-       cout << "hello?\n";
        yavg = fabs(PLAT_Y - havg);
       }
     }
@@ -492,69 +439,13 @@ void Set_Main_Thruster(void) {
  else main_thruster=2;
 }
 
-void checkSensorState(void) {
-  /*
-   * Monitors sensor outputs, inidicates if they fail.
-  */
-
-  // ANG_State = Angle();
-  // PX_State = Position_X();
-}
-
-void print_status (void) {
-
-  cout << "\n";  
-  /*
-  x1 = Position_X();
-  cout << "x1:" << x1 << "\n";
-  x2 = Position_X();
-  cout << "x2:" << x2 << "\n";
-  x3 = Position_X();
-  cout << "x3:" << x3 << "\n";
-  x4 = Position_X();
-  cout << "x4:" << x4 << "\n";
-  x5 = Position_X();
-  cout << "x5:" << x5 << "\n";
-*/
-
-  // //xavg = (x1 + x2 + x3 + x4 + x5) / 5;
-  cout << "pxavg:" << pxavg << "--pyavg:" << pyavg << "--pvxavg:" << pvxavg << "--pvyavg:" << pvyavg << "--paavg: " << paavg << "\n";
-  cout << "xavg1:" << xavg << "\n";
-  cout << "yavg1:" << yavg << "\n";
-  cout << "vxavg1:" << vxavg << "\n";
-  cout << "vyavg1:" << vyavg << "\n";
-  cout << "aavg:" << aavg << "\n";
-  cout << "ax:" << ax << "\n";
-  cout << "ay:" << ay << "\n";
-  //xsd = sqrt(((xavg-x1)*(xavg-x1)+(xavg-x2)*(xavg-x2)+(xavg-x3)*(xavg-x3)+(xavg-x4)*(xavg-x4)+(xavg-x5)*(xavg-x5))/4);
-  //cout << "xsd:" << xsd << "\n\n";
-  cout << "config: " << configuration << "\n";
-
-
-  /* Sensor outputs */
-  //cout << "X: " << Angle() << "\n";
-
-
-  cout << "\n";
-
-}
-
 void Lander_Control(void)
 {
  
-// double xavg = 0, xsd=0, yavg = 0, vxavg = 0, vyavg = 0;
-
-// double x1, x2, x3, x4, x5;
-
 
  filter();
 
  configure();
-
- print_status();
-
- //Rotate(90);
-
 
   pxavg = xavg;
   pyavg = yavg;
@@ -563,7 +454,6 @@ void Lander_Control(void)
   paavg = aavg;
   pax = ax;
   pay = ay;
-// }
 
  // Set velocity limits depending on distance to platform.
  // If the module is far from the platform allow it to
@@ -578,11 +468,6 @@ void Lander_Control(void)
  else if (PLAT_Y-yavg>100) VYlim=-10/2;  // These are negative because they
  else VYlim=-3;              // limit descent velocity
 
-//  VXlim = VXlim/2;
-//  VYlim = VYlim/2;
-
- // Ensure we will be OVER the platform when we land
-// if (fabs(PLAT_X-xavg)/fabs(vxavg)>1.25*fabs(PLAT_Y-yavg)/fabs(vyavg)) VYlim=0;
 
  // Free Falling
  if(fabs(PLAT_X-xavg)<30 && fabs(PLAT_Y-yavg)<30 && vxavg<3 && vyavg<3)
@@ -629,9 +514,6 @@ void Safety_Override(void)
   carry out speed corrections using the thrusters
 **************************************************/
 
- // return;
-
-
  double DistLimit;
  double Vmag;
  double dmin, min_angle, min_angle_x, min_angle_y, curr_ang;
@@ -650,11 +532,8 @@ void Safety_Override(void)
  // the Control_Policy() should be trusted to
  // safely land the craft)
  if (fabs(PLAT_X-xavg)<100&&fabs(PLAT_Y-yavg)<200) { 
-  cout << "close to platform: safetyOverride disabled" << "\n";
   return;
 }
-
-  cout << "Beep Boop" << "\n";
 
  // Determine the closest surfaces in the direction
  // of motion. This is done by checking the sonar
@@ -725,19 +604,12 @@ void Safety_Override(void)
 
 
   if (dmin < 70) {
-    //cout << dmin << " Near wall! " << wall_count << "\n";
     wall_count++;
     Set_Angle3(0);
-    //thrust = 1;
 
   } else {
-    //cout << dmin << " NOT Near wall! " << wall_count << "\n";
     wall_count++;
     Set_Angle3(1);
-//    if (vyavg<VYlim) thrust=1.0;
-//    else thrust=0.0;
   }
 
-
-//  Set_Thrust(thrust,0);
 }
