@@ -408,7 +408,7 @@ void configure() {
 
 
   if(fx == 1) {
-    xavg = pxavg + (pvxavg * 0.022);
+    xavg = pxavg + (pvxavg * 0.021);
   }
 
 
