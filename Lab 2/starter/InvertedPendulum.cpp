@@ -45,7 +45,7 @@
 
 #include "InvertedPendulum.h"
 
-// *************** GLOBAL VARIABLE DEFINITIONS *************************
+// *************** PACO'S GLOBAL VARIABLE DEFINITIONS *************************
 
 double m;			// Mass of the cart
 double m1;			// Mass of the bar
@@ -57,6 +57,28 @@ double sp;			// Sampling period
 double g=9.81;			// Gravitational acceleration constant
 double st;			// Internal clock
 const float PI = 3.14159;
+
+
+// *************** OUR VARIABLE DEFINITIONS *************************
+
+double set_point = 0.0;     // Desired angle for bar.
+double error;     // Difference between set_point and current angle.  
+double prev_error = 0;     // Error recorded in last clock tick.
+double deg;     // Stores theta (radians) in degrees
+
+double prev_st = 0;    // Previous internal clock
+double prev_x = 0;  // Previous location on x-axis
+double v = 0;
+double prev_v = 0;
+double a  = 0;
+double dt = 0;
+
+
+double Kp = 1.0;     // Proportional Coefficients for PID controller
+double Ki = 1.0;     // Integral Coefficients for PID controller
+double Kd = 1.0;     // Derivative Coefficients for PID controller
+
+double integral, derivative = 0;  // Other stuff for PID controoler
 
 // --------------- OpenGL Stuff -----------------
 // Window settings
@@ -146,11 +168,47 @@ void ApplyHorizontalForce(void)
  //
  ///////////////////////////////////////////////////////////////////////////
 
- fprintf(stderr,"Current simulation state: time=%f, x=%f, theta=%f, force applied= ",st,x,theta);
+ // Physics stuff
+ dt = st - prev_st;
 
- F=0;
+ // Car
 
- fprintf(stderr,"%f\n",F);
+
+ v = (x - prev_x)/dt;
+
+ a = (v - prev_v)/dt;
+
+ // Stick **NEED TO FIND STICK'S HORIZONTAL VELOCITY**
+
+ fprintf(stderr, "ACCEL: %f ; VELOCITY: %f \n", a, v);
+ 
+ prev_v = v;
+ prev_x = x;
+
+ double F_from_movement = (m + m1)*a;
+
+ // PID stuff
+
+ double deg = theta * (180/PI);
+ dt = st - prev_st;
+ error = deg - set_point;
+
+ integral = integral + error * dt;
+ derivative = (error - prev_error)/dt;
+
+ double P = Kp * error;
+ double I = Ki * integral;
+ double D = Kd * derivative;
+
+ F = P + I + D - F_from_movement;
+ prev_error = error;
+
+ fprintf(stderr,"error=%f, P=%f, I=%f, D=%f\n", error, P, I, D);
+
+ //fprintf(stderr,"error=%f, P=%f, I=%f, D=%f \n", error, Kp*error, Ki*integral, Kd*derivative);
+ //fprintf(stderr,"Current simulation state: time=%f, x=%f, theta=%f, force applied= %f\n",st,x,deg, F);
+
+
  return;
 }
 
