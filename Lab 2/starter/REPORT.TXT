@@ -1,0 +1,65 @@
+CSC C85 - Lab #2
+
+Control systems implementation - Inverted pendulum
+_________________________________________________________
+
+Team name:
+
+Name 1 (last, first):
+Student number 1:
+
+Name 2 (last, first):
+Student number 2:
+
+Name 3 (last, first):
+Student number 3:
+
+(special - lose marks for not completing the information above)
+_________________________________________________________
+
+Questions:
+
+0) What are the input(s) and output(s) of the system? what is the
+   error signal you used to determine the force to be exerted by
+   your controller?
+
+1) What is the effect of m, m1, and l1 on the controllability of the
+    system? what are the range of values for these variables that
+    your controller can handle?
+ 
+2) How does your controller work? explain to me the way this function
+    decides how much force to apply. There should be a good reason for
+    doing things, i.e. trial and error won't work well and won't result
+    in a decent controller. Also, explain how you handled variations in
+    the model's parameters.
+
+3) What is the effect of the sampling period sp on the ability of your
+    code to control the pendulum?
+ 
+4) In an actual system, sp is typically a function of how long it takes
+    for the control software to do the required computations and update
+    all required variables. Given your answer to 3), do you think that
+    a standard operationg system such as desktop Linux or Windows are
+    suitable for running control software for critical systems?
+
+5) You can easily balance an inverted umbrella, broom, or similar object
+    on your hand. Do you think your brain builds a physical model of
+    the system and then solves equations to accomplish this? if no,
+    how do you think it manages to keep things balanced?
+________________________________________________________
+
+Grading:
+
+- Attending lab and working hard			-	/ 15
+- Programming solution						/ 60
+	* Stabilizing pendulum for simple task (40)
+	* Stabilizing pendulum for hard task (20)
+- Completed report and answers to the questions(25)		/25
+
+- Penalty marks (TA assigned)				-
+
+Total for Lab 3							/100	
+
+(*) This mark is conditional on every member of the team being able
+    to explain any aspect of the work when asked.
+
