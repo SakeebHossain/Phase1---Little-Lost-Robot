@@ -75,8 +75,17 @@ double dt = 0;
 
 
 double Kp = 1.0;     // Proportional Coefficients for PID controller
-double Ki = 1.0;     // Integral Coefficients for PID controller
-double Kd = 1.0;     // Derivative Coefficients for PID controller
+double Ki = 0.05;     // Integral Coefficients for PID controller
+double Kd = 10;     // Derivative Coefficients for PID controller
+
+/* WORKS FOR 20+
+
+double Kp = 1.0;     // Proportional Coefficients for PID controller
+double Ki = 0.05;     // Integral Coefficients for PID controller
+double Kd = 10;     // Derivative Coefficients for PID controller
+
+
+*/
 
 double integral, derivative = 0;  // Other stuff for PID controoler
 
@@ -172,16 +181,13 @@ void ApplyHorizontalForce(void)
  dt = st - prev_st;
 
  // Car
-
-
  v = (x - prev_x)/dt;
-
  a = (v - prev_v)/dt;
 
  // Stick **NEED TO FIND STICK'S HORIZONTAL VELOCITY**
-
  fprintf(stderr, "ACCEL: %f ; VELOCITY: %f \n", a, v);
- 
+
+ prev_st = st;
  prev_v = v;
  prev_x = x;
 
@@ -190,7 +196,6 @@ void ApplyHorizontalForce(void)
  // PID stuff
 
  double deg = theta * (180/PI);
- dt = st - prev_st;
  error = deg - set_point;
 
  integral = integral + error * dt;
@@ -200,10 +205,10 @@ void ApplyHorizontalForce(void)
  double I = Ki * integral;
  double D = Kd * derivative;
 
- F = P + I + D - F_from_movement;
+ F = P + I + D; //F_from_movement;
  prev_error = error;
 
- fprintf(stderr,"error=%f, P=%f, I=%f, D=%f\n", error, P, I, D);
+ fprintf(stderr,"error=%f, P=%f, I=%f, D=%f\n\n", error, P, I, D);
 
  //fprintf(stderr,"error=%f, P=%f, I=%f, D=%f \n", error, Kp*error, Ki*integral, Kd*derivative);
  //fprintf(stderr,"Current simulation state: time=%f, x=%f, theta=%f, force applied= %f\n",st,x,deg, F);
