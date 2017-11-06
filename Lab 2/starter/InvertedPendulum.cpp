@@ -78,7 +78,7 @@ double Kp = 1.0;     // Proportional Coefficients for PID controller
 double Ki = 0.05;     // Integral Coefficients for PID controller
 double Kd = 10;     // Derivative Coefficients for PID controller
 
-/* WORKS FOR 20+
+/* WORKS FOR 20+ 
 
 double Kp = 1.0;     // Proportional Coefficients for PID controller
 double Ki = 0.05;     // Integral Coefficients for PID controller
