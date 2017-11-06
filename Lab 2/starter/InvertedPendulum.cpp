@@ -75,10 +75,10 @@ double dt = 0;
 
 
 double Kp = 1.0;     // Proportional Coefficients for PID controller
-double Ki = 0.05;     // Integral Coefficients for PID controller
-double Kd = 10;     // Derivative Coefficients for PID controller
+double Ki = 0.00;     // Integral Coefficients for PID controller
+double Kd = 5/3 * l1 + 10/3;     // Derivative Coefficients for PID controller
 
-/* WORKS FOR 20+ 
+/* WORKS FOR 20+
 
 double Kp = 1.0;     // Proportional Coefficients for PID controller
 double Ki = 0.05;     // Integral Coefficients for PID controller
@@ -205,7 +205,7 @@ void ApplyHorizontalForce(void)
  double I = Ki * integral;
  double D = Kd * derivative;
 
- F = P + I + D; //F_from_movement;
+ F = (m + m1)/2 * (P + I + D); //F_from_movement;
  prev_error = error;
 
  fprintf(stderr,"error=%f, P=%f, I=%f, D=%f\n\n", error, P, I, D);
