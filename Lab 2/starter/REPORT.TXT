@@ -3,16 +3,16 @@ CSC C85 - Lab #2
 Control systems implementation - Inverted pendulum
 _________________________________________________________
 
-Team name:
+Team name: AWSHAW
 
-Name 1 (last, first):
-Student number 1:
+Name 1 (last, first): Watchorn, Adam
+Student number 1: 1000867788
 
-Name 2 (last, first):
-Student number 2:
+Name 2 (last, first): Wall, Alexander
+Student number 2: 999995037
 
-Name 3 (last, first):
-Student number 3:
+Name 3 (last, first): Hossain, Ahnaf
+Student number 3: 1001537483
 
 (special - lose marks for not completing the information above)
 _________________________________________________________
@@ -23,9 +23,30 @@ Questions:
    error signal you used to determine the force to be exerted by
    your controller?
 
+   The inputs are the angle of the pendulum, the position of the cart,
+   and the force applied to the cart. Our output is the force to
+   apply to the cart to bring the state closer to our desired state.
+   The error signal we used to determine the force our controller
+   exerts was the angle of the pendulum with respect to the vertical.
+
 1) What is the effect of m, m1, and l1 on the controllability of the
     system? what are the range of values for these variables that
     your controller can handle?
+
+    The value of m has a very minimal effect on the controllability of
+    our system based on its construction. Our controller uses m to compute
+    the force to apply. Our controller during testing was shown to act the
+    same when m = 1 as when m = 1000000, though there was a slight oscillation
+    when m = 1 that was not present for m = 1000000.
+
+    The value of m1 has a much greater effect on the controllability of
+    our system than m. With a steady m and an m1 of zero we experience oscillations.
+    A very high m1 of m1 = 100000 also caused oscillations, but much smaller ones.
+    With an m1 fairly close in value to m the oscillations go away. This is
+    likely due to our calculations.
+
+    The shorter l1 is the less control our controller has. This is only
+    really noticeable when l1 is less than 5.
  
 2) How does your controller work? explain to me the way this function
     decides how much force to apply. There should be a good reason for
@@ -33,19 +54,40 @@ Questions:
     in a decent controller. Also, explain how you handled variations in
     the model's parameters.
 
+    
+
 3) What is the effect of the sampling period sp on the ability of your
     code to control the pendulum?
+
+   The smaller the sampling period, the more often our controller can have
+   an affect on the system. When the sampling period becomes too large our
+   code has a harder and harder time controlling the pendulum before
+   eventually losing control completely. This is often because the pendulum
+   fails within the sampling period when our controller code is not active.
  
 4) In an actual system, sp is typically a function of how long it takes
     for the control software to do the required computations and update
     all required variables. Given your answer to 3), do you think that
-    a standard operationg system such as desktop Linux or Windows are
+    a standard operating system such as desktop Linux or Windows are
     suitable for running control software for critical systems?
+
+    We do not think standard operating systems would be suitable for running
+    control software for critical systems as they are not optimized for
+    extremely fast computations. A real-time operating system would be far
+    more suitable.
 
 5) You can easily balance an inverted umbrella, broom, or similar object
     on your hand. Do you think your brain builds a physical model of
     the system and then solves equations to accomplish this? if no,
     how do you think it manages to keep things balanced?
+
+    When it comes to balancing an object on our hand, our brain has a way of
+    detecting if the object is off balance, and would adjust accordingly. For
+    example, if we're balancing an umbrella, we would be able to feel if the
+    umbrella is toppling to the left by feeling the weight being distrubuted more
+    towards the left, rather than in the centre. We can then position our hand 
+    more to the left to get it balanced again. In a way, we don't compute equations
+    in our head, rather we have an algorithm to adjust if the balance is off.
 ________________________________________________________
 
 Grading:
