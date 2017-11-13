@@ -1,0 +1,92 @@
+CSC C85 - Lab 3 - Code Optimization
+_______________________________________________________________________
+
+Team name:
+
+Name 1 (last, first):
+Student number 1:
+
+Name 2 (last, first):
+Student number 2:
+
+If applicable:
+Name 3 (last, first):
+Student number 3:
+
+(Special: Lose marks for failing to complete the above)
+_______________________________________________________________________
+
+Questions:
+
+0) On the same computer, and with no other applications open:
+
+   - Run vanilla version, compiled as per the compile script (no compiler
+     optimization) and list: Vanilla (no compiler opt) FPS = 
+     
+   - Run your optimized code, compiled without compiler optimization
+     and list: Your Code (no compiler opt) FPS =
+
+   - Run vanilla code compiled with flag -O3 for compiler optimization
+     and list: Vanilla (compiler optimized) FPS =
+     
+   - Run your optimized code, compiled with flag -O3
+     and list: Your Code (compiler optimized) FPS =
+     
+     What is the ratio of your code (compiler optimized) to vanilla
+     with no compiler optimization?
+     
+     Ratio = Vanilla(no compiler opt) FPS / Your code(compiler optimized) FPS
+           =
+     
+a) Look at the profiler output for vanilla_imageRescale(). Identify the
+   lines that you think are un-necessary bottlenecks (i.e. lines whose
+   CPU usage can be reduced or eliminated by careful coding).
+
+   List these bottleneck lines in descending order (i.e. the ones that
+   consume most time at the top) of CPU time. Please list
+	- The actual line of code
+	- The amount of time taken
+	(you can copy/paste from the profiler output)
+
+   For each line, explain why the line creates a bottleneck (in terms
+   of what you know about CPU architecture). I want specific reasons
+   why a line you listed takes a large chunk of CPU time.
+
+b) For each of the lines in a)
+
+   Describe what you did in fast_imageRescale() to reduce/resolve the
+   problem.
+
+   Explain why your improvement should work (again, based on what you
+   know about CPU architecture).
+
+c) List any other optimizations you performed in your code and why they
+   help increase speed
+
+d) Is there any part of the vanilla code that could not be optimized
+   at all? if so, which?
+
+e) Do you think you have achieved close to optimal performance on this
+   code? (yes/no)
+
+f) If your answer to d) is no, what could you do to further increase
+   performance?
+
+______________________________________________________________________
+
+Grading
+
+Attending lab and working hard -         	 	/10
+
+Programming exercise
+	- Competitive performance of your code	 	/70	
+             Your FPS multiplier:     (Max:  )
+
+Answers in this report					/20
+
+Penalty marks (TA assigned)			  
+
+Total for First Lab Session:			   	/100 (*)
+
+(*) This mark is conditional to all team members being able to explain
+    any part of the work when questioned.
