@@ -145,42 +145,43 @@ double dx,dy, odx, ody;
 //dest=(unsigned char *)malloc(HD_Xres*HD_Yres*3);
 unsigned char *TA[4];
 double T[3];
-int m;
+//int m;
 
 unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int dest_x, int dest_y)
 { 
-  double step_x,step_y;			// Step increase as per instructions above
-  unsigned char *dest;
-  int x,y,ffx,ffy,cfx,cfy,dxbound;				// Coordinates on destination image
-  double fx,fy;				// Corresponding coordinates on source image
-  double dx,dy,odx,ody;				// Fractional component of source image coordinates
+//  double step_x,step_y;
+//  unsigned char *dest;
+//  int ffx,ffy,cfx,cfy;
+//  double fx,fy;
+//  double dx,dy,odx,ody;
  
-  m=dest_x*dest_y;
-  dest=(unsigned char *)malloc((m<<1)+m);
+  int m=dest_x*dest_y;
+  unsigned char *dest=(unsigned char *)malloc((m<<1)+m);
   if (!dest) return(NULL);					       // Unable to allocate image
  
 
-   step_x=(src_x-1)/(dest_x-1.0);                                
-   step_y=(src_y-1)/(dest_y-1.0);
-
-  dxbound=dest_x-3;
+  double step_x=(src_x-1.0)/(dest_x-1.0);
+  double step_y=(src_y-1.0)/(dest_y-1.0);
+  int dxbound=dest_x-3;
  
-  for (y=0;y<dest_y;y++)			// Loop over destination image
-   for (x=0;x<dxbound;)
-   {
-    fx=x*step_x;
-    ffx=fx;
-    cfx=ffx+(fx!=ffx);
-    dx=fx-ffx;
-    odx=1-dx;
+  for (int y=0;y<dest_y;y++) {
 
-    fy=y*step_y;
-    ffy=fy;
-    cfy=ffy+(fy!=ffy);
-    dy=fy-ffy;
-    ody=1-dy;
+
+    double fy=y*step_y;
+    int ffy=fy;
+    int cfy=ffy+(fy!=ffy);
+    double dy=fy-ffy;
+    double ody=1-dy;
     ffy*=src_x;
     cfy*=src_x;
+
+   for (int x=0;x<dxbound;)
+   {
+    double fx=x*step_x;
+    int ffx=fx;
+    int cfx=ffx+(fx!=ffx);
+    double dx=fx-ffx;
+    double odx=1-dx;
     
     TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
     TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
@@ -283,6 +284,7 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     x++;
 
    }
+  }
   return(dest);
 }
 
