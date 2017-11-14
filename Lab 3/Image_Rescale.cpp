@@ -167,16 +167,16 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
    for (y=0;y<dest_y;)
    {
     fx=x*step_x;
-    fy=y*step_y;
     ffx=fx;
-    ffy=fy;
     cfx=ffx+(fx!=ffx);
-    cfy=ffy+(fy!=ffy);
     dx=fx-ffx;
-    dy=fy-ffy;
     odx=1-dx;
-    ody=1-dy;
 
+    fy=y*step_y;
+    ffy=fy;
+    cfy=ffy+(fy!=ffy);
+    dy=fy-ffy;
+    ody=1-dy;
     ffy*=src_x;
     cfy*=src_x;
 
@@ -201,14 +201,10 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     y++;
 
     fy=y*step_y;
-
     ffy=fy;
-
     cfy=ffy+(fy!=ffy);
-    dx=fx-ffx;
     dy=fy-ffy;
     ody=1-dy;
-
     ffy*=src_x;
     cfy*=src_x;
 
@@ -232,16 +228,11 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     *(T1)=(unsigned char)(T[2]);
     y++;
 
-
     fy=y*step_y;
-
     ffy=fy;
-
     cfy=ffy+(fy!=ffy);
-    dx=fx-ffx;
     dy=fy-ffy;
     ody=1-dy;
-
     ffy*=src_x;
     cfy*=src_x;
 
@@ -265,16 +256,11 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     *(T1)=(unsigned char)(T[2]);
     y++;
 
-
     fy=y*step_y;
-
     ffy=fy;
-
     cfy=ffy+(fy!=ffy);
-    dx=fx-ffx;
     dy=fy-ffy;
     ody=1-dy;
-
     ffy*=src_x;
     cfy*=src_x;
 
@@ -300,7 +286,6 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
 
    }
   return(dest);
- //return(NULL);		// Comment out, and write your fast routine here!
 }
 
 /*****************************************************
