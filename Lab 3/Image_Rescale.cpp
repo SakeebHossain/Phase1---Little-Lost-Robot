@@ -143,28 +143,30 @@ double dx,dy, odx, ody;
 
 //unsigned char *dest=(unsigned char *)malloc(HD_Xres*HD_Yres*3);
 //dest=(unsigned char *)malloc(HD_Xres*HD_Yres*3);
-unsigned char *T1, *T2, *T3, *T4;
+unsigned char *TA[4];
 double T[3];
+int m;
 
 unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int dest_x, int dest_y)
 { 
   double step_x,step_y;			// Step increase as per instructions above
   unsigned char *dest;
-  int x,y,ffx,ffy,cfx,cfy;				// Coordinates on destination image
+  int x,y,ffx,ffy,cfx,cfy,dxbound;				// Coordinates on destination image
   double fx,fy;				// Corresponding coordinates on source image
   double dx,dy,odx,ody;				// Fractional component of source image coordinates
  
-  dest=(unsigned char *)malloc(dest_x*dest_y*3);
+  m=dest_x*dest_y;
+  dest=(unsigned char *)malloc((m<<1)+m);
   if (!dest) return(NULL);					       // Unable to allocate image
  
 
    step_x=(src_x-1)/(dest_x-1.0);                                
    step_y=(src_y-1)/(dest_y-1.0);
 
-  dest_y-=3;
+  dxbound=dest_x-3;
  
-  for (x=0;x<dest_x;x++)			// Loop over destination image
-   for (y=0;y<dest_y;)
+  for (y=0;y<dest_y;y++)			// Loop over destination image
+   for (x=0;x<dxbound;)
    {
     fx=x*step_x;
     ffx=fx;
@@ -179,110 +181,106 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     ody=1-dy;
     ffy*=src_x;
     cfy*=src_x;
-
-    T1=src+((ffx+ffy)*3);
-    T2=src+((cfx+ffy)*3);
-    T3=src+((ffx+cfy)*3);
-    T4=src+((cfx+cfy)*3);
-
-
-// dx*(*(T2++)-*(T1++)) + *(T1++)
-
-    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-
-
-    T1=dest+((x+(y*dest_x))*3);
-
-    *(T1++)=(unsigned char)(T[0]);
-    *(T1++)=(unsigned char)(T[1]);
-    *(T1)=(unsigned char)(T[2]);
-    y++;
-
-    fy=y*step_y;
-    ffy=fy;
-    cfy=ffy+(fy!=ffy);
-    dy=fy-ffy;
-    ody=1-dy;
-    ffy*=src_x;
-    cfy*=src_x;
-
-    T1=src+((ffx+ffy)*3);
-    T2=src+((cfx+ffy)*3);
-    T3=src+((ffx+cfy)*3);
-    T4=src+((cfx+cfy)*3);
+    
+    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
+    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
+    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
+    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
 
 
 // dx*(*(T2++)-*(T1++)) + *(T1++)
 
-    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[0]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[1]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[2]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
 
+    m=(x+(y*dest_x));
+    TA[3]=dest+((m<<1)+m);
+    *(TA[3]++)=T[0];
+    *(TA[3]++)=T[1];
+    *(TA[3])=T[2];
+    x++;
 
-    T1=dest+((x+(y*dest_x))*3);
+    fx=x*step_x;
+    ffx=fx;
+    cfx=ffx+(fx!=ffx);
+    dx=fx-ffx;
+    odx=1-dx;
 
-    *(T1++)=(unsigned char)(T[0]);
-    *(T1++)=(unsigned char)(T[1]);
-    *(T1)=(unsigned char)(T[2]);
-    y++;
-
-    fy=y*step_y;
-    ffy=fy;
-    cfy=ffy+(fy!=ffy);
-    dy=fy-ffy;
-    ody=1-dy;
-    ffy*=src_x;
-    cfy*=src_x;
-
-    T1=src+((ffx+ffy)*3);
-    T2=src+((cfx+ffy)*3);
-    T3=src+((ffx+cfy)*3);
-    T4=src+((cfx+cfy)*3);
+    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
+    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
+    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
+    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
 
 
 // dx*(*(T2++)-*(T1++)) + *(T1++)
 
-    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[0]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[1]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[2]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
 
+    m=(x+(y*dest_x));
+    TA[3]=dest+((m<<1)+m);
+    
+    m=T[0];
+    *(TA[3]++)=m;
+    m=T[1];
+    *(TA[3]++)=m;
+    m=T[2];
+    *(TA[3])=m;
+    x++;
 
-    T1=dest+((x+(y*dest_x))*3);
+    fx=x*step_x;
+    ffx=fx;
+    cfx=ffx+(fx!=ffx);
+    dx=fx-ffx;
+    odx=1-dx;
 
-    *(T1++)=(unsigned char)(T[0]);
-    *(T1++)=(unsigned char)(T[1]);
-    *(T1)=(unsigned char)(T[2]);
-    y++;
-
-    fy=y*step_y;
-    ffy=fy;
-    cfy=ffy+(fy!=ffy);
-    dy=fy-ffy;
-    ody=1-dy;
-    ffy*=src_x;
-    cfy*=src_x;
-
-    T1=src+((ffx+ffy)*3);
-    T2=src+((cfx+ffy)*3);
-    T3=src+((ffx+cfy)*3);
-    T4=src+((cfx+cfy)*3);
+    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
+    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
+    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
+    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
 
 
 // dx*(*(T2++)-*(T1++)) + *(T1++)
 
-    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
-    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[0]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[1]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[2]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+
+    m=(x+(y*dest_x));
+    TA[3]=dest+((m<<1)+m);
+    
+    *(TA[3]++)=T[0];
+    *(TA[3]++)=T[1];
+    *(TA[3])=T[2];
+    x++;
+
+    fx=x*step_x;
+    ffx=fx;
+    cfx=ffx+(fx!=ffx);
+    dx=fx-ffx;
+    odx=1-dx;
+
+    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
+    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
+    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
+    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
 
 
-    T1=dest+((x+(y*dest_x))*3);
+// dx*(*(T2++)-*(T1++)) + *(T1++)
 
-    *(T1++)=(unsigned char)(T[0]);
-    *(T1++)=(unsigned char)(T[1]);
-    *(T1)=(unsigned char)(T[2]);
-    y++;
+    T[0]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[1]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+    T[2]=(*(TA[0]++)*odx + *(TA[1]++)*dx)*ody + (*(TA[2]++)*odx + *(TA[3]++)*dx)*dy;
+
+    m=(x+(y*dest_x));
+    TA[3]=dest+((m<<1)+m);
+
+    *(TA[3]++)=T[0];
+    *(TA[3]++)=T[1];
+    *(TA[3])=T[2];
+    x++;
 
    }
   return(dest);
