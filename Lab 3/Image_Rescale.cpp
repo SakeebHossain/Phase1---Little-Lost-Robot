@@ -145,6 +145,7 @@ double dx,dy, odx, ody;
 //dest=(unsigned char *)malloc(HD_Xres*HD_Yres*3);
 unsigned char *TA[4];
 double T[3];
+int a,b,c,d;
 //int m;
 
 unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int dest_x, int dest_y)
@@ -167,26 +168,30 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
   for (int y=0;y<dest_y;y++) {
 
 
-    double fy=y*step_y;
-    int ffy=fy;
-    int cfy=ffy+(fy!=ffy);
-    double dy=fy-ffy;
+    double dy=y*step_y;
+    int ffy=dy;
+    int cfy=dy+0.99999;
+    cfy*=src_x;
+    dy-=ffy;
     double ody=1-dy;
     ffy*=src_x;
-    cfy*=src_x;
 
    for (int x=0;x<dxbound;)
    {
-    double fx=x*step_x;
-    int ffx=fx;
-    int cfx=ffx+(fx!=ffx);
-    double dx=fx-ffx;
+    double dx=x*step_x;
+    int ffx=dx;
+    a=ffx+ffy;
+    int cfx=dx+0.99999;
+    dx-=ffx;
+    b=cfx+ffy;
+    d=cfx+cfy;
+    c=ffx+cfy;
     double odx=1-dx;
-    
-    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
-    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
-    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
-    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
+
+    TA[0]=src+(((a)<<1)+(a));
+    TA[1]=src+(((b)<<1)+(b));
+    TA[2]=src+(((c)<<1)+(c));
+    TA[3]=src+(((d)<<1)+(d));
 
 
 // dx*(*(T2++)-*(T1++)) + *(T1++)
@@ -202,16 +207,24 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     *(TA[3])=T[2];
     x++;
 
-    fx=x*step_x;
-    ffx=fx;
-    cfx=ffx+(fx!=ffx);
-    dx=fx-ffx;
+    dx=x*step_x;
+    ffx=dx;
+    a=ffx+ffy;
+    cfx=dx+0.99999;
+    dx-=ffx;
+    b=cfx+ffy;
+    d=cfx+cfy;
+    c=ffx+cfy;
     odx=1-dx;
 
-    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
-    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
-    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
-    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
+
+
+
+
+    TA[0]=src+(((a)<<1)+(a));
+    TA[1]=src+(((b)<<1)+(b));
+    TA[2]=src+(((c)<<1)+(c));
+    TA[3]=src+(((d)<<1)+(d));
 
 
 // dx*(*(T2++)-*(T1++)) + *(T1++)
@@ -231,16 +244,20 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     *(TA[3])=m;
     x++;
 
-    fx=x*step_x;
-    ffx=fx;
-    cfx=ffx+(fx!=ffx);
-    dx=fx-ffx;
+    dx=x*step_x;
+    ffx=dx;
+    a=ffx+ffy;
+    cfx=dx+0.99999;
+    dx-=ffx;
+    b=cfx+ffy;
+    d=cfx+cfy;
+    c=ffx+cfy;
     odx=1-dx;
 
-    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
-    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
-    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
-    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
+    TA[0]=src+(((a)<<1)+(a));
+    TA[1]=src+(((b)<<1)+(b));
+    TA[2]=src+(((c)<<1)+(c));
+    TA[3]=src+(((d)<<1)+(d));
 
 
 // dx*(*(T2++)-*(T1++)) + *(T1++)
@@ -257,16 +274,20 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     *(TA[3])=T[2];
     x++;
 
-    fx=x*step_x;
-    ffx=fx;
-    cfx=ffx+(fx!=ffx);
-    dx=fx-ffx;
+    dx=x*step_x;
+    ffx=dx;
+    a=ffx+ffy;
+    cfx=dx+0.99999;
+    dx-=ffx;
+    b=cfx+ffy;
+    d=cfx+cfy;
+    c=ffx+cfy;
     odx=1-dx;
 
-    TA[0]=src+(((ffx+ffy)<<1)+(ffx+ffy));
-    TA[1]=src+(((cfx+ffy)<<1)+(cfx+ffy));
-    TA[2]=src+(((ffx+cfy)<<1)+(ffx+cfy));
-    TA[3]=src+(((cfx+cfy)<<1)+(cfx+cfy));
+    TA[0]=src+(((a)<<1)+(a));
+    TA[1]=src+(((b)<<1)+(b));
+    TA[2]=src+(((c)<<1)+(c));
+    TA[3]=src+(((d)<<1)+(d));
 
 
 // dx*(*(T2++)-*(T1++)) + *(T1++)
