@@ -1,17 +1,17 @@
 CSC C85 - Lab 3 - Code Optimization
 _______________________________________________________________________
 
-Team name:
+Team name: AWSHAW
 
-Name 1 (last, first):
-Student number 1:
+Name 1 (last, first): Watchorn, Adam
+Student number 1: 1000867788
 
-Name 2 (last, first):
-Student number 2:
+Name 2 (last, first): Wall, Alexander
+Student number 2: 999995037
 
 If applicable:
-Name 3 (last, first):
-Student number 3:
+Name 3 (last, first): Hossain, Ahnaf
+Student number 3: 1001537483
 
 (Special: Lose marks for failing to complete the above)
 _______________________________________________________________________
@@ -21,22 +21,22 @@ Questions:
 0) On the same computer, and with no other applications open:
 
    - Run vanilla version, compiled as per the compile script (no compiler
-     optimization) and list: Vanilla (no compiler opt) FPS = 
+     optimization) and list: Vanilla (no compiler opt) FPS = 4.733333
      
    - Run your optimized code, compiled without compiler optimization
-     and list: Your Code (no compiler opt) FPS =
+     and list: Your Code (no compiler opt) FPS = 8.066667
 
    - Run vanilla code compiled with flag -O3 for compiler optimization
-     and list: Vanilla (compiler optimized) FPS =
+     and list: Vanilla (compiler optimized) FPS = 9.400000
      
    - Run your optimized code, compiled with flag -O3
-     and list: Your Code (compiler optimized) FPS =
+     and list: Your Code (compiler optimized) FPS = 14.000000
      
      What is the ratio of your code (compiler optimized) to vanilla
-     with no compiler optimization?
+     with no compiler optimization? 1.489362
      
      Ratio = Vanilla(no compiler opt) FPS / Your code(compiler optimized) FPS
-           =
+           = 0.338095214
      
 a) Look at the profiler output for vanilla_imageRescale(). Identify the
    lines that you think are un-necessary bottlenecks (i.e. lines whose
@@ -52,6 +52,16 @@ a) Look at the profiler output for vanilla_imageRescale(). Identify the
    of what you know about CPU architecture). I want specific reasons
    why a line you listed takes a large chunk of CPU time.
 
+   - getPixel: lines: 473 - 476 (10.98%)
+         Uses a function call which requires two jumps
+   - setPixel: line: 489        (2.79%)
+         Uses a function call which requires two jumps
+   - ceil: lines: 473 - 476     (0.4%)
+         Uses a function call which requires two jumps
+   - floor lines: 473 - 476     (0.4%)
+         Uses a function call which requires two jumps
+   
+
 b) For each of the lines in a)
 
    Describe what you did in fast_imageRescale() to reduce/resolve the
@@ -60,18 +70,40 @@ b) For each of the lines in a)
    Explain why your improvement should work (again, based on what you
    know about CPU architecture).
 
+   For both getPixel and setPixel, we put the lines of code in the function to eliminate unnecessary
+   jumps. For floor and ceiling functions, we calculated manually also to eliminate jumps.
+
 c) List any other optimizations you performed in your code and why they
    help increase speed
+
+   We unrolled the inner loop so it will limit jumps. We used bit shifting and adding to reduce
+   multiplication cost. We used arrays rather than lots of variables to make memory access more
+   sequential. We also eliminated the need for more variables by making computations with variables
+   we already had. We also reduced the number of casts to prevent more unnecessary memory consumption.
+   Added more variables globally so that they wouldn't be on the stack and could reduce the amount of
+   computations we did. We used malloc instead of calloc as malloc is faster. We swapped the loops in 
+   order to access the image array in sequential order. We assigned variables when they were 
+   instantiated as much as possible to reduce the lines of code and variable lookups. Took as few
+   lines as possible to complete our computations.
 
 d) Is there any part of the vanilla code that could not be optimized
    at all? if so, which?
 
+   There were computations regarding the interpolated colour values that required multiplications by
+   (1-variable) of a variable we already had. Algebra could simplify these calculations but we found
+   that the image produced would be different on a binary level by doing so. Other small algebra 
+   tricks for small increments here and there had similar issues.
+
 e) Do you think you have achieved close to optimal performance on this
    code? (yes/no)
 
-f) If your answer to d) is no, what could you do to further increase
+   No
+
+f) If your answer to e) is no, what could you do to further increase
    performance?
 
+   It is unclear what more we could do to improve our code except for rewriting the algorithm 
+   altogether and replacing it with a better one.
 ______________________________________________________________________
 
 Grading
