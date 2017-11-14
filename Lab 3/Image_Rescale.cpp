@@ -127,34 +127,44 @@ void imageOutput(unsigned char *im, int sx, int sy, const char *name);
 **  step that differs from the vanilla version WHY
 **  your version should be faster.
 *****************************************************/
+/*
+double step_x, step_y;
+unsigned char R1,R2,R3,R4;
+unsigned char G1,G2,G3,G4;
+unsigned char B1,B2,B3,B4;
+double RT1, GT1, BT1;
+double RT2, GT2, BT2;
+unsigned char R,G,B;
+unsigned char *dst, *T1;
+int x,y,ffx,ffy,cfx,cfy, dxbound, dybound;
+double fx,fy;
+double dx,dy, odx, ody;
+*/
+
+//unsigned char *dest=(unsigned char *)malloc(HD_Xres*HD_Yres*3);
+//dest=(unsigned char *)malloc(HD_Xres*HD_Yres*3);
+unsigned char *T1, *T2, *T3, *T4;
+double T[3];
 
 unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int dest_x, int dest_y)
 { 
   double step_x,step_y;			// Step increase as per instructions above
-  unsigned char R1,R2,R3,R4;		// Colours at the four neighbours
-  unsigned char G1,G2,G3,G4;
-  unsigned char B1,B2,B3,B4;
-  double RT1, GT1, BT1;			// Interpolated colours at T1 and T2
-  double RT2, GT2, BT2;
-  unsigned char R,G,B;			// Final colour at a destination pixel
-  unsigned char *dst, *ncolor;			// Destination image - must be allocated here! 
-  int x,y,ffx,ffy,cfx,cfy, dxbound, dybound;				// Coordinates on destination image
+  unsigned char *dest;
+  int x,y,ffx,ffy,cfx,cfy;				// Coordinates on destination image
   double fx,fy;				// Corresponding coordinates on source image
-  double dx,dy, odx, ody;				// Fractional component of source image coordinates
+  double dx,dy,odx,ody;				// Fractional component of source image coordinates
  
-  dst=(unsigned char *)malloc(dest_x*dest_y*3);   // Allocate and clear destination image
-  if (!dst) return(NULL);					       // Unable to allocate image
+  dest=(unsigned char *)malloc(dest_x*dest_y*3);
+  if (!dest) return(NULL);					       // Unable to allocate image
  
-  // step_x=(src_x-1)/(double)(dest_x-1);
-  // step_y=(src_y-1)/(double)(dest_y-1);
 
-   step_x=(src_x-1)/(dest_x-1.0);
+   step_x=(src_x-1)/(dest_x-1.0);                                
    step_y=(src_y-1)/(dest_y-1.0);
-   dxbound=dest_x;
-   dybound=dest_y-3;
+
+  dest_y-=3;
  
   for (x=0;x<dest_x;x++)			// Loop over destination image
-   for (y=0;y<dybound;)
+   for (y=0;y<dest_y;)
    {
     fx=x*step_x;
     fy=y*step_y;
@@ -164,183 +174,132 @@ unsigned char *fast_rescaleImage(unsigned char *src, int src_x, int src_y, int d
     cfy=ffy+(fy!=ffy);
     dx=fx-ffx;
     dy=fy-ffy;
-    //getPixel(src,(int)floor(fx),(int)floor(fy),src_x,&R1,&G1,&B1);	// get N1 colours
-    ncolor=src+((ffx+(ffy*src_x))*3);
-    R1=*(ncolor++);
-    G1=*(ncolor++);
-    B1=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)floor(fy),src_x,&R2,&G2,&B2);	// get N2 colours
-    ncolor=src+((cfx+(ffy*src_x))*3);
-    R2=*(ncolor++);
-    G2=*(ncolor++);
-    B2=*(ncolor);
-    //getPixel(src,(int)floor(fx),(int)ceil(fy),src_x,&R3,&G3,&B3);	// get N3 colours
-    ncolor=src+((ffx+(cfy*src_x))*3);
-    R3=*(ncolor++);
-    G3=*(ncolor++);
-    B3=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)ceil(fy),src_x,&R4,&G4,&B4);	// get N4 colours
-    ncolor=src+((cfx+(cfy*src_x))*3);
-    R4=*(ncolor++);
-    G4=*(ncolor++);
-    B4=*(ncolor);
     odx=1-dx;
     ody=1-dy;
-    // Interpolate to get T1 and T2 colours
-    RT1=(dx*R2)+(odx)*R1;
-    GT1=(dx*G2)+(odx)*G1;
-    BT1=(dx*B2)+(odx)*B1;
-    RT2=(dx*R4)+(odx)*R3;
-    GT2=(dx*G4)+(odx)*G3;
-    BT2=(dx*B4)+(odx)*B3;
-    // Obtain final colour by interpolating between T1 and T2
-    R=(unsigned char)((dy*RT2)+((ody)*RT1));
-    G=(unsigned char)((dy*GT2)+((ody)*GT1));
-    B=(unsigned char)((dy*BT2)+((ody)*BT1));
-    // Store the final colour
-    //setPixel(dst,x,y,dest_x,R,G,B);
-    ncolor=dst+((x+(y*dest_x))*3);
-    *(ncolor++)=R;
-    *(ncolor++)=G;
-    *(ncolor)=B;
+
+    ffy*=src_x;
+    cfy*=src_x;
+
+    T1=src+((ffx+ffy)*3);
+    T2=src+((cfx+ffy)*3);
+    T3=src+((ffx+cfy)*3);
+    T4=src+((cfx+cfy)*3);
+
+
+// dx*(*(T2++)-*(T1++)) + *(T1++)
+
+    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+
+
+    T1=dest+((x+(y*dest_x))*3);
+
+    *(T1++)=(unsigned char)(T[0]);
+    *(T1++)=(unsigned char)(T[1]);
+    *(T1)=(unsigned char)(T[2]);
     y++;
 
     fy=y*step_y;
+
     ffy=fy;
+
     cfy=ffy+(fy!=ffy);
+    dx=fx-ffx;
     dy=fy-ffy;
-    //getPixel(src,(int)floor(fx),(int)floor(fy),src_x,&R1,&G1,&B1);	// get N1 colours
-    ncolor=src+((ffx+(ffy*src_x))*3);
-    R1=*(ncolor++);
-    G1=*(ncolor++);
-    B1=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)floor(fy),src_x,&R2,&G2,&B2);	// get N2 colours
-    ncolor=src+((cfx+(ffy*src_x))*3);
-    R2=*(ncolor++);
-    G2=*(ncolor++);
-    B2=*(ncolor);
-    //getPixel(src,(int)floor(fx),(int)ceil(fy),src_x,&R3,&G3,&B3);	// get N3 colours
-    ncolor=src+((ffx+(cfy*src_x))*3);
-    R3=*(ncolor++);
-    G3=*(ncolor++);
-    B3=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)ceil(fy),src_x,&R4,&G4,&B4);	// get N4 colours
-    ncolor=src+((cfx+(cfy*src_x))*3);
-    R4=*(ncolor++);
-    G4=*(ncolor++);
-    B4=*(ncolor);
-    odx=1-dx;
     ody=1-dy;
-    // Interpolate to get T1 and T2 colours
-    RT1=(dx*R2)+(odx)*R1;
-    GT1=(dx*G2)+(odx)*G1;
-    BT1=(dx*B2)+(odx)*B1;
-    RT2=(dx*R4)+(odx)*R3;
-    GT2=(dx*G4)+(odx)*G3;
-    BT2=(dx*B4)+(odx)*B3;
-    // Obtain final colour by interpolating between T1 and T2
-    R=(unsigned char)((dy*RT2)+((ody)*RT1));
-    G=(unsigned char)((dy*GT2)+((ody)*GT1));
-    B=(unsigned char)((dy*BT2)+((ody)*BT1));
-    // Store the final colour
-    //setPixel(dst,x,y,dest_x,R,G,B);
-    ncolor=dst+((x+(y*dest_x))*3);
-    *(ncolor++)=R;
-    *(ncolor++)=G;
-    *(ncolor)=B;
+
+    ffy*=src_x;
+    cfy*=src_x;
+
+    T1=src+((ffx+ffy)*3);
+    T2=src+((cfx+ffy)*3);
+    T3=src+((ffx+cfy)*3);
+    T4=src+((cfx+cfy)*3);
+
+
+// dx*(*(T2++)-*(T1++)) + *(T1++)
+
+    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+
+
+    T1=dest+((x+(y*dest_x))*3);
+
+    *(T1++)=(unsigned char)(T[0]);
+    *(T1++)=(unsigned char)(T[1]);
+    *(T1)=(unsigned char)(T[2]);
     y++;
 
-    fy=y*step_y;
-    ffy=fy;
-    cfy=ffy+(fy!=ffy);
-    dy=fy-ffy;
-    //getPixel(src,(int)floor(fx),(int)floor(fy),src_x,&R1,&G1,&B1);	// get N1 colours
-    ncolor=src+((ffx+(ffy*src_x))*3);
-    R1=*(ncolor++);
-    G1=*(ncolor++);
-    B1=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)floor(fy),src_x,&R2,&G2,&B2);	// get N2 colours
-    ncolor=src+((cfx+(ffy*src_x))*3);
-    R2=*(ncolor++);
-    G2=*(ncolor++);
-    B2=*(ncolor);
-    //getPixel(src,(int)floor(fx),(int)ceil(fy),src_x,&R3,&G3,&B3);	// get N3 colours
-    ncolor=src+((ffx+(cfy*src_x))*3);
-    R3=*(ncolor++);
-    G3=*(ncolor++);
-    B3=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)ceil(fy),src_x,&R4,&G4,&B4);	// get N4 colours
-    ncolor=src+((cfx+(cfy*src_x))*3);
-    R4=*(ncolor++);
-    G4=*(ncolor++);
-    B4=*(ncolor);
-    odx=1-dx;
-    ody=1-dy;
-    // Interpolate to get T1 and T2 colours
-    RT1=(dx*R2)+(odx)*R1;
-    GT1=(dx*G2)+(odx)*G1;
-    BT1=(dx*B2)+(odx)*B1;
-    RT2=(dx*R4)+(odx)*R3;
-    GT2=(dx*G4)+(odx)*G3;
-    BT2=(dx*B4)+(odx)*B3;
-    // Obtain final colour by interpolating between T1 and T2
-    R=(unsigned char)((dy*RT2)+((ody)*RT1));
-    G=(unsigned char)((dy*GT2)+((ody)*GT1));
-    B=(unsigned char)((dy*BT2)+((ody)*BT1));
-    // Store the final colour
-    //setPixel(dst,x,y,dest_x,R,G,B);
-    ncolor=dst+((x+(y*dest_x))*3);
-    *(ncolor++)=R;
-    *(ncolor++)=G;
-    *(ncolor)=B;
-    y++;
 
     fy=y*step_y;
+
     ffy=fy;
+
     cfy=ffy+(fy!=ffy);
+    dx=fx-ffx;
     dy=fy-ffy;
-    //getPixel(src,(int)floor(fx),(int)floor(fy),src_x,&R1,&G1,&B1);	// get N1 colours
-    ncolor=src+((ffx+(ffy*src_x))*3);
-    R1=*(ncolor++);
-    G1=*(ncolor++);
-    B1=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)floor(fy),src_x,&R2,&G2,&B2);	// get N2 colours
-    ncolor=src+((cfx+(ffy*src_x))*3);
-    R2=*(ncolor++);
-    G2=*(ncolor++);
-    B2=*(ncolor);
-    //getPixel(src,(int)floor(fx),(int)ceil(fy),src_x,&R3,&G3,&B3);	// get N3 colours
-    ncolor=src+((ffx+(cfy*src_x))*3);
-    R3=*(ncolor++);
-    G3=*(ncolor++);
-    B3=*(ncolor);
-    //getPixel(src,(int)ceil(fx),(int)ceil(fy),src_x,&R4,&G4,&B4);	// get N4 colours
-    ncolor=src+((cfx+(cfy*src_x))*3);
-    R4=*(ncolor++);
-    G4=*(ncolor++);
-    B4=*(ncolor);
-    odx=1-dx;
     ody=1-dy;
-    // Interpolate to get T1 and T2 colours
-    RT1=(dx*R2)+(odx)*R1;
-    GT1=(dx*G2)+(odx)*G1;
-    BT1=(dx*B2)+(odx)*B1;
-    RT2=(dx*R4)+(odx)*R3;
-    GT2=(dx*G4)+(odx)*G3;
-    BT2=(dx*B4)+(odx)*B3;
-    // Obtain final colour by interpolating between T1 and T2
-    R=(unsigned char)((dy*RT2)+((ody)*RT1));
-    G=(unsigned char)((dy*GT2)+((ody)*GT1));
-    B=(unsigned char)((dy*BT2)+((ody)*BT1));
-    // Store the final colour
-    //setPixel(dst,x,y,dest_x,R,G,B);
-    ncolor=dst+((x+(y*dest_x))*3);
-    *(ncolor++)=R;
-    *(ncolor++)=G;
-    *(ncolor)=B;
+
+    ffy*=src_x;
+    cfy*=src_x;
+
+    T1=src+((ffx+ffy)*3);
+    T2=src+((cfx+ffy)*3);
+    T3=src+((ffx+cfy)*3);
+    T4=src+((cfx+cfy)*3);
+
+
+// dx*(*(T2++)-*(T1++)) + *(T1++)
+
+    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+
+
+    T1=dest+((x+(y*dest_x))*3);
+
+    *(T1++)=(unsigned char)(T[0]);
+    *(T1++)=(unsigned char)(T[1]);
+    *(T1)=(unsigned char)(T[2]);
     y++;
+
+
+    fy=y*step_y;
+
+    ffy=fy;
+
+    cfy=ffy+(fy!=ffy);
+    dx=fx-ffx;
+    dy=fy-ffy;
+    ody=1-dy;
+
+    ffy*=src_x;
+    cfy*=src_x;
+
+    T1=src+((ffx+ffy)*3);
+    T2=src+((cfx+ffy)*3);
+    T3=src+((ffx+cfy)*3);
+    T4=src+((cfx+cfy)*3);
+
+
+// dx*(*(T2++)-*(T1++)) + *(T1++)
+
+    T[0]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[1]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+    T[2]=(*(T1++)*odx + *(T2++)*dx)*ody + (*(T3++)*odx + *(T4++)*dx)*dy;
+
+
+    T1=dest+((x+(y*dest_x))*3);
+
+    *(T1++)=(unsigned char)(T[0]);
+    *(T1++)=(unsigned char)(T[1]);
+    *(T1)=(unsigned char)(T[2]);
+    y++;
+
    }
-  return(dst);
+  return(dest);
  //return(NULL);		// Comment out, and write your fast routine here!
 }
 
