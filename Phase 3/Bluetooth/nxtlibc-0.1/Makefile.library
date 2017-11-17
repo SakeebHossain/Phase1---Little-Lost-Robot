@@ -1,0 +1,60 @@
+CC          = gcc
+RM          = rm -f
+CP          = cp -f
+
+#
+# flags
+#
+# CPPFLAGS    = -DDEBUG 
+CFLAGS      = -g -Wall
+#INCLUDES    = `gtk-config --cflags`
+INCLUDES    = 
+LDFLAGS     =  
+LIBRARIES   = -lbluetooth -lm
+VERSION  = 0.1
+DESTLIBDIR=/usr/lib
+DESTINCDIR=/usr/include/nxtlibc
+
+#
+# file defs
+#
+SOURCE_nxt  = \
+	bluetooth.c misc.c nxt.c file.c poll.c motors.c \
+	sensors.c sensors-ls.c iomap.c screen.c msg.c file-linear.c motorControl.c
+OBJECT_nxt  = $(SOURCE_nxt:.c=.o)
+SOURCES     = $(SOURCE_nxt)
+
+
+#
+# targets
+#
+default: all
+
+all: libnxtlibc.a libnxtlibc.so
+
+clean:
+	$(RM) libnxtlibc.a libnxtlibc.so.$(VERSION)
+	$(RM) *.o
+	unlink $(DESTLIBDIR)/libnxtlibc.so
+	$(RM) $(DESTLIBDIR)/libnxtlibc.a
+	$(RM) $(DESTLIBDIR)/libnxtlibc.so.$(VERSION)
+	$(RM) $(DESTINCDIR)/nxtlibc.h
+
+.c.o:
+	$(CC) $(CPPFLAGS) -g -c -Wall -fPIC $< 2>/dev/null
+
+libnxtlibc.a: $(OBJECT_nxt)
+	ar rc $@ $(OBJECT_nxt)
+
+libnxtlibc.so: $(OBJECT_nxt)
+	$(CC) -shared -o $@.$(VERSION) $(OBJECT_nxt)
+
+install: libnxtlibc.a libnxtlibc.so
+	[ -d $(DESTLIBDIR) ] || \
+	(mkdir -p $(DESTLIBDIR); chmod 755 $(DESTLIBDIR))
+	cp libnxtlibc.a $(DESTLIBDIR)
+	cp libnxtlibc.so.$(VERSION) $(DESTLIBDIR)
+	ln -s $(DESTLIBDIR)/libnxtlibc.so.$(VERSION) $(DESTLIBDIR)/libnxtlibc.so
+	[ -d $(DESTINCDIR) ] || \
+	(mkdir -p $(DESTINCDIR); chmod 755 $(DESTINCDIR))
+	cp nxtlibc.h $(DESTINCDIR)

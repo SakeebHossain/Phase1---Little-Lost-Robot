@@ -1,0 +1,819 @@
+<head>
+<style type="text/css" media="screen">
+.synopsis, .classsynopsis 
+{
+  background: #eeeeee;
+  border: solid 1px #aaaaaa;
+  padding: 0.5em;
+}
+.programlisting 
+{
+  background: #eeeeff;
+  border: solid 1px #aaaaff;
+  padding: 0.5em;
+}
+.variablelist 
+{
+  padding: 4px;
+  margin-left: 3em;
+}
+.variablelist td:first-child
+{
+  vertical-align: top;
+}
+/* this is needed so that the local anchors are displayed below the naviagtion */
+div.refnamediv a[name], div.refsect1 a[name]
+{
+  position: relative;
+  top: -4.5em;
+}
+table.navigation#top
+{
+  background: #ffeeee;
+  border: solid 1px #ffaaaa;
+  margin-top: 0;
+  margin-bottom: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2em;
+  z-index: 1;
+}
+.navigation a 
+{
+  color: #770000;
+}
+.navigation a:visited 
+{
+  color: #550000;
+}
+.navigation .title 
+{
+  font-size: 200%;
+}
+td.shortcuts
+{
+  color: #770000;
+  font-size: 80%;
+}
+
+div.refentry, div.chapter, div.part, div.book, div.index, div.glossary, div.sect1, div.appendix, div.preface
+{
+  position: relative;
+  top: 3em;
+  z-index: 0;
+}
+div.refnamediv 
+{
+  margin-top: 2em;
+}
+div.gallery-float 
+{
+  float: left;
+  padding: 10px;
+}
+div.gallery-float img 
+{
+  border-style: none;
+}
+div.gallery-spacer 
+{
+  clear: both;
+}
+a
+{
+  text-decoration: none;
+}
+a:hover
+{
+  text-decoration: underline;
+  color: #FF0000;
+}
+
+div.table table
+{
+  border-collapse: collapse;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #777777;
+  border-width: 1px;
+}
+
+div.table table td, div.table table th
+{
+  border-style: solid;
+  border-color: #777777;
+  border-width: 1px;
+  padding: 3px;
+  vertical-align: top;
+}
+
+div.table table th
+{
+  background-color: #eeeeee;
+}
+</style>
+</head>
+<body>
+<table id="top" width="100%" class="navigation">
+<tr valign="middle">
+<th width="100%" align="center">
+nxtlibc 0.1 api reference manual
+</th>
+</tr>
+</table>
+<br />
+<br />
+<h2>Synopsis</h2>
+<pre class="synopsis">
+#include &lt;nxtlibc.h&gt;
+
+int		<a href="#nxt_bluetooth_initialize">nxt_bluetooth_initialize(char *)</a>
+void		<a href="#nxt_bluetooth_done">nxt_bluetooth_done()</a>
+int		<a href="#get_battery_level">get_battery_level()</a>
+char *		<a href="#get_firmware_version">get_firmware_version()</a>
+int		<a href="#get_bluetooth_signal_strength">get_bluetooth_signal_strength()</a>
+int		<a href="#start_program">start_program(char *)</a>
+int		<a href="#stop_program">stop_program()</a>
+int		<a href="#play_sound_file">play_sound_file(int, char *)</a>
+int		<a href="#stop_sound_playback">stop_sound_playback()</a>
+int		<a href="#play_tone">play_tone(short int, short int)</a>
+int		<a href="#keep_alive">keep_alive()</a>
+int		<a href="#set_brick_name">set_brick_name(char *)</a>
+int		<a href="#delete_user_flash">delete_user_flash()</a>
+
+int 		<a href="#list_files">list_files(char *)</a>
+int		<a href="#read_file">read_file(char *, char **, int *)</a>
+int		<a href="#write_file">write_file(int, char *, char *, int)</a>
+int		<a href="#delete_file">delete_file(char *)</a>
+int		<a href="#open_read_linear">open_read_linear(char *)</a>
+
+int		<a href="#clear_screen">clear_screen()</a>
+int		<a href="#draw_pixel">draw_pixel(unsigned char, unsigned char)</a>
+int		<a href="#clear_pixel">clear_pixel(unsigned char, unsigned char)</a>
+int		<a href="#draw_line">draw_line(unsigned char, unsigned char, unsigned char, unsigned char)</a>
+
+int		<a href="#_set_output_state">_set_output_state(unsigned char, signed char, unsigned char,
+		unsigned char, signed char, unsigned char, unsigned long)</a>
+int		<a href="#_get_output_state">_get_output_state(unsigned char, signed char *, unsigned char *,
+		unsigned char *, signed char *, unsigned char *,
+		unsigned long *, int *, int *, int *)</a>
+int		<a href="#reset_motor_position">reset_motor_position(unsigned char, unsigned char)</a>
+
+void		<a href="#set_touch_sensor">set_touch_sensor(unsigned char)</a>
+void		<a href="#set_sound_sensor">set_sound_sensor(unsigned char)</a>
+void		<a href="#set_light_sensor">set_light_sensor(unsigned char)</a>
+void		<a href="#set_ultrasonic_sensor">set_ultrasonic_sensor(unsigned char)</a>
+int		<a href="#reset_input_scaled_value">reset_input_scaled_value(unsigned char)</a>
+int		<a href="#get_touch_value">get_touch_value()</a>
+int		<a href="#get_sound_db_pct">get_sound_db_pct()</a>
+int		<a href="#get_sound_db_scale">get_sound_db_scale()</a>
+int		<a href="#get_sound_dba_pct">get_sound_dba_pct()</a>
+int		<a href="#get_sound_dba_scale">get_sound_dba_scale()</a>
+int		<a href="#get_light_active_pct">get_light_active_pct()</a>
+int		<a href="#get_light_active_scale">get_light_active_scale()</a>
+int		<a href="#get_light_ambient_pct">get_light_ambient_pct()</a>
+int		<a href="#get_light_ambient_scale">get_light_ambient_scale()</a>
+int		<a href="#get_light_reflection">get_light_reflection()</a>
+
+int		<a href="#initialize_ultrasonic_sensor">initialize_ultrasonic_sensor()</a>
+int		<a href="#get_ultrasonic_measurement_units">get_ultrasonic_measurement_units()</a>
+int		<a href="#get_ultrasonic_measurement_byte">get_ultrasonic_measurement_byte(unsigned char byte)</a>
+int		<a href="#get_ultrasonic_continuous_measurement_interval">get_ultrasonic_continuous_measurement_interval()</a>
+int		<a href="#get_ultrasonic_read_command_state">get_ultrasonic_read_command_state()</a>
+int		<a href="#get_ultrasonic_actual_zero">get_ultrasonic_actual_zero()</a>
+int		<a href="#get_ultrasonic_actual_scale_factor">get_ultrasonic_actual_scale_factor()</a>
+int		<a href="#get_ultrasonic_actual_scale_divisor">get_ultrasonic_actual_scale_divisor()</a>
+int		<a href="#set_ultrasonic_single_shot">set_ultrasonic_single_shot()</a>
+int		<a href="#set_ultrasonic_continuous_measurement">set_ultrasonic_continuous_measurement()</a>
+int		<a href="#set_ultrasonic_event_capture_mode">set_ultrasonic_event_capture_mode()</a>
+int		<a href="#ultrasonic_request_warm_reset">ultrasonic_request_warm_reset()</a>
+int		<a href="#set_ultrasonic_continuous_measurement_interval">set_ultrasonic_continuous_measurement_interval(unsigned char)</a>
+int		<a href="#set_ultrasonic_actual_zero">set_ultrasonic_actual_zero(unsigned char)</a>
+int		<a href="#set_ultrasonic_actual_scale_factor">set_ultrasonic_actual_scale_factor(unsigned char)</a>
+int		<a href="#set_ultrasonic_actual_scale_divisor">set_ultrasonic_actual_scale_divisor(unsigned char)</a>
+int		<a href="#set_ultrasonic_off">set_ultrasonic_off()</a>
+
+void		<a href="#list_modules">list_modules(char *)</a>
+int		<a href="#get_module_id">get_module_id(int)</a>
+int		<a href="#read_io_map">read_io_map(int, unsigned short int, unsigned short int, unsigned char **)</a>
+int		<a href="#write_io_map">write_io_map(int, unsigned short int, unsigned short int, unsigned char *)</a>
+
+int		<a href="#poll_command_length">poll_command_length(unsigned char)</a>
+int		<a href="#poll_command">poll_command(unsigned char, unsigned char, char **, int *)</a>
+
+int		<a href="#message_write">message_write(unsigned char, unsigned char, unsigned char *)</a>
+int		<a href="#message_read">message_read(unsigned char, unsigned char, unsigned char,
+		unsigned char *, unsigned char *, unsigned char **)</a>
+
+
+Private functions:
+int		_get_device_info(char **, int *, int *)
+int		_close_command(unsigned char)
+unsigned char	_find_first(char *)
+int		_find_next(unsigned char)
+unsigned char 	_open_read(char *, int *)
+int		_read_command(unsigned char, char *, short int)
+unsigned char	_open_write(char *, int)
+int		_write_command(unsigned char, char *, int)
+unsigned char	_open_write_linear(char *, int)
+unsigned char	_open_write_data(char *, int)
+unsigned char	_open_append_data(char *, int)
+int		_set_input_mode(unsigned char, unsigned char, unsigned char)
+int		_get_input_values(unsigned char, unsigned char *, unsigned char *,
+		unsigned char *, unsigned char *, unsigned short int *,
+		unsigned short int *, signed short int *, signed short int *);
+int		_ls_get_status(unsigned char);
+int		_ls_write(unsigned char, unsigned char, unsigned char, char *);
+int		_ls_read(unsigned char, int *, char **)
+int		_ls_request_response(unsigned char, unsigned char, char *, int, char **, int *)
+int		_close_module_handle(unsigned char)
+unsigned char	_request_first_module(char *)
+int		_request_next_module(unsigned char)
+</pre>
+<br />
+<div class="rfsect2">
+<h3><a name="nxt_bluetooth_initialize"></a>nxt_bluetooth_initialize(char *)</h3>
+<pre class="programlisting">
+int nxt_bluetooth_initialize(char *)
+
+Provide the mac address of the NXT device in the form XX:XX:XX:XX:XX:XX
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="nxt_bluetooth_done"></a>nxt_bluetooth_done()</h3>
+<pre class="programlisting">
+int nxt_bluetooth_done()
+
+Closes the bluetooth connection.
+</pre>
+<div class="rfsect2">
+<h3><a name="get_battery_level"></a>get_battery_level()</h3>
+<pre class="programlisting">
+int get_battery_level()
+
+Returns the current battery level in mV or -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="get_firmware_version"></a>get_firmware_version()</h3>
+<pre class="programlisting">
+char *get_firmware_version()
+
+Returns the current firmware and protocol versions in the form: "Protocol: 1.124 Firmware: 1.1".
+Returns NULL on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="get_bluetooth_signal_strength"></a>get_bluetooth_signal_strength()</h3>
+<pre class="programlisting">
+int get_bluetooth_signal_strength
+
+Returns the bluetooth signal strength. For some reason this is always 0.
+Maybe this is different if acting in master/slave mode with 2 nxt bricks.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="start_program"></a>start_program(char *)</h3>
+<pre class="programlisting">
+int start_program(char *)
+
+Starts a program which is on the brick.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="stop_program"></a>stop_program()</h3>
+<pre class="programlisting">
+int stop_program()
+
+Stops the currently running program.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="play_sound_file"></a>play_sound_file(int, char *)</h3>
+<pre class="programlisting">
+int play_sound_file(int, char *)
+
+int is a boolean, 1 = loop sound file indefinitely, 0 play only once.
+char * is the filename.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="stop_sound_playback"></a>stop_sound_playback()</h3>
+<pre class="programlisting">
+int stop_sound_playback()
+
+This is pretty self explanatory.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="play_tone"></a>play_tone(short int, short int)</h3>
+<pre class="programlisting">
+int play_tone(short int, short int)
+
+short int is Frequency in Hz (Range 200-14000Hz).
+short int is Duration in ms.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="keep_alive"></a>keep_alive()</h3>
+<pre class="programlisting">
+int keep_alive()
+
+Returns current sleep time limit in milliseconds.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="set_brick_name"></a>set_brick_name(char *)</h3>
+<pre class="programlisting">
+int set_brick_name(char *)
+
+Sets the name of your NXT brick, of which the default is "NXT".
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="delete_user_flash"></a>delete_user_flash()</h3>
+<pre class="programlisting">
+int delete_user_flash()
+
+I have no idea what this does and it hasn't been tested.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="list_files"></a>list_files(char *)</h3>
+<pre class="programlisting">
+void list_files(char *)
+
+char * You can provide a search mask or NULL for all files.
+You can then access the file list like such:
+
+extern struct fstruct *filefirst;
+struct fstruct *fs;
+list_files(NULL);
+fs = filefirst;
+while (fs != NULL) {
+        printf("%s %d\n", fs->filename, fs->size);
+        fs = fs->next;
+        }
+
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="read_file"></a>read_file(char *, char **, int *)</h3>
+<pre class="programlisting">
+int read_file(char *, char **, int *)
+
+char * is the filename.
+char ** is the return buffer of the file contents.
+int * is the return length of the file.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="write_file"></a>write_file(int, char *, char *, int)</h3>
+<pre class="programlisting">
+int write_file(int, char *, char *, int)
+
+WARNING: I HAVE NOT TRIED THIS FUNCTION, SO USE AT YOUR OWN RISK. IF YOU TRY IT, PLEASE LET ME KNOW.
+
+int is one of FILE_NORMAL, FILE_LINEAR, FILE_DATA, FILE_APPEND_DATA.
+I am not sure exactly what the last 3 do, but I think they are for system and sepcial files.
+char * is the filename to write.
+char * is the file content buffer to write.
+int is the length of the content buffer to write.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="delete_file"></a>delete_file(char *)</h3>
+<pre class="programlisting">
+int delete_file(char *)
+
+char * is the filename.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="open_read_linear"></a>open_read_linear(char *)</h3>
+<pre class="programlisting">
+int open_read_linear(char *)
+
+char * is the filename.
+Returns a pointer to the linear memory segment. Not sure exactly what this does.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="clear_screen"></a>clear_screen()</h3>
+<pre class="programlisting">
+int clear_screen()
+
+This clears everything except the bar across the top, and you can write above the bar, but it
+	disappears immediatly. Everything below the bar is writable however. 
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="draw_pixel"></a>draw_pixel(unsigned char, unsigned char)</h3>
+<pre class="programlisting">
+int draw_pixel(unsigned char, unsigned char)
+
+unsigned char is the x point.
+unsigned char is the y point.
+This will draw a pixel at the specified x,y point. The display size is 100x64.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="clear_pixel"></a>clear_pixel(unsigned char, unsigned char)</h3>
+<pre class="programlisting">
+int clear_pixel(unsigned char, unsigned char)
+
+unsigned char is the x point.
+unsigned char is the y point.
+This will clear the pixel at the specified x,y point.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="draw_line"></a>draw_line(unsigned char, unsigned char, unsigned char, unsigned char)</h3>
+<pre class="programlisting">
+int delete_file(char *)
+
+unsigned char is the x0 point.
+unsigned char is the y0 point.
+unsigned char is the x1 point.
+unsigned char is the y1 point.
+This will draw a line from x0,y0 to x1, y1.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="_set_output_state"></a>_set_output_state(unsigned char, signed char, unsigned char, unsigned char,
+		signed char, unsigned char, unsigned long)</h3>
+<pre class="programlisting">
+int _set_output_state(unsigned char, signed char, unsigned char,
+		unsigned char, signed char, unsigned char, unsigned long)
+
+See SETOUTPUTSTATE in Bluetooth Appendix 2 for further information.
+I will have macros for some of these eventually.
+
+unsigned char is the output port (0-2)
+signed char is the power set point (range -100 to 100)
+unsigned char is the Mode byte (Bit field)
+	MOTOR_ON, BRAKE, REGULATED
+unsigned char is the regularion mode (enumerated)
+	REGULATION_MODE_IDLE, REGULATION_MODE_MOTOR_SPEED, REGULATION_MODE_MOTOR_SYNC
+signed char is the turn ratio (range -100 to 100)
+unsigned char is the run state (enumerated)
+	MOTOR_RUN_STATE_IDLE, MOTOR_RUN_STATE_RAMPUP, MOTOR_RUN_STATE_RUNNING, MOTOR_RUN_STATE_RAMPDOWN
+unsigned long is Tacho limit (0 = run forever)
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="_get_input_state"></a>_get_input_state(unsigned char, signed char *, unsigned char *, unsigned char *,
+		signed char *, unsigned char *, unsigned long *, int *, int *, int *)</h3>
+<pre class="programlisting">
+int _get_input_state(unsigned char, signed char *, unsigned char *, unsigned char *, signed char *,
+			unsigned char *, unsigned long *, int *, int *, int *)
+
+See GETETOUTPUTSTATE in Bluetooth Appendix 2 for further information.
+I will have macros for some of these eventually.
+
+unsigned char is the output port (0-2)
+signed char * returns the power set point (rangre -100 to 100)
+unsigned char * returns the mode (bit field, see above)
+unsigned char * returns the regulation mode (enumerated, see above)
+signed char * returns the turn ration (range -100 to 100)
+unsigned char * returns the run state (enumerated, see above)
+unsigned long * returns the tacho limit (current limit on a movement in progress, if any)
+int * returns the tacho count (internal count, number of counts since last reset of the motor counter)
+int * returns the block tacho count (current position relative to the last programmed movement)
+int * returns the rotation count (current position relative to the last reset of the rotation sensor
+	for this motor)
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="reset_motor_position"></a>reset_motor_position(unsigned char, unsigned char)</h3>
+<pre class="programlisting">
+int reset_motor_position(unsigned char, unsigned char)
+
+unsigned char is output port (range 0-2)
+unsigned char is boolean (1 = position relative to last movement, 0 = absolute position)
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<div class="rfsect2">
+<h3><a name="set_touch_sensor"></a>set_touch_sensor(unsigned char)</h3>
+<pre class="programlisting">
+void set_touch_sensor(unsigned char)
+
+Set the touch sensor port. This must be done before the sensor port can be used.
+NXT_SENSOR1, NXT_SENSOR2, NXT_SENSOR3, NXT_SENSOR4.
+</pre>
+<div class="rfsect2">
+<h3><a name="set_sound_sensor"></a>set_sound_sensor(unsigned char)</h3>
+<pre class="programlisting">
+void set_sound_sensor(unsigned char)
+
+Set the sound sensor port. This must be done before the sensor port can be used.
+NXT_SENSOR1, NXT_SENSOR2, NXT_SENSOR3, NXT_SENSOR4.
+</pre>
+<div class="rfsect2">
+<h3><a name="set_light_sensor"></a>set_light_sensor(unsigned char)</h3>
+<pre class="programlisting">
+void set_light_sensor(unsigned char)
+
+Set the light sensor port. This must be done before the sensor port can be used.
+NXT_SENSOR1, NXT_SENSOR2, NXT_SENSOR3, NXT_SENSOR4.
+</pre>
+<div class="rfsect2">
+<h3><a name="set_ultrasonic_sensor"></a>set_ultrasonic_sensor(unsigned char)</h3>
+<pre class="programlisting">
+void set_ultrasonic_sensor(unsigned char)
+
+Set the ultrasonicsensor port. This must be done before the sensor port can be used.
+NXT_SENSOR1, NXT_SENSOR2, NXT_SENSOR3, NXT_SENSOR4.
+</pre>
+<div class="rfsect2">
+<h3><a name="reset_input_scaled_value"></a>reset_input_scaled_value(unsigned char)</h3>
+<pre class="programlisting">
+void reset_input_scaled_value(unsigned char)
+
+unsigned char is the sensor port. I am not exactly sure what this does.
+NXT_SENSOR1, NXT_SENSOR2, NXT_SENSOR3, NXT_SENSOR4.
+</pre>
+<div class="rfsect2">
+<h3><a name="get_touch_value"></a>get_touch_value()</h3>
+<pre class="programlisting">
+void get_touch_value()
+
+Returns the touch sensor value, 1 = pressed, 0 = unpressed.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_sound_db_pct"></a>get_sound_db_pct()</h3>
+<pre class="programlisting">
+int get_sound_db_pct()
+
+Returns audible range in a percentage, 0 - 100. Need to find more info on this.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_sound_db_scale"></a>get_sound_db_scale()</h3>
+<pre class="programlisting">
+int get_sound_db_scale()
+
+Returns audible range in a scale, 0 - 1023. Need to find more info on this.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_sound_dba_pct"></a>get_sound_dba_pct()</h3>
+<pre class="programlisting">
+int get_sound_dba_pct()
+
+Returns audible + non-audible range in a percentage, 0 - 100. Need to find more info on this.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_sound_dba_scale"></a>get_sound_dba_scale()</h3>
+<pre class="programlisting">
+int get_sound_dba_scale()
+
+Returns audible + non-audible range in a scale, 0 - 1023. Need to find more info on this.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_light_active_pct"></a>get_light_active_pct()</h3>
+<pre class="programlisting">
+int get_light_active_pct()
+
+I think this returns reflected light, in a percentage, 0 - 100. Need more info on this.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_light_active_scale"></a>get_light_active_scale()</h3>
+<pre class="programlisting">
+int get_light_active_scale()
+
+I think this returns reflected light, in a scale, 0 - 1023.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_light_ambient_pct"></a>get_light_ambient_pct()</h3>
+<pre class="programlisting">
+int get_light_ambient_pct()
+
+Returns the amount of detected light (the light sensor is off) in a percentage, 0 - 100.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_light_ambient_scale"></a>get_light_ambient_scale()</h3>
+<pre class="programlisting">
+int get_light_ambient_scale()
+
+Returns the amount of detected light (the light sensor is off) in a scale, 0 - 1023.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_light_reflection"></a>get_light_reflection()</h3>
+<pre class="programlisting">
+int get_light_reflection()
+
+This doesn't work. I think this has to do with attaching the old RCX light sensor to the NXT.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="initialize_ultrasonic_sensor"></a>initialize_ultrasonic_sensor()</h3>
+<pre class="programlisting">
+int initialize_ultrasonic_sensor()
+
+You must call this after <a href="#set_ultrasonic_sensor">set_ultrasonic_sensor</a> before using any of the other ultrasonic calls.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_ultrasonic_measurement_units"></a>get_ultrasonic_measurement_units()</h3>
+<pre class="programlisting">
+int get_ultrasonic_measurement_units()
+
+This returns different data every time, it's supposed to return whether your sensor is set to inches
+	or centimeters. At this point it just does below till I can fix it.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_ultrasonic_measurement_byte"></a>get_ultrasonic_measurement_byte(unsigned char byte)</h3>
+<pre class="programlisting">
+int get_ultrasonic_measurement_byte(unsigned char byte)
+
+Returns the distance reading from the NXT from register $byte.
+$byte should be a value 0-7 indicating the measurement register
+in the ultrasound sensor. In continuous measurement mode,
+measurements are stored in register 0 only, however in one-shot mode,
+each time one-shot is called a value will be stored in a new register.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_ultrasonic_continuous_measurement_interval"></a>get_ultrasonic_continuous_measurement_interval()</h3>
+<pre class="programlisting">
+int get_ultrasonic_continuous_measurement_interval()
+
+Returns the period between ultrasonic measurements, I think this is in milliseconds?
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_ultrasonic_read_command_state"></a>get_ultrasonic_read_command_state()</h3>
+<pre class="programlisting">
+int get_ultrasonic_read_command_state()
+
+Returns whether the sensor is in one-off mode or continuous measurement mode (the default).
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_ultrasonic_actual_zero"></a>get_ultrasonic_actual_zero()</h3>
+<pre class="programlisting">
+int get_ultrasonic_actual_zero()
+
+Returns the calibrated zero-distance value for the sensor.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_ultrasonic_actual_scale_factor"></a>get_ultrasonic_actual_scale_factor()</h3>
+<pre class="programlisting">
+int get_ultrasonic_actual_scale_factor()
+
+Returns the scale factor used to compute distances.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="get_ultrasonic_actual_scale_divisor"></a>get_ultrasonic_actual_scale_divisor()</h3>
+<pre class="programlisting">
+int get_ultrasonic_actual_scale_divisor()
+
+Returns the scale divisor used to compute distances.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_continuous_measurement"></a>set_ultrasonic_continuous_measurement()</h3>
+<pre class="programlisting">
+int set_ultrasonic_continuous_measurement()
+
+Puts the sensor in continuous measurement mode (the default).
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_single_shot"></a>set_ultrasonic_single_shot()</h3>
+<pre class="programlisting">
+int set_ultrasonic_single_shot()
+
+Puts the sensor in single shot mode, it will only store a value in a register once each time this
+	function is called.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_event_capture_mode"></a>set_ultrasonic_event_capture_mode()</h3>
+<pre class="programlisting">
+int set_ultrasonic_event_capture_mode()
+
+In this mode the US sensor will detect only other ultrasound sensors in the vicinity.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="ultrasonic_request_warm_reset"></a>ultrasonic_request_warm_reset()</h3>
+<pre class="programlisting">
+int ultrasonic_request_warm_reset()
+
+Maybe this does a warm reset? Hmmmmmm...
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_continuous_measurement_interval"></a>set_ultrasonic_continuous_measurement_interval(unsigned char)</h3>
+<pre class="programlisting">
+int set_ultrasonic_continuous_measurement_interval(unsigned char)
+
+Sets the sampling interval for the range sensor. Not sure of timing.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_actual_zero"></a>set_ultrasonic_actual_zero(unsigned char)</h3>
+<pre class="programlisting">
+int set_ultrasonic_actual_zero(unsigned char)
+
+Sets the calibrated zero value for the sensor.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_actual_scale_factor"></a>set_ultrasonic_actual_scale_factor(unsigned char)</h3>
+<pre class="programlisting">
+int set_ultrasonic_actual_scale_factor(unsigned char)
+
+Sets the scale factor used in computing range.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_actual_scale_divisor"></a>set_ultrasonic_actual_scale_divisor(unsigned char)</h3>
+<pre class="programlisting">
+int set_ultrasonic_actual_scale_divisor(unsigned char)
+
+Sets the scale divisor used in computing range.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="set_ultrasonic_off"></a>set_ultrasonic_off()</h3>
+<pre class="programlisting">
+int set_ultrasonic_off()
+
+Turn the ultrasonic sensor off.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="list_modules"></a>list_modules(char *)</h3>
+<pre class="programlisting">
+void int list_modules(char *)
+
+char * is the mask or NULL for all modules.
+You can access the mdoules list like such:
+
+extern struct fstruct *modulefirst;
+struct fstruct *fs;
+list_modules(NULL);
+fs = modulefirst;
+while (fs != NULL) {
+        printf("%s %d %d\n", fs->filename, fs->moduleid, fs->module);
+        fs = fs->next;
+        }
+</pre>
+<h3><a name="get_module_id"></a>get_module_id(int)</h3>
+<pre class="programlisting">
+int get_module_id(int)
+
+int is the module request, they are prefaced with MODULE_ in nxtlibc.h
+Returns the module id for use with read_io_map, and write_io_map.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="read_io_map"></a>read_io_map(int, unsigned short int, unsigned short int, unsigned char **)</h3>
+<pre class="programlisting">
+int read_io_map(int, unsigned short int, unsigned short int, unsigned char **)
+
+int is the moduleid (from <a href="#get_module_id">get_module_id</a>).
+unsigned short int is the index position.
+unsigned short int is the length (I think this is 110 max).
+unsigned char **data is the return buffer of the data read.
+Returns length read on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="write_io_map"></a>write_io_map(int, unsigned short int, unsigned short int, unsigned char *)</h3>
+<pre class="programlisting">
+int write_io_map(int, unsigned short int, unsigned short int, unsigned char *)
+
+int is the moduleid (from <a href="#get_module_id">get_module_id</a>).
+unsigned short int is the index position.
+unsigned short int is the length (I think this is 110 max).
+unsigned char *data is the data to write.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="poll_command_length"></a>poll_command_length(unsigned char)</h3>
+<pre class="programlisting">
+int poll_command_length(unsigned char)
+
+unsigned char is one of POLL_BUFFER or HS_BUFFER (highspeed buffer?).
+Not exactly sure what this does.
+Returns number of bytes for the command ready in the buffer. (0 = no command ready)
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="poll_command"></a>poll_command(unsigned char, unsigned char ,char **, int *)</h3>
+<pre class="programlisting">
+int poll_command_length(unsigned char, unsigned char, char **, int *)
+
+unsigned char is one of POLL_BUFFER or HS_BUFFER (highspeed buffer?).
+unsigned char is the command length
+char ** is the return data buffer.
+int * is the return data length.
+Not exactly sure what this does.
+Returns the data length read.
+Returns -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="message_write"></a>message_write(unsigned char, unsigned char, unsigned char *)</h3>
+<pre class="programlisting">
+int message_write(unsigned char, unsigned char, unsigned char *)
+
+unsigned char is the inbox.
+unsigned char is the data size to write.
+unsigned char * is the data to write.
+From what I understand this is to communicate with running programs on the NXT.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>
+<h3><a name="message_read"></a>message_read(unsigned char, unsigned char, unsigned char,
+unsigned char *, unsigned char *, unsigned char **)</h3>
+<pre class="programlisting">
+int message_read(unsigned char, unsigned char, unsigned char,
+		unsigned char *, unsigned char *, unsigned char **)
+
+unsigned char is the remote inbox (0-9).
+unsigned char is the local inbox (0-9).
+unsigned char is remove boolean. (1 = clear message, 0 = keep message in inbox)
+unsigned char * is the return inbox number. (one byte)
+unsigned char * is the return message size. (one byte)
+unsigned char ** is the return data.
+From what I understand this is to communicate with running programs on the NXT.
+Returns 0 on success, -1 on failure and prints the error to stderr.
+</pre>

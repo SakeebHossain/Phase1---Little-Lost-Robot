@@ -1,0 +1,26 @@
+-=Required libraries=-
+bluez-dev - bluetooth library
+libbluetooth-dev
+
+-=Installation notes=-
+In the top directory run the command: make install 
+- may require sudo/su 
+- configuration changes are inside the Makefile
+
+-=Reinstallation=-
+In the top directory run the command: make clean
+- may requiree sudo/su
+- will give an error if there is no file to unlink
+
+-=Usage=-
+Inside programs:
+#include<nxtlibc.h>
+
+-=Compiling=-
+gcc filename.c -lnxtlibc -lbluetooth -lm -o outputfilename
+
+-=Etc=-
+You also need to pair with the nxt brick before using this library.
+After the first pairing the brick remembers and authorization is not needed.
+You can do this with "hcitool cc XX:XX:XX:XX:XX:XX"
+
