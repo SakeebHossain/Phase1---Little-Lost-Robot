@@ -1,0 +1,74 @@
+CC          = /usr/bin/gcc
+RM          = /bin/rm -f
+CP          = /bin/cp -f
+IN          = /usr/bin/indent -kr -i4
+
+
+#
+# flags
+#
+CFLAGS      = -g -Wall -DDEBUG
+#INCLUDES    = `gtk-config --cflags`
+INCLUDES    = 
+LDFLAGS     =  
+LIBRARIES   = -lbluetooth -lm
+
+
+#
+# file defs
+#
+TARGET_nxt  = nxt
+SOURCE_nxt  = \
+	bluetooth.c \
+	misc.c \
+	nxt.c \
+	file.c \
+	poll.c \
+	motors.c \
+	sensors.c \
+	sensors-ls.c \
+	iomap.c \
+	screen.c \
+	msg.c \
+	file-linear.c \
+	main.c
+OBJECT_nxt  = $(SOURCE_nxt:.c=.o)
+SOURCES     = $(SOURCE_nxt)
+
+
+#
+# targets
+#
+default: all
+
+all: $(TARGET_nxt)
+
+clean:
+	$(RM) $(TARGET_nxt)
+	$(RM) *.o
+
+indent:
+	$(IN) *.h *.c
+	$(RM) *.h~ *.c~
+
+#depend: $(SOURCES)
+#	$(CC) -MM $(CPPFLAGS) $(CFLAGS) $(INCLUDES) $(SOURCES) > makedepend
+	
+$(TARGET_nxt): $(OBJECT_nxt)
+	$(CC) $(CFLAGS) -o $(TARGET_nxt) $(OBJECT_nxt) $(LDFLAGS) $(LIBRARIES)
+
+hcicon: $(OBJECT_hcicon)
+	$(CC) $(CFLAGS) -o hcicon hcicon.o hci.o $(LDFLAGS) $(LIBRARIES)
+
+
+#
+# rules
+#
+%.o: %.c
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(INCLUDES) $<
+
+
+#docklet.o: docklet.c eggtrayicon.c hci.c scan.c eggtrayicon.h
+#eggtrayicon.o: docklet.c eggtrayicon.c eggtrayicon.h hci.c scan.c
+#hci.c: eggtrayicon.c eggtrayicon.h  scan.c docklet.c hci.c
+#scan.c: docklet.c eggtrayicon.c eggtrayicon.h hci.c scan.c
