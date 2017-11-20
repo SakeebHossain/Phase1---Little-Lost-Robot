@@ -411,6 +411,8 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
+int d_speed = 50, r_speed = 30;
+
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 {
  /*************************************************************************
@@ -506,7 +508,7 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
   *****************************************************************************/
   int *current_state = &(ai->st.state);
 
-  fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f], AI state=%d, side=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.smx,ai->st.smy,ai->st.state, ai->st.side);
+  //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f], AI state=%d, side=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.smx,ai->st.smy,ai->st.state, ai->st.side);
 
   //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f]\n",ai->st.self->cx,ai->st.self->cy,ai->st.self->mx,ai->st.self->my);
 
@@ -539,11 +541,12 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
  // STATE 104: move towards X wall
  else if ( *current_state == 104 ) {
-      if (ai->st.self->cy > 720 || ai->st.self->cy < 200) {
+//      if (ai->st.self->cy > 720 || ai->st.self->cy < 200) {
+   if( abs(ai->st.self->cy - ai->st.ball->cy) > 100 ) {
         all_stop();
         *current_state = 105;
       } else {
-          drive_speed(30);
+          drive_speed(d_speed);
 //  fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f]\n",ai->st.self->cx,ai->st.self->cy,ai->st.self->mx,ai->st.self->my);
       }
  }
@@ -560,12 +563,13 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
  // STATE 106: move towards Y wall
  else if ( *current_state == 106 ) {
 
-   if(ai->st.self->cx > 954 || ai->st.self->cx < 50) {
+//   if(ai->st.self->cx > 954 || ai->st.self->cx < 50) {
+   if( (ai->st.self->cx - ai->st.ball->cx) > 80 ) {
      all_stop();
      *current_state = 107;
    }
    else {
-     drive_speed(30);
+     drive_speed(d_speed);
    }
  }
 
@@ -581,16 +585,16 @@ else if ( *current_state == 107 ) {
  // STATE 108: move towards center of our net (measured relative to ball)
  else if ( *current_state == 108 ) {
 
-   if( abs(ai->st.self->cy - ai->st.ball->cy) < 10 ) {
+   if( abs(ai->st.self->cy - ai->st.ball->cy) < 20 ) {
      all_stop();
      *current_state = 109;
    }
    else {
-     drive_speed(30);
+     drive_speed(d_speed);
    }
  }
 
- // STATE 109: move towards center of our net (measured relative to ball)
+ // STATE 109: face the ball
  else if ( *current_state == 109 ) {
 
    if (lookSide(ai, blobs))  {
@@ -600,14 +604,14 @@ else if ( *current_state == 107 ) {
 
  }
 
- // STATE 110: move towards center of our net (measured relative to ball)
+ // STATE 110: move towards ball (measured relative to ball)
  else if ( *current_state == 110 ) {
-   if( abs(ai->st.self->cx - ai->st.ball->cx) < 110 ) {
+   if( abs(ai->st.self->cx - ai->st.ball->cx) < 300 ) {
      all_stop();
      *current_state = 113;
    }
    else {
-     drive_speed(30);
+     drive_speed(d_speed);
    }
  }
 
@@ -672,10 +676,14 @@ else if ( *current_state == 107 ) {
     *current_state = 116;
   }
   else if ( *current_state == 116 ) {
-    stop_kicker();
+    kick();
     *current_state = 117;
   }
   else if ( *current_state == 117 ) {
+    stop_kicker();
+    *current_state = 118;
+  }
+  else if ( *current_state == 118 ) {
     fprintf(stderr,"Turn at Wall");
   }
 
@@ -727,8 +735,7 @@ int wrongDirection(struct RoboAI *ai, struct blob *blobs) {
 int lookTop(struct RoboAI *ai, struct blob *blobs) {
 
   if ( fabs( ai->st.self->dx ) > .1 ) {
-
-    pivot_left_speed(20);
+    pivot_left_speed(r_speed);
     return 0;
 
   }
@@ -740,9 +747,9 @@ int lookSide(struct RoboAI *ai, struct blob *blobs) {
 
   if ( fabs( ai->st.self->dy ) > .1 ) {
     if(ai->st.mv_fwd) {
-      pivot_right_speed(20);
+      pivot_right_speed(r_speed);
     } else if(ai->st.mv_back) {
-      pivot_left_speed(20);
+      pivot_left_speed(r_speed);
     }
     return 0;
 
@@ -755,9 +762,9 @@ int lookNet(struct RoboAI *ai, struct blob *blobs) {
 
   if ( fabs( ai->st.self->dx ) > .1 ) {
     if(ai->st.mv_fwd) {
-      pivot_right_speed(20);
+      pivot_right_speed(r_speed);
     } else if(ai->st.mv_back) {
-      pivot_left_speed(20);
+      pivot_left_speed(r_speed);
     }
     return 0;
 
@@ -770,9 +777,9 @@ int lookBall(struct RoboAI *ai, struct blob *blobs) {
 
   if ( fabs( ai->st.self->dy ) > .1 ) {
     if(ai->st.mv_fwd) {
-      pivot_right_speed(20);
+      pivot_right_speed(r_speed);
     } else if(ai->st.mv_back) {
-      pivot_left_speed(20);
+      pivot_left_speed(r_speed);
     }
     return 0;
 
