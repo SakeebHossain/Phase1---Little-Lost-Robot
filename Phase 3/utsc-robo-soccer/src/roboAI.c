@@ -497,12 +497,78 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
   /****************************************************************************
   PENALTY KICK 
+
+  Below are summaries of what each state is responsible for:
+  
+
+
+
   *****************************************************************************/
   int *current_state = &(ai->st.state);
+
+  //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f]\n",ai->st.self->cx,ai->st.self->cy,ai->st.self->mx,ai->st.self->my);
+
+//  fprintf(stderr,"state: %d\n", *current_state);
  
   if ( *current_state == 101 ) {
       *current_state = 102;   
   }
+
+  // STATE 102: turn to face wall
+  else if ( *current_state == 102 ) {
+      if (lookTop(ai, blobs))  {
+        *current_state = 103;
+      }
+ }
+
+ else if ( *current_state == 103) {
+   all_stop();
+   *current_state = 104;   
+ }
+
+ else if ( *current_state == 104 ) {
+      if (ai->st.self->cx > 954 || ai->st.self->cy > 720 || ai->st.self->cx < 50 || ai->st.self->cy < 150) {
+        all_stop();
+        *current_state = 105;
+      } else {
+          drive_speed(30);
+  fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f]\n",ai->st.self->cx,ai->st.self->cy,ai->st.self->mx,ai->st.self->my);
+      }
+ }
+ else if ( *current_state == 105 ) {
+  fprintf(stderr, "Sup Sakeeb?\n"); 
+ }
+
+/* // Below is stuff for wrong direction
+  else if ( *current_state == 102 ) {
+
+    if(closeToBall(ai, blobs)) {
+       *current_state = 103;
+    } else {
+       *current_state = 107;
+    } 
+  }
+
+  else if ( *current_state == 103 ) {
+    if(wrongDirection(ai, blobs)) {
+      *current_state = 104;
+    }
+    else {
+      //nothing yet
+    }
+  }
+*/
+
+/* else if ( *current_state == 102 ) {
+      if (ai->st.self->cx > 954 || ai->st.self->cy > 720) {
+        all_stop();
+      } else {
+          drive_speed(30);
+      }
+  fprintf(stderr, "Current bot position: (%f,%f);\n", ai->st.self->cx,ai->st.self->cy); 
+  }*/
+
+/*
 
   else if ( *current_state == 102 ) {
 
@@ -510,10 +576,10 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
        *current_state = 103;
     } else {
        *current_state = 107;
-    }
+    } 
   }
+
   else if ( *current_state == 103 ) {
-//     kick();
      retract();
      *current_state = 104;
   }
@@ -522,12 +588,10 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
      *current_state = 105;
   }
   else if ( *current_state == 105 ) {
-//    retract();
     kick();
     *current_state = 106;
   }
   else if ( *current_state == 106 ) {
-//    retract();
     stop_kicker();
     *current_state = 102;
   }
@@ -539,13 +603,13 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     else {
        *current_state = 107;
     }
+  fprintf(stderr,"dx: %f\n", ai->st.self->dx);
   }
   else if ( *current_state == 108 ) {
     all_stop();
     *current_state = 108;
-  }
-
-}
+  } */
+} 
 
 /**********************************************************************************
  TO DO:
@@ -562,26 +626,26 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 **********************************************************************************/
 
 int closeToBall(struct RoboAI *ai, struct blob *blobs) {
-  fprintf(stderr, "Current bot position: (%f,%f); Current ball position: (%f,%f)\n", ai->st.self->cx,ai->st.self->cy, ai->st.ball->cx,ai->st.ball->cy);
+/*  fprintf(stderr, "Current bot position: (%f,%f); Current ball position: (%f,%f)\n", ai->st.self->cx,ai->st.self->cy, ai->st.ball->cx,ai->st.ball->cy); */
 
-  if ( fabs(ai->st.self->cx - ai->st.ball->cx) < 300 && fabs(ai->st.self->cy - ai->st.ball->cy) < 100) {
+  if ( fabs(ai->st.self->cx - ai->st.ball->cx) < 300 && fabs(ai->st.self->cy - ai->st.ball->cy) < 150) {
     return 1;
   }
 
   return 0;
 }
 
+int wrongDirection(struct RoboAI *ai, struct blob *blobs) {
+
+}
+
 int lookTop(struct RoboAI *ai, struct blob *blobs) {
 
-  if ( fabs(ai->st.self->mx) < 50) {
+  if ( fabs( ai->st.self->dx ) > .2 ) {
 
-//    if(ai->st.self->mx < 0) {
-       pivot_left();
-//    }
-//    else {
-//       turn_right();
-//    }
+    pivot_left_speed(30);
     return 0;
+
   }
 
   return 1;
