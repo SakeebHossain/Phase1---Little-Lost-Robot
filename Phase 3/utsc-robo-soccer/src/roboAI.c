@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 50, r_speed = 30;
+int d_speed = 50, r_speed = 20, t_speed = 50;
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 {
@@ -507,6 +507,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
   *****************************************************************************/
   int *current_state = &(ai->st.state);
+  double *x, *y;
+  
 
   //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f], AI state=%d, side=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.smx,ai->st.smy,ai->st.state, ai->st.side);
   fprintf(stderr,"Current position: (%f,%f), current heading: [%f, %f], current direction: [%f, %f], AI state=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.smx,ai->st.smy,ai->st.self->dx,ai->st.self->dy,ai->st.state);
@@ -731,6 +733,21 @@ else if ( *current_state == 107 ) {
     all_stop();
     *current_state = 108;
   } */
+
+  if ( *current_state == 201 ) {
+    if( ai->st.smx > 0) {
+        ai->st.mv_fwd = 1;
+        ai->st.mv_back = 0;
+     } else {
+        ai->st.mv_back = 1;
+        ai->st.mv_fwd = 0;
+    }
+   
+   *current_state = 202;    
+ }  
+  if ( *current_state == 202 ) {
+     toBallVec(ai, blobs);
+  }    
 } 
 
 /**********************************************************************************
@@ -815,4 +832,28 @@ int lookBall(struct RoboAI *ai, struct blob *blobs) {
 
   return 1;
 }
+
+void toBallVec(struct RoboAI *ai, struct blob *blobs) {
+
+    double theta, phi, x, y;
+
+    x = ai->st.ball->cx - ai->st.self->cx;
+    y = ai->st.ball->cy - ai->st.self->cy;
+
+    theta = atan2(x, y);
+
+    phi = acos(ai->st.self->dx);
+
+    if(fabs(theta - phi) > 0.1) {
+      if((theta - phi) < 0.1) {
+        turn_right_speed(t_speed);   
+        //pivot_right_speed(r_speed);      
+      }
+      else if((theta - phi) > 0.1) {
+        turn_left_speed(t_speed); 
+        //pivot_left_speed(r_speed);              
+      }
+    }
+
+  }
 
