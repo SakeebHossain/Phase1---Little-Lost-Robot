@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 50, r_speed = 30, t_speed = 60;
+int d_speed = 50, r_speed = 25, t_speed = 60;
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 {
@@ -511,7 +511,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
   }
   
   int *current_state = &(ai->st.state);
-  double *x, *y;
   
 
   //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f], AI state=%d, side=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.smx,ai->st.smy,ai->st.state, ai->st.side);
@@ -594,7 +593,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
  else if ( *current_state == 106 ) {
 
 //   if(ai->st.self->cx > 954 || ai->st.self->cx < 50) {
-   if( (ai->st.self->cx - ai->st.ball->cx) > 80 ) {
+   //if( (ai->st.self->cx - ai->st.ball->cx) > 80 ) {
+    if( (ai->st.self->x1 - ai->st.ball->cx) > 80 ) {
      all_stop();
      *current_state = 107;
    }
