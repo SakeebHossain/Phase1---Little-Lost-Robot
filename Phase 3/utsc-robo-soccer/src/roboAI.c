@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 50, r_speed = 20, t_speed = 50;
+int d_speed = 50, r_speed = 30, t_speed = 60;
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 {
@@ -506,6 +506,10 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
 
   *****************************************************************************/
+  if(checkBlobsExist(ai, blobs)) {
+    return;
+  }
+  
   int *current_state = &(ai->st.state);
   double *x, *y;
   
@@ -520,9 +524,7 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       // If 
       if( ai->st.smx > 0) {
          ai->st.mv_fwd = 1;
-         ai->st.mv_back = 0;
       } else {
-         ai->st.mv_back = 1;
          ai->st.mv_fwd = 0;
       }
 
@@ -614,7 +616,7 @@ else if ( *current_state == 107 ) {
  else if ( *current_state == 108 ) {
 
    if( (abs(ai->st.self->cy - ai->st.ball->cy) < 30 && ai->st.mv_bl) ||
-       (abs(ai->st.self->cy - ai->st.ball->cy) < 150 && !(ai->st.mv_bl))) {
+       (abs(ai->st.self->cy - ai->st.ball->cy) < 100 && !(ai->st.mv_bl))) {
      all_stop();
      *current_state = 109;
    }
@@ -635,7 +637,8 @@ else if ( *current_state == 107 ) {
 
  // STATE 110: move towards ball (measured relative to ball)
  else if ( *current_state == 110 ) {
-   if( abs(ai->st.self->cx - ai->st.ball->cx) < 300 ) {
+   //if( abs(ai->st.self->cx - ai->st.ball->cx) < 300 ) {
+    if( abs(ai->st.self->x1 - ai->st.ball->cx) < 150 ) {
      all_stop();
      *current_state = 113;
    }
@@ -737,17 +740,48 @@ else if ( *current_state == 107 ) {
   if ( *current_state == 201 ) {
     if( ai->st.smx > 0) {
         ai->st.mv_fwd = 1;
-        ai->st.mv_back = 0;
      } else {
         ai->st.mv_back = 1;
-        ai->st.mv_fwd = 0;
     }
    
    *current_state = 202;    
  }  
-  if ( *current_state == 202 ) {
+  else if ( *current_state == 202 ) {
      toBallVec(ai, blobs);
-  }    
+     if(closeToBall(ai,blobs)) {
+
+     // if(facing(ai,blobs)) {
+      *current_state = 204;
+      //}
+
+     }
+  }
+  else if ( *current_state == 203 ) {
+    all_stop();
+    *current_state = 204;      
+ }
+  else if ( *current_state == 204 ) {
+    retract();
+    *current_state = 205;
+ }
+ else if ( *current_state == 205 ) {
+    stop_kicker();
+    *current_state = 206;
+ }
+ else if ( *current_state == 206 ) {
+   kick();
+   *current_state = 207;
+ }
+ else if ( *current_state == 207 ) {
+   kick();
+   *current_state = 208;
+ }
+ else if ( *current_state == 208 ) {
+   stop_kicker();
+   *current_state = 202;
+ }
+
+
 } 
 
 /**********************************************************************************
@@ -793,7 +827,8 @@ int lookSide(struct RoboAI *ai, struct blob *blobs) {
   if ( fabs( ai->st.self->dy ) > .1 ) {
     if(ai->st.mv_fwd) {
       pivot_right_speed(r_speed);
-    } else if(ai->st.mv_back) {
+    //} else if(ai->st.mv_back) {
+    } else {
       pivot_left_speed(r_speed);
     }
     return 0;
@@ -836,13 +871,26 @@ int lookBall(struct RoboAI *ai, struct blob *blobs) {
 void toBallVec(struct RoboAI *ai, struct blob *blobs) {
 
     double theta, phi, x, y;
+    int correction;
 
     x = ai->st.ball->cx - ai->st.self->cx;
     y = ai->st.ball->cy - ai->st.self->cy;
 
     theta = atan2(x, y);
 
-    phi = acos(ai->st.self->dx);
+    if((ai->st.self->dx > 0) && (ai->st.self->mx > 0)) {
+      correction = 1;
+    } else if ((ai->st.self->dx < 0) && (ai->st.self->mx < 0)) {
+      correction = 1;
+    }
+    else if ((ai->st.self->dx > 0) && (ai->st.self->mx < 0)) {
+      correction = -1;
+    }
+    else if ((ai->st.self->dx < 0) && (ai->st.self->mx > 0)) {
+      correction = -1;
+    }
+
+    phi = atan2((ai->st.self->dx * correction), (ai->st.self->dy * correction));
 
     if(fabs(theta - phi) > 0.1) {
       if((theta - phi) < 0.1) {
@@ -856,4 +904,39 @@ void toBallVec(struct RoboAI *ai, struct blob *blobs) {
     }
 
   }
+
+int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
+
+
+    if (ai->st.self == NULL ) {
+      all_stop();
+      return 1;
+    }
+
+    int diff = ai->st.state % 100;
+
+    if (ai->st.ball == NULL) {
+      fprintf(stderr, "ball is gone.....\n");
+      all_stop();
+      ai->st.state -= diff;
+    }
+
+    return 0;
+  }
+
+int facing(struct RoboAI *ai, struct blob *blobs) {
+
+  double x, y;
+  
+  x = ai->st.ball->cx - ai->st.self->cx;
+  y = ai->st.ball->cy - ai->st.self->cy;
+
+  if((fabs(x - ai->st.self->dx) < 0.1) && (fabs(y - ai->st.self->dy) < 0.1)) {
+    return 1;
+  }
+
+  return 0;
+
+}
+    
 
