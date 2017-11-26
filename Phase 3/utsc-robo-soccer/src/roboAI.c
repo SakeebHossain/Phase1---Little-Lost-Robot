@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 60, r_speed = 25, t_speed = 80;
+int d_speed = 60, r_speed = 25, t_speed = 80, face_right;
 double old_dir_x = -10, old_dir_y = -10;
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
@@ -507,15 +507,142 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
 
   *****************************************************************************/
+
+
   if(checkBlobsExist(ai, blobs)) {
     return;
   }
   
   int *current_state = &(ai->st.state);
 
+ printf("Old: (%f, %f)\n",old_dir_x,old_dir_y);
+ printf("New: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
+
   if(old_dir_x != -10) {
      directionCorrection(ai, blobs);
+  } else {
+     initialDir(ai, blobs);
   }
+
+  int bound_prox = closeToBoundary(ai, blobs);
+
+   if(*current_state == 1) {
+
+    if( ai->st.smx > 0) {
+        face_right = 1;
+     } else {
+        face_right = 0;
+    }
+
+      //initialDir(ai, blobs);
+
+      *current_state = 2;
+   }
+
+   if(*current_state == 2) {
+
+      if(bound_prox == 1) {
+
+         if(ai->st.self->dx < 0) {
+
+            if(ai->st.mv_fl) {
+               all_stop();
+            }
+
+            reverse(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_back = 1;
+            ai->st.mv_bl = 1;
+
+         } else { // drives over boundary
+
+            if(ai->st.mv_bl) {
+               all_stop();
+            }
+
+            drive(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
+            ai->st.mv_fl = 1;
+         }
+      }
+
+      if(bound_prox == 2) {
+
+         if(ai->st.self->dy < 0) { // over
+
+            if(ai->st.mv_fl) {
+               all_stop();
+            }
+
+            reverse(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_back = 1;
+            ai->st.mv_bl = 1;
+         } else {
+
+            if(ai->st.mv_bl) {
+               all_stop();
+            }
+
+            drive(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
+            ai->st.mv_fl = 1;
+         }
+      }
+
+      if(bound_prox == 3) {
+
+         if(ai->st.self->dx > 0) { //over bound
+
+            if(ai->st.mv_fl) {
+               all_stop();
+            }
+
+            reverse(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_back = 1;
+            ai->st.mv_bl = 1;
+         } else {
+
+            if(ai->st.mv_bl) {
+               all_stop();
+            }
+
+            drive(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
+            ai->st.mv_fl = 1;
+         }
+      }
+
+      if(bound_prox == 4) {
+
+         if(ai->st.self->dy > 0) { // over bound
+
+            if(ai->st.mv_fl) {
+               all_stop();
+            }
+
+            reverse(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_back = 1;
+            ai->st.mv_bl = 1;
+         } else {
+
+            if(ai->st.mv_bl) {
+               all_stop();
+            }
+
+            drive(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
+            ai->st.mv_fl = 1;
+         }
+      }
+
+   }
   
 
   //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f], AI state=%d, side=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.smx,ai->st.smy,ai->st.state, ai->st.side);
@@ -523,22 +650,33 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
   //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f]\n",ai->st.self->cx,ai->st.self->cy,ai->st.self->mx,ai->st.self->my);
 
 //  fprintf(stderr,"state: %d\n", *current_state);
+  
+//  if( *current_state == 1) {
+//  }
+  // STATE 1: Initialize
+  //	- Find position
+  //	- Find ball
+  //	- Find opponent
 
+  // STATE 2: Determine offense, defense or neutral
+  //	- if close too ball
+  //		- if facing ball, go to offense
+  //		- if not facing ball, go to neutral
+ 
+  // STATE 3: 
   if ( *current_state == 101 ) {
       // If 
       if( ai->st.smx > 0) {
-         ai->st.mv_fwd = 1;
+         face_right = 1;
       } else {
-         ai->st.mv_fwd = 0;
+         face_right = 0;
       }
 
       if (fabs(1 - ai->st.smy) < .1) {
         if(ai->st.smy > 0) {
-          ai->st.mv_back = 1;
-          ai->st.mv_fwd = 0;
+          face_right = 0;
         } else {
-          ai->st.mv_fwd = 1;
-          ai->st.mv_back = 0;
+          face_right = 1;
         }
       }
 
@@ -578,6 +716,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
         *current_state = 105;
       } else {
          drive_speed(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
       }
    } else {
       if( (ai->st.self->cy - ai->st.ball->cy) > 80 ) {
@@ -585,6 +725,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
         *current_state = 105;
       } else {
          drive_speed(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
       }
    }
  }
@@ -609,6 +751,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
    }
    else {
      drive_speed(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
    }
  }
 
@@ -631,6 +775,8 @@ else if ( *current_state == 107 ) {
    }
    else {
      drive_speed(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
    }
  }
 
@@ -653,6 +799,8 @@ else if ( *current_state == 107 ) {
    }
    else {
      drive_speed(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
    }
  }
 
@@ -755,14 +903,12 @@ else if ( *current_state == 107 ) {
 
 
     if( ai->st.smx > 0) {
-        ai->st.mv_fwd = 1;
-        ai->st.mv_back = 0;
+        face_right = 1;
      } else {
-        ai->st.mv_back = 1;
-        ai->st.mv_fwd = 0;
+        face_right = 0;
     }
 
-   initialDir(ai, blobs);
+//   initialDir(ai, blobs);
    *current_state = 202;    
  }  
   else if ( *current_state == 202 ) {
@@ -840,13 +986,17 @@ else if ( *current_state == 107 ) {
    }
 
    drive_speed(d_speed);
+            clear_motion_flags(ai);
+            ai->st.mv_fwd = 1;
 
  }
 
  //fprintf(stderr, "Old bot direction: (%f,%f)\n", old_dir_x, old_dir_y);
 
- old_dir_x = ai->st.self->dx;
- old_dir_y = ai->st.self->dy;
+ if(!((*current_state % 100) == 0)) {
+    old_dir_x = ai->st.self->dx;
+    old_dir_y = ai->st.self->dy;
+ }
 
  //fprintf(stderr, "Current bot direction: (%f,%f)\n", ai->st.self->dx, ai->st.self->dy);
 
@@ -878,22 +1028,66 @@ void initialDir(struct RoboAI *ai, struct blob *blobs) {
 
 void directionCorrection(struct RoboAI *ai, struct blob *blobs) {
 
- // If vector flips
- if(fabs(ai->st.smy - old_dir_y) > 1.0 && ai->st.mv_fwd) {
+
+ if(ai->st.mv_back) {
+  return;
+ }
+
+/*
+ double bound = 2.5 * old_dir_y;
+
+ int flipped = 0;
+
+ if(ai->st.self->dy > 0 && old_dir_y < 0) {
+
+   if(fabs(-1.0 - old_dir_y) < 0.3) {
+      flipped = 1;
+   }
+
+ }
+ else if(ai->st.self->dy < 0 && old_dir_y > 0) {
+
+   if(fabs(1.0 - old_dir_y) < 0.3) {
+      flipped = 1;
+   }
+
+ }
+
+ if(flipped && ai->st.mv_fwd) {
       ai->st.self->dx *= -1;
       ai->st.self->dy *= -1;
       ai->st.mv_fwd = 0;
       ai->st.mv_back = 1;
  }
- else if(fabs(ai->st.smy - old_dir_y) > 1.0 && ai->st.mv_back) {
+ else if(flipped && ai->st.mv_back) {
    ai->st.mv_fwd = 1;
    ai->st.mv_back = 0;
  }
- else if(fabs(ai->st.smy - old_dir_y) < 1.0 && ai->st.mv_back) {
+ else if(!flipped && ai->st.mv_back) {
+   ai->st.self->dx *= -1;
+   ai->st.self->dy *= -1;
+ }
+*/
+
+ //ai->st.self->dy
+ //ai->st.smy
+ // If vector flips
+// printf("Old: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
+
+ if(fabs(ai->st.smy - old_dir_y) > 1.2 && face_right) {
+      ai->st.self->dx *= -1;
+      ai->st.self->dy *= -1;
+      face_right = 0;
+ }
+ else if(fabs(ai->st.smy - old_dir_y) > 1.2 && !face_right) {
+   face_right = 1;
+ }
+ else if(fabs(ai->st.smy - old_dir_y) < 1.2 && !face_right) {
    ai->st.self->dx *= -1;
    ai->st.self->dy *= -1;
  }
 
+// printf("New: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
 }
 
 
@@ -940,7 +1134,7 @@ int lookTop(struct RoboAI *ai, struct blob *blobs) {
 int lookSide(struct RoboAI *ai, struct blob *blobs) {
 
   if ( fabs( ai->st.self->dy ) > .1 ) {
-    if(ai->st.mv_fwd) {
+    if(face_right) {
       pivot_right_speed(r_speed);
     //} else if(ai->st.mv_back) {
     } else {
@@ -986,7 +1180,7 @@ int lookBall(struct RoboAI *ai, struct blob *blobs) {
 void toBallVec(struct RoboAI *ai, struct blob *blobs) {
 
     double theta, phi, x, y, mag, dot, cross;
-    int correction;
+    int correction, speed;
 
     // Vector from centre of bot to centre of ball
     x = ai->st.ball->cx - ai->st.self->cx;
@@ -1005,11 +1199,18 @@ void toBallVec(struct RoboAI *ai, struct blob *blobs) {
 
     cross = (ai->st.self->dx * y) - (x * ai->st.self->dy);
 
+    speed = t_speed * dot;
+
+    if(speed < 40) {
+       speed = 40;
+    }
+
+
     if(cross >= 0) {
-       turn_right_speed((t_speed * dot)); 
+       turn_right_speed(speed); 
     }
     else if(cross < 0) {
-       turn_left_speed((t_speed * dot)); 
+       turn_left_speed(speed); 
     }
 
   }
@@ -1019,6 +1220,7 @@ int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
 
     if (ai->st.self == NULL ) {
       all_stop();
+      stop_kicker();
       return 1;
     }
 
@@ -1027,6 +1229,7 @@ int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
     if (ai->st.ball == NULL) {
       fprintf(stderr, "ball is gone.....\n");
       all_stop();
+      stop_kicker();
       ai->st.state -= diff;
       old_dir_x = -10;
       old_dir_y = -10;
@@ -1074,5 +1277,26 @@ double x, y;
   return 0;
 
 }
-    
 
+int closeToBoundary(struct RoboAI *ai, struct blob *blobs) {
+
+   if(ai->st.self->x1 < 65) {
+      return 1;
+   }
+
+   if(ai->st.self->y1 < 65) {
+      return 2;
+   }
+
+   if(ai->st.self->x2 > 960) {
+      return 3;
+   }
+
+   if(ai->st.self->y2 > 700) {
+      return 4;
+   }
+
+   return 0;
+
+
+}
