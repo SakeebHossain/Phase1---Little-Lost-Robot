@@ -411,8 +411,8 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 60, r_speed = 25, t_speed = 80, face_right;
-double old_dir_x = -10, old_dir_y = -10;
+int d_speed = 60, r_speed = 25, t_speed = 80, face_right, bound_prox, face_down;
+double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y;
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 {
@@ -515,134 +515,53 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
   
   int *current_state = &(ai->st.state);
 
- printf("Old: (%f, %f)\n",old_dir_x,old_dir_y);
- printf("New: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
+  //printf("Old: (%f, %f)\n",old_dir_x,old_dir_y);
+  //printf("New: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
 
   if(old_dir_x != -10) {
      directionCorrection(ai, blobs);
   } else {
-     initialDir(ai, blobs);
+    initialDir(ai, blobs);
+
+    double ball_x_size = (ai->st.ball->x2 - ai->st.ball->x1);
+    ball_x_size *= ball_x_size;
+    double ball_y_size = (ai->st.ball->y2 - ai->st.ball->y1);
+    ball_y_size *= ball_y_size;
+
+    bal_euc = sqrt(ball_x_size + ball_y_size);
   }
 
-  int bound_prox = closeToBoundary(ai, blobs);
+  bound_prox = closeToBoundary(ai, blobs);
 
-   if(*current_state == 1) {
 
-    if( ai->st.smx > 0) {
-        face_right = 1;
-     } else {
-        face_right = 0;
-    }
+  if((*current_state / 100) < 1) {
+
+    if(*current_state == 1) {
+
+      if( ai->st.smx > 0) {
+          face_right = 1;
+       } else {
+          face_right = 0;
+      }
+
+      if( ai->st.smy > 0) {
+          face_down = 1;
+      } else {
+          face_down = 0;
+      }
 
       //initialDir(ai, blobs);
 
       *current_state = 2;
-   }
+    }
 
-   if(*current_state == 2) {
+    if(*current_state == 2) {
+      pivot_left_speed(50);
+      ai->st.mv_fl = 1;
 
-      if(bound_prox == 1) {
-
-         if(ai->st.self->dx < 0) {
-
-            if(ai->st.mv_fl) {
-               all_stop();
-            }
-
-            reverse(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_back = 1;
-            ai->st.mv_bl = 1;
-
-         } else { // drives over boundary
-
-            if(ai->st.mv_bl) {
-               all_stop();
-            }
-
-            drive(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-            ai->st.mv_fl = 1;
-         }
-      }
-
-      if(bound_prox == 2) {
-
-         if(ai->st.self->dy < 0) { // over
-
-            if(ai->st.mv_fl) {
-               all_stop();
-            }
-
-            reverse(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_back = 1;
-            ai->st.mv_bl = 1;
-         } else {
-
-            if(ai->st.mv_bl) {
-               all_stop();
-            }
-
-            drive(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-            ai->st.mv_fl = 1;
-         }
-      }
-
-      if(bound_prox == 3) {
-
-         if(ai->st.self->dx > 0) { //over bound
-
-            if(ai->st.mv_fl) {
-               all_stop();
-            }
-
-            reverse(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_back = 1;
-            ai->st.mv_bl = 1;
-         } else {
-
-            if(ai->st.mv_bl) {
-               all_stop();
-            }
-
-            drive(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-            ai->st.mv_fl = 1;
-         }
-      }
-
-      if(bound_prox == 4) {
-
-         if(ai->st.self->dy > 0) { // over bound
-
-            if(ai->st.mv_fl) {
-               all_stop();
-            }
-
-            reverse(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_back = 1;
-            ai->st.mv_bl = 1;
-         } else {
-
-            if(ai->st.mv_bl) {
-               all_stop();
-            }
-
-            drive(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-            ai->st.mv_fl = 1;
-         }
-      }
-
-   }
+      
+    }
+  }
   
 
   //fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f], AI state=%d, side=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.smx,ai->st.smy,ai->st.state, ai->st.side);
@@ -664,12 +583,20 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
   //		- if not facing ball, go to neutral
  
   // STATE 3: 
-  if ( *current_state == 101 ) {
-      // If 
+
+  else if((*current_state / 100) < 2) {
+    if ( *current_state == 101 ) {
+      
       if( ai->st.smx > 0) {
          face_right = 1;
       } else {
          face_right = 0;
+      }
+
+      if( ai->st.smy > 0) {
+          face_down = 1;
+      } else {
+          face_down = 0;
       }
 
       if (fabs(1 - ai->st.smy) < .1) {
@@ -691,128 +618,119 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
 
       *current_state = 102;
-  }
+    }
 
-  // STATE 102: turn to face wall
-  else if ( *current_state == 102 ) {
+    // STATE 102: turn to face wall
+    else if ( *current_state == 102 ) {
       if (lookTop(ai, blobs))  {
         *current_state = 103;
       }
- }
+    }
 
- // STATE 103: facing X wall, so stop
- else if ( *current_state == 103) {
-   all_stop();
-   *current_state = 104;   
- }
+    // STATE 103: facing X wall, so stop
+    else if ( *current_state == 103) {
+      all_stop();
+      *current_state = 104;   
+    }
 
-  // STATE 104: move towards X wall
- else if ( *current_state == 104 ) {
-//      if (ai->st.self->cy > 720 || ai->st.self->cy < 200) {
+    // STATE 104: move towards X wall
+    else if ( *current_state == 104 ) {
+    //      if (ai->st.self->cy > 720 || ai->st.self->cy < 200) {
 
-   if(ai->st.mv_bl) {
-      if( (ai->st.ball->cy - ai->st.self->cy) > 80 ) {
-        all_stop();
-        *current_state = 105;
+      if(ai->st.mv_bl) {
+        if( (ai->st.ball->cy - ai->st.self->cy) > 80 ) {
+          all_stop();
+          *current_state = 105;
+        } else {
+          drive_speed(d_speed);
+          clear_motion_flags(ai);
+          ai->st.mv_fwd = 1;
+        }
       } else {
-         drive_speed(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
+        if( (ai->st.self->cy - ai->st.ball->cy) > 80 ) {
+          all_stop();
+          *current_state = 105;
+        } else {
+          drive_speed(d_speed);
+          clear_motion_flags(ai);
+          ai->st.mv_fwd = 1;
+        }
       }
-   } else {
-      if( (ai->st.self->cy - ai->st.ball->cy) > 80 ) {
+    }
+
+    // STATE 105: wall reached, turn to face our side.
+    else if ( *current_state == 105 ) {
+
+      if (lookSide(ai, blobs))  {
+       all_stop();
+       *current_state = 106;
+      }
+    }
+
+    // STATE 106: move towards Y wall
+    else if ( *current_state == 106 ) {
+
+      //   if(ai->st.self->cx > 954 || ai->st.self->cx < 50) {
+      //if( (ai->st.self->cx - ai->st.ball->cx) > 80 ) {
+      if( (ai->st.self->x1 - ai->st.ball->cx) > 80 ) {
         all_stop();
-        *current_state = 105;
-      } else {
-         drive_speed(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
+        *current_state = 107;
       }
-   }
- }
+      else {
+        drive_speed(d_speed);
+        clear_motion_flags(ai);
+        ai->st.mv_fwd = 1;
+      }
+    }
 
- // STATE 105: wall reached, turn to face our side.
- else if ( *current_state == 105 ) {
+    // STATE 107: face our net
+    else if ( *current_state == 107 ) {
 
-   if (lookSide(ai, blobs))  {
-     all_stop();
-     *current_state = 106;
-   }
- }
+      if (lookNet(ai, blobs))  {
+        all_stop();
+        *current_state = 108;
+      }  
+    }
 
- // STATE 106: move towards Y wall
- else if ( *current_state == 106 ) {
+    // STATE 108: move towards center of our net (measured relative to ball)
+    else if ( *current_state == 108 ) {
 
-//   if(ai->st.self->cx > 954 || ai->st.self->cx < 50) {
-   //if( (ai->st.self->cx - ai->st.ball->cx) > 80 ) {
-    if( (ai->st.self->x1 - ai->st.ball->cx) > 80 ) {
-     all_stop();
-     *current_state = 107;
-   }
-   else {
-     drive_speed(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-   }
- }
-
-// STATE 107: face our net
-else if ( *current_state == 107 ) {
-
-   if (lookNet(ai, blobs))  {
-     all_stop();
-     *current_state = 108;
-   }  
-}
-
- // STATE 108: move towards center of our net (measured relative to ball)
- else if ( *current_state == 108 ) {
-
-   if( (abs(ai->st.self->cy - ai->st.ball->cy) < 30 && ai->st.mv_bl) ||
+      if( (abs(ai->st.self->cy - ai->st.ball->cy) < 30 && ai->st.mv_bl) ||
        (abs(ai->st.self->cy - ai->st.ball->cy) < 100 && !(ai->st.mv_bl))) {
-     all_stop();
-     *current_state = 109;
-   }
-   else {
-     drive_speed(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-   }
- }
+        all_stop();
+        *current_state = 109;
+      }
+      else {
+        drive_speed(d_speed);
+        clear_motion_flags(ai);
+        ai->st.mv_fwd = 1;
+      }
+    }
 
- // STATE 109: face the ball
- else if ( *current_state == 109 ) {
+    // STATE 109: face the ball
+    else if ( *current_state == 109 ) {
 
-   if (lookBall(ai, blobs))  {
-     all_stop();
-     *current_state = 110;
-   }  
+      if (lookBall(ai, blobs))  {
+        all_stop();
+        *current_state = 110;
+      }  
 
- }
+    }
 
- // STATE 110: move towards ball (measured relative to ball)
- else if ( *current_state == 110 ) {
-   //if( abs(ai->st.self->cx - ai->st.ball->cx) < 300 ) {
-    if( abs(ai->st.self->x1 - ai->st.ball->cx) < 150 ) {
-     all_stop();
-     *current_state = 113;
-   }
-   else {
-     drive_speed(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-   }
- }
-
- // STATE 110: move towards center of our net (measured relative to ball)
- else if ( *current_state == 111 ) {
-
-  
-
- }
+    // STATE 110: move towards ball (measured relative to ball)
+    else if ( *current_state == 110 ) {
+      //if( abs(ai->st.self->cx - ai->st.ball->cx) < 300 ) {
+      if( abs(ai->st.self->x1 - ai->st.ball->cx) < 150 ) {
+        all_stop();
+        *current_state = 113;
+      }
+      else {
+        drive_speed(d_speed);
+        clear_motion_flags(ai);
+        ai->st.mv_fwd = 1;
+      }
+    }
  
-
-
 /* // Below is stuff for wrong direction
   else if ( *current_state == 102 ) {
 
@@ -854,30 +772,30 @@ else if ( *current_state == 107 ) {
   }
 */
 
-  else if ( *current_state == 113 ) {
-     retract();
-     *current_state = 114;
+    else if ( *current_state == 113 ) {
+      retract();
+      *current_state = 114;
+    }
+    else if ( *current_state == 114 ) {
+      stop_kicker();
+      *current_state = 115;
+    }
+    else if ( *current_state == 115 ) {
+      kick();
+      *current_state = 116;
+    }
+    else if ( *current_state == 116 ) {
+      kick();
+      *current_state = 117;
+    }
+    else if ( *current_state == 117 ) {
+      stop_kicker();
+      *current_state = 118;
+    }
+    else if ( *current_state == 118 ) {
+      fprintf(stderr,"Turn at Wall");
+    }
   }
-  else if ( *current_state == 114 ) {
-     stop_kicker();
-     *current_state = 115;
-  }
-  else if ( *current_state == 115 ) {
-    kick();
-    *current_state = 116;
-  }
-  else if ( *current_state == 116 ) {
-    kick();
-    *current_state = 117;
-  }
-  else if ( *current_state == 117 ) {
-    stop_kicker();
-    *current_state = 118;
-  }
-  else if ( *current_state == 118 ) {
-    fprintf(stderr,"Turn at Wall");
-  }
-
 /*
     else if ( *current_state == 107 ) {
     
@@ -899,39 +817,48 @@ else if ( *current_state == 107 ) {
 //----------------------------------------------
 
 
-  if ( *current_state == 201 ) {
+  else {
+
+    if ( *current_state == 201 ) {
 
 
-    if( ai->st.smx > 0) {
+      if( ai->st.smx > 0) {
         face_right = 1;
-     } else {
+      } else {
         face_right = 0;
-    }
+      }
 
-//   initialDir(ai, blobs);
-   *current_state = 202;    
- }  
-  else if ( *current_state == 202 ) {
+      if( ai->st.smy > 0) {
+          face_down = 1;
+      } else {
+          face_down = 0;
+      }
+
+      //   initialDir(ai, blobs);
+      *current_state = 202;    
+    }  
+
+    else if ( *current_state == 202 ) {
      
 
-     /*
-     toBallVec(ai, blobs);
-     if(closeToBall(ai,blobs)) {
+      /*
+      toBallVec(ai, blobs);
+      if(closeToBall(ai,blobs)) {
   
-       if(facingBall(ai,blobs)) {
-        *current_state = 204;
-       }
+        if(facingBall(ai,blobs)) {
+         *current_state = 204;
+        }
 
-     } else {
-       if(facingBall(ai,blobs)) {
+      } else {
+        if(facingBall(ai,blobs)) {
         *current_state = 209;
-       }
-     }
-     */
+        }
+      }
+      */
 
-     toBallVec(ai, blobs); 
+      toBallVec(ai, blobs); 
  
-     if(facingBall(ai,blobs)) {
+      if(facingBall(ai,blobs)) {
 
         all_stop();
         *current_state = 209;
@@ -949,54 +876,59 @@ else if ( *current_state == 107 ) {
             
        } */
      
-     } 
+      } 
+    }
+    else if ( *current_state == 203 ) {
+      all_stop();
+      *current_state = 209;      
+    }
+    else if ( *current_state == 204 ) {
+      retract();
+      *current_state = 205;
+    }
+    else if ( *current_state == 205 ) {
+      stop_kicker();
+      *current_state = 206;
+    }
+    else if ( *current_state == 206 ) {
+      kick();
+      *current_state = 207;
+    }
+    else if ( *current_state == 207 ) {
+      kick();
+      *current_state = 208;
+    }
+    else if ( *current_state == 208 ) {
+      stop_kicker();
+      *current_state = 202;
+    }
+    else if ( *current_state == 209 ) {
+
+      if(closeToBall(ai,blobs)) {
+        *current_state = 204;
+      }
+
+      if(!facingBall(ai,blobs)) {
+        *current_state = 202;
+      }
+
+      drive_speed(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+
+    }
+
   }
-  else if ( *current_state == 203 ) {
-    all_stop();
-    *current_state = 209;      
- }
-  else if ( *current_state == 204 ) {
-    retract();
-    *current_state = 205;
- }
- else if ( *current_state == 205 ) {
-    stop_kicker();
-    *current_state = 206;
- }
- else if ( *current_state == 206 ) {
-   kick();
-   *current_state = 207;
- }
- else if ( *current_state == 207 ) {
-   kick();
-   *current_state = 208;
- }
- else if ( *current_state == 208 ) {
-   stop_kicker();
-   *current_state = 202;
- }
- else if ( *current_state == 209 ) {
 
-   if(closeToBall(ai,blobs)) {
-     *current_state = 204;
-   }
+  //fprintf(stderr, "Old bot direction: (%f,%f)\n", old_dir_x, old_dir_y);
 
-   if(!facingBall(ai,blobs)) {
-     *current_state = 202;
-   }
-
-   drive_speed(d_speed);
-            clear_motion_flags(ai);
-            ai->st.mv_fwd = 1;
-
- }
-
- //fprintf(stderr, "Old bot direction: (%f,%f)\n", old_dir_x, old_dir_y);
-
- if(!((*current_state % 100) == 0)) {
+  if(!((*current_state % 100) == 0)) {
     old_dir_x = ai->st.self->dx;
     old_dir_y = ai->st.self->dy;
- }
+    ai->st.self->dx = fixed_x;
+    ai->st.self->dy = fixed_y;
+  }
+
 
  //fprintf(stderr, "Current bot direction: (%f,%f)\n", ai->st.self->dx, ai->st.self->dy);
 
@@ -1029,65 +961,98 @@ void initialDir(struct RoboAI *ai, struct blob *blobs) {
 void directionCorrection(struct RoboAI *ai, struct blob *blobs) {
 
 
- if(ai->st.mv_back) {
+if(ai->st.mv_back && face_right) {
   return;
- }
+}
+else if(ai->st.mv_fwd && face_right) {
+  return;
+}
+
+
+ //double bound = 2.5 * old_dir_y;
+
+int flipped = 0;
+double cross = (ai->st.self->dx * old_dir_y) - (old_dir_x * ai->st.self->dy);
 
 /*
- double bound = 2.5 * old_dir_y;
-
- int flipped = 0;
-
  if(ai->st.self->dy > 0 && old_dir_y < 0) {
 
-   if(fabs(-1.0 - old_dir_y) < 0.3) {
+   if(fabs(ai->st.self->dy - old_dir_y) > 1.0) {
       flipped = 1;
    }
 
  }
  else if(ai->st.self->dy < 0 && old_dir_y > 0) {
 
-   if(fabs(1.0 - old_dir_y) < 0.3) {
+   if(fabs(ai->st.self->dy - old_dir_y) > 1.0) {
       flipped = 1;
    }
 
  }
 
- if(flipped && ai->st.mv_fwd) {
-      ai->st.self->dx *= -1;
-      ai->st.self->dy *= -1;
-      ai->st.mv_fwd = 0;
-      ai->st.mv_back = 1;
- }
- else if(flipped && ai->st.mv_back) {
-   ai->st.mv_fwd = 1;
-   ai->st.mv_back = 0;
- }
- else if(!flipped && ai->st.mv_back) {
-   ai->st.self->dx *= -1;
-   ai->st.self->dy *= -1;
- }
 */
+
+  if(ai->st.mv_fl) {
+    if(face_right && cross < 0) {
+      flipped = 1;
+    }
+
+    if(!face_right && cross < 0) {
+      flipped = 1;
+    }
+  }
+
+  if(ai->st.mv_fr) {
+    if(face_right && cross > 0) {
+      flipped = 1;
+    }
+  }
+
+  if(flipped && face_right) {
+    //ai->st.self->dx *= -1;
+    //ai->st.self->dy *= -1;
+    fixed_x = ai->st.self->dx * (-1.0);
+    fixed_y = ai->st.self->dy * (-1.0);
+    face_right = 0;
+  }
+  else if(flipped && !face_right) {
+    fixed_x = ai->st.self->dx;
+    fixed_y = ai->st.self->dy;
+    face_right = 1;
+  }
+  else if(!flipped && !face_right) {
+    //ai->st.self->dx *= -1;
+    //ai->st.self->dy *= -1;
+    fixed_x = ai->st.self->dx * (-1.0);
+    fixed_y = ai->st.self->dy * (-1.0);
+  } else {
+    fixed_x = ai->st.self->dx;
+    fixed_y = ai->st.self->dy;
+  }
+
 
  //ai->st.self->dy
  //ai->st.smy
  // If vector flips
 // printf("Old: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
 
- if(fabs(ai->st.smy - old_dir_y) > 1.2 && face_right) {
-      ai->st.self->dx *= -1;
-      ai->st.self->dy *= -1;
-      face_right = 0;
- }
- else if(fabs(ai->st.smy - old_dir_y) > 1.2 && !face_right) {
-   face_right = 1;
- }
- else if(fabs(ai->st.smy - old_dir_y) < 1.2 && !face_right) {
-   ai->st.self->dx *= -1;
-   ai->st.self->dy *= -1;
- }
+/*
 
-// printf("New: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
+  if(fabs(ai->st.smy - old_dir_y) > 1.2 && face_right) {
+    ai->st.self->dx *= -1;
+    ai->st.self->dy *= -1;
+    face_right = 0;
+  }
+  else if(fabs(ai->st.smy - old_dir_y) > 1.2 && !face_right) {
+    face_right = 1;
+  }
+  else if(fabs(ai->st.smy - old_dir_y) < 1.2 && !face_right) {
+    ai->st.self->dx *= -1;
+    ai->st.self->dy *= -1;
+  }
+
+  // printf("New: (%f, %f)\n",ai->st.self->dx,ai->st.self->dy);
+  */
 }
 
 
@@ -1112,7 +1077,7 @@ int closeToBall(struct RoboAI *ai, struct blob *blobs) {
 
 //  if ( fabs(ai->st.self->cx - ai->st.ball->cx) < ball_x_size && fabs(ai->st.self->cy - ai->st.ball->cy) < ball_y_size) {
 
-  if(fabs(mag - euc_dist) < (1.75*euc_dist)) {
+  if(fabs(mag - bal_euc) < (1.75*bal_euc)) {
     return 1;
   }
 
@@ -1233,26 +1198,14 @@ int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
       ai->st.state -= diff;
       old_dir_x = -10;
       old_dir_y = -10;
+      return 1;
     }
 
     return 0;
   }
 
 int facingBall(struct RoboAI *ai, struct blob *blobs) {
- /*
-  
-double x, y;
-  
-  x = ai->st.ball->cx - ai->st.self->cx;
-  y = ai->st.ball->cy - ai->st.self->cy;
 
-  if((fabs(x - ai->st.self->dx) < 0.1) && (fabs(y - ai->st.self->dy) < 0.1)) {
-    return 1;
-  }
-
-  return 0;
-
-*/
 
     double x, y, mag, dot;
     int correction;
@@ -1299,4 +1252,109 @@ int closeToBoundary(struct RoboAI *ai, struct blob *blobs) {
    return 0;
 
 
+}
+
+
+int boundCheck(struct RoboAI *ai, struct blob *blobs) {
+
+  if(bound_prox == 1) {
+
+    if(ai->st.self->dx < 0) {
+
+      if(ai->st.mv_fl) {
+        all_stop();
+      }
+
+      reverse(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_back = 1;
+      ai->st.mv_bl = 1;
+
+    } else { // drives over boundary
+
+      if(ai->st.mv_bl) {
+        all_stop();
+      }
+
+      drive(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+      ai->st.mv_fl = 1;
+    }
+  }
+
+  if(bound_prox == 2) {
+
+    if(ai->st.self->dy < 0) { // over
+
+      if(ai->st.mv_fl) {
+        all_stop();
+      }
+
+      reverse(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_back = 1;
+      ai->st.mv_bl = 1;
+    } else {
+
+      if(ai->st.mv_bl) {
+        all_stop();
+      }
+
+      drive(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+      ai->st.mv_fl = 1;
+    }
+  }
+
+  if(bound_prox == 3) {
+
+    if(ai->st.self->dx > 0) { //over bound
+
+      if(ai->st.mv_fl) {
+        all_stop();
+      }
+
+      reverse(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_back = 1;
+      ai->st.mv_bl = 1;
+    } else {
+
+      if(ai->st.mv_bl) {
+        all_stop();
+      }
+
+      drive(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+      ai->st.mv_fl = 1;
+    }
+  }
+
+  if(bound_prox == 4) {
+
+    if(ai->st.self->dy > 0) { // over bound
+
+      if(ai->st.mv_fl) {
+        all_stop();
+      }
+
+      reverse(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_back = 1;
+      ai->st.mv_bl = 1;
+    } else {
+
+      if(ai->st.mv_bl) {
+        all_stop();
+      }
+
+      drive(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+      ai->st.mv_fl = 1;
+    }
+  }
 }
