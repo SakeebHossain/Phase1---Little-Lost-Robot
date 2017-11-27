@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 60, r_speed = 25, t_speed = 80, face_right, bound_prox, face_down;
+int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox, face_down, not_moving;
 double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y;
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
@@ -559,6 +559,9 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       pivot_left_speed(50);
       ai->st.mv_fl = 1;
 
+      //pivot_right_speed(50);
+      //ai->st.mv_fr = 1;
+
       
     }
   }
@@ -630,6 +633,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     // STATE 103: facing X wall, so stop
     else if ( *current_state == 103) {
       all_stop();
+      clear_motion_flags(ai);
+      not_moving = 1;
       *current_state = 104;   
     }
 
@@ -640,6 +645,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       if(ai->st.mv_bl) {
         if( (ai->st.ball->cy - ai->st.self->cy) > 80 ) {
           all_stop();
+          clear_motion_flags(ai);
+          not_moving = 1;
           *current_state = 105;
         } else {
           drive_speed(d_speed);
@@ -649,6 +656,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       } else {
         if( (ai->st.self->cy - ai->st.ball->cy) > 80 ) {
           all_stop();
+          clear_motion_flags(ai);
+          not_moving = 1;
           *current_state = 105;
         } else {
           drive_speed(d_speed);
@@ -663,6 +672,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
       if (lookSide(ai, blobs))  {
        all_stop();
+       clear_motion_flags(ai);
+       not_moving = 1;
        *current_state = 106;
       }
     }
@@ -674,6 +685,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       //if( (ai->st.self->cx - ai->st.ball->cx) > 80 ) {
       if( (ai->st.self->x1 - ai->st.ball->cx) > 80 ) {
         all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
         *current_state = 107;
       }
       else {
@@ -688,6 +701,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
       if (lookNet(ai, blobs))  {
         all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
         *current_state = 108;
       }  
     }
@@ -698,6 +713,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       if( (abs(ai->st.self->cy - ai->st.ball->cy) < 30 && ai->st.mv_bl) ||
        (abs(ai->st.self->cy - ai->st.ball->cy) < 100 && !(ai->st.mv_bl))) {
         all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
         *current_state = 109;
       }
       else {
@@ -712,6 +729,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
       if (lookBall(ai, blobs))  {
         all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
         *current_state = 110;
       }  
 
@@ -722,6 +741,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       //if( abs(ai->st.self->cx - ai->st.ball->cx) < 300 ) {
       if( abs(ai->st.self->x1 - ai->st.ball->cx) < 150 ) {
         all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
         *current_state = 113;
       }
       else {
@@ -861,6 +882,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       if(facingBall(ai,blobs)) {
 
         all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
         *current_state = 209;
 
 /*
@@ -880,6 +903,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     }
     else if ( *current_state == 203 ) {
       all_stop();
+      clear_motion_flags(ai);
+      not_moving = 1;
       *current_state = 209;      
     }
     else if ( *current_state == 204 ) {
@@ -952,8 +977,10 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 void initialDir(struct RoboAI *ai, struct blob *blobs) {
 
  if( ai->st.smx < 0 && ai->st.self->dx > 0) {
-   ai->st.self->dx *= -1;
-   ai->st.self->dy *= -1;
+   //ai->st.self->dx *= -1;
+   //ai->st.self->dy *= -1;
+   fixed_x = ai->st.self->dx * (-1.0);
+   fixed_y = ai->st.self->dy * (-1.0);
  }
 
 }
@@ -965,6 +992,10 @@ if(ai->st.mv_back && face_right) {
   return;
 }
 else if(ai->st.mv_fwd && face_right) {
+  return;
+}
+else if(not_moving) {
+  not_moving = 0;
   return;
 }
 
@@ -993,17 +1024,13 @@ double cross = (ai->st.self->dx * old_dir_y) - (old_dir_x * ai->st.self->dy);
 */
 
   if(ai->st.mv_fl) {
-    if(face_right && cross < 0) {
-      flipped = 1;
-    }
-
-    if(!face_right && cross < 0) {
+    if(cross < 0) {
       flipped = 1;
     }
   }
 
   if(ai->st.mv_fr) {
-    if(face_right && cross > 0) {
+    if(cross > 0) {
       flipped = 1;
     }
   }
@@ -1155,14 +1182,14 @@ void toBallVec(struct RoboAI *ai, struct blob *blobs) {
     x *= mag;
     y *= mag;
 
-    dot = (ai->st.self->dx * x) + (ai->st.self->dy * y);
+    dot = (fixed_x * x) + (fixed_y * y);
     dot = 1 - dot;
 
     if(dot > 1) {
        dot = 1;
     }
 
-    cross = (ai->st.self->dx * y) - (x * ai->st.self->dy);
+    cross = (fixed_x * y) - (x * fixed_y);
 
     speed = t_speed * dot;
 
@@ -1172,10 +1199,16 @@ void toBallVec(struct RoboAI *ai, struct blob *blobs) {
 
 
     if(cross >= 0) {
-       turn_right_speed(speed); 
+       turn_right_speed(speed);
+       //pivot_right_speed(speed);
+       clear_motion_flags(ai);
+       ai->st.mv_fr = 1;
     }
     else if(cross < 0) {
-       turn_left_speed(speed); 
+       turn_left_speed(speed);
+       //pivot_left_speed(speed);
+       clear_motion_flags(ai);
+       ai->st.mv_fl = 1;       
     }
 
   }
@@ -1185,6 +1218,8 @@ int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
 
     if (ai->st.self == NULL ) {
       all_stop();
+      clear_motion_flags(ai);
+      not_moving = 1;
       stop_kicker();
       return 1;
     }
@@ -1194,6 +1229,8 @@ int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
     if (ai->st.ball == NULL) {
       fprintf(stderr, "ball is gone.....\n");
       all_stop();
+      clear_motion_flags(ai);
+      not_moving = 1;
       stop_kicker();
       ai->st.state -= diff;
       old_dir_x = -10;
@@ -1218,7 +1255,7 @@ int facingBall(struct RoboAI *ai, struct blob *blobs) {
     x *= mag;
     y *= mag;
 
-    dot = (ai->st.self->dx * x) + (ai->st.self->dy * y);
+    dot = (fixed_x * x) + (fixed_y * y);
 
 
 
