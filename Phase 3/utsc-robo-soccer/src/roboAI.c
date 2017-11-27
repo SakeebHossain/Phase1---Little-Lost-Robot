@@ -550,8 +550,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
           face_down = 0;
       }
 
-      //initialDir(ai, blobs);
-
       *current_state = 2;
     }
 
@@ -616,7 +614,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
          ai->st.mv_bl = 0;
       }
 
-      initialDir(ai, blobs);
 
 
 
@@ -855,7 +852,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
           face_down = 0;
       }
 
-      //   initialDir(ai, blobs);
       *current_state = 202;    
     }  
 
@@ -976,12 +972,18 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
 void initialDir(struct RoboAI *ai, struct blob *blobs) {
 
- if( ai->st.smx < 0 && ai->st.self->dx > 0) {
-   //ai->st.self->dx *= -1;
-   //ai->st.self->dy *= -1;
-   fixed_x = ai->st.self->dx * (-1.0);
-   fixed_y = ai->st.self->dy * (-1.0);
- }
+  //drive_speed(10);
+
+  if( ai->st.smx < 0 && ai->st.self->dx > 0) {
+    //ai->st.self->dx *= -1;
+    //ai->st.self->dy *= -1;
+    //fixed_x = ai->st.self->dx * (-1.0);
+    //fixed_y = ai->st.self->dy * (-1.0);
+    fixed_x = ai->st.smx;
+    fixed_y = ai->st.smy;
+  }
+
+  //all_stop();
 
 }
 
