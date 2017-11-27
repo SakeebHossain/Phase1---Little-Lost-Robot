@@ -411,8 +411,8 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox, face_down, not_moving;
-double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y;
+int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox, face_down, not_moving, line_up[3]={1,0,2};
+double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y, dists[2] = {-1.0, -1.0};
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 {
@@ -536,7 +536,24 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
   if((*current_state / 100) < 1) {
 
+    // Will we attack or defend?
+    // int mode = chooseMode(ai, blobs);
+    // Say chunk out 20 states per (least in dist)
+    // Defense: 10-30
+    // Attack: 40-60
+    // Kick: 70-80 or whatever (will then keep track of old state?)
+    // Kicking has own state section used by both if needed
+    // Can have default mode default states, if still doing one, continue
+
+    // Consider having a unique check just for soccer that doesn't reset to init when things vanish
+
+    // If we vanish, we should still have our old move flag set, so do the inverse
+    // Above requires a change for inclusion in directionCorrection (ignores bl/br)
+    // Also if we disappear may need to somewhat reinitialize direction vector
+
     if(*current_state == 1) {
+
+      not_moving = 1;
 
       if( ai->st.smx > 0) {
           face_right = 1;
@@ -549,6 +566,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       } else {
           face_down = 0;
       }
+      //lineUp(ai, blobs);
+      //distancesFromBall(ai, blobs);
 
       *current_state = 2;
     }
@@ -974,14 +993,14 @@ void initialDir(struct RoboAI *ai, struct blob *blobs) {
 
   //drive_speed(10);
 
-  if( ai->st.smx < 0 && ai->st.self->dx > 0) {
+//  if( ai->st.smx < 0 && ai->st.self->dx > 0) {
     //ai->st.self->dx *= -1;
     //ai->st.self->dy *= -1;
     //fixed_x = ai->st.self->dx * (-1.0);
     //fixed_y = ai->st.self->dy * (-1.0);
-    fixed_x = ai->st.smx;
-    fixed_y = ai->st.smy;
-  }
+    fixed_x = ai->st.self->mx;
+    fixed_y = ai->st.self->my;
+//  }
 
   //all_stop();
 
@@ -1228,6 +1247,17 @@ int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
 
     int diff = ai->st.state % 100;
 
+    if(ai->st.opp == NULL && ai->st.state < 100) {
+      fprintf(stderr, "opponent is gone.....\n");
+      all_stop();
+      clear_motion_flags(ai);
+      not_moving = 1;
+      stop_kicker();
+      ai->st.state -= diff;
+      old_dir_x = -10;
+      old_dir_y = -10;
+      return 1;
+    }
     if (ai->st.ball == NULL) {
       fprintf(stderr, "ball is gone.....\n");
       all_stop();
@@ -1396,4 +1426,56 @@ int boundCheck(struct RoboAI *ai, struct blob *blobs) {
       ai->st.mv_fl = 1;
     }
   }
+}
+
+int modeChoice(struct RoboAI *ai, struct blob *blobs) {
+    //0 for defend, 1 for attack
+    if(!(ai->st.side) && ai->st.ball->cx < ai->st.self->cx) return 0;
+    if(!(ai->st.side) && ai->st.ball->cx >= ai->st.self->cx) return 1;
+    if(ai->st.side && ai->st.ball->cx > ai->st.self->cx) return 0;
+    if(ai->st.side && ai->st.ball->cx <= ai->st.self->cx) return 1;
+}
+
+void lineUp(struct RoboAI *ai, struct blob *blobs) {
+    // Tells us the order from left (our net) to right (opp net) of all blobs placements
+    // (0->ball, 1->self, 2->opp)
+    if(ai->st.ball->cx < ai->st.self->cx && ai->st.self->cx < ai->st.opp->cx) {
+        line_up[0] = 0;
+        line_up[1] = 1;
+        line_up[2] = 2;
+    }
+    if(ai->st.ball->cx < ai->st.opp->cx && ai->st.opp->cx < ai->st.self->cx) {
+        line_up[0] = 0;
+        line_up[1] = 2;
+        line_up[2] = 1;
+    }
+    if(ai->st.self->cx < ai->st.ball->cx && ai->st.ball->cx < ai->st.opp->cx) {
+        line_up[0] = 1;
+        line_up[1] = 0;
+        line_up[2] = 2;
+    }
+    if(ai->st.self->cx < ai->st.opp->cx && ai->st.opp->cx < ai->st.ball->cx) {
+        line_up[0] = 1;
+        line_up[1] = 2;
+        line_up[2] = 0;
+    }
+    if(ai->st.opp->cx < ai->st.ball->cx && ai->st.ball->cx < ai->st.self->cx) {
+        line_up[0] = 2;
+        line_up[1] = 0;
+        line_up[2] = 1;
+    }
+    if(ai->st.opp->cx < ai->st.self->cx && ai->st.self->cx < ai->st.ball->cx) {
+        line_up[0] = 2;
+        line_up[1] = 1;
+        line_up[2] = 0;
+    }
+    printf("Order-> Left: %d, Middle: %d, Right: %d\n", line_up[0],line_up[1],line_up[2]);
+}
+
+void distancesFromBall(struct RoboAI *ai, struct blob *blobs) {
+    // Set our distance from ball
+    dists[0] = sqrt((ai->st.self->cx*ai->st.self->cx)+(ai->st.ball->cx*ai->st.ball->cx));
+    // Set opp distance from ball
+    dists[1] = sqrt((ai->st.opp->cx*ai->st.opp->cx)+(ai->st.ball->cx*ai->st.ball->cx));
+    printf("Distances from ball: 1: %f, 2: %f\n", dists[0],dists[1]);
 }
