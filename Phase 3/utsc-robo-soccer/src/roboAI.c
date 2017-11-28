@@ -471,6 +471,7 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
    if (ai->st.self->cx>=512) ai->st.side=1; else ai->st.side=0;
    all_stop();
    clear_motion_flags(ai);
+   initPhantomBall(ai, blobs);  // set initial ball size
    fprintf(stderr,"Self-ID complete. Current position: (%f,%f), current heading: [%f, %f], AI state=%d\n",ai->st.self->cx,ai->st.self->cy,ai->st.self->mx,ai->st.self->my,ai->st.state);
   }
  }
@@ -513,6 +514,11 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     return;
   }
   
+  // Check if phantom ball appears.
+  if (phantomBall(ai, blobs)) {
+    return;
+  }
+
   int *current_state = &(ai->st.state);
 
   //printf("Old: (%f, %f)\n",old_dir_x,old_dir_y);
@@ -1651,3 +1657,34 @@ void distancesFromBall(struct RoboAI *ai, struct blob *blobs) {
     dists[1] = sqrt((ai->st.opp->cx*ai->st.opp->cx)+(ai->st.ball->cx*ai->st.ball->cx));
     printf("Distances from ball: 1: %f, 2: %f\n", dists[0],dists[1]);
 }
+
+int initPhantomBall(struct RoboAI *ai, struct blob *blobs) {
+  
+    /* 
+     * gets the initial parameters of the ball for comparisons later.  
+    */
+    init_ball_x = fabs(ai->st.ball->x1 - ai->st.ball->x2);
+    init_ball_y = fabs(ai->st.ball->y1 - ai->st.ball->y2);
+  
+  }
+  
+  int phantomBall(struct RoboAI *ai, struct blob *blobs) {
+    
+      /* 
+       * check if the ball has changed in size dramatically. If it has it's probably not a ball!  
+      */
+  
+      double current_ball_x = ai->st.ball->x1 - ai->st.ball->x2;
+      double current_ball_y = ai->st.ball->y1 - ai->st.ball->y2;
+  
+      if (current_ball_x - init_ball_x > 10 ||
+          current_ball_y - init_ball_y > 10) {
+            return 0;   //it's not the ball!
+          }
+      
+      else {
+        return 1;  // it is the ball!
+      }
+  
+  }
+    
