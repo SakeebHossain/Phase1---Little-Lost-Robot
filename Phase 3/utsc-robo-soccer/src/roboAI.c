@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox = 0, face_down, not_moving, last_mode = -1, spawn_top;
+int d_speed = 60, r_speed = 25, t_speed = 50, k_speed = 80, face_right, bound_prox = 0, face_down, not_moving, last_mode = -1, spawn_top;
 double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y, dists[2] = {-1.0, -1.0};
 
 
@@ -640,11 +640,34 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     else if ( *current_state == 3 ) {
       
       if(closeToBall(ai,blobs)) {
-        *current_state = 4;
+
+        if(!ai->st.side && ai->st.ball->cx < 512) {
+          *current_state = 9;
+        }
+        else if(ai->st.side && ai->st.ball->cx > 512) {
+          *current_state = 9;
+        } else {
+
+          *current_state = 4;
+        }
       }
 
       if(!facingBall(ai,blobs)) {
         *current_state = 2;
+      }
+
+
+      if(ai->st.mv_fwd) {
+        if(!(checkFwd(ai, blobs))) {
+          fixed_x *= -1;
+          fixed_y *= -1;
+          all_stop();
+          clear_motion_flags(ai);
+          not_moving = 1;
+          *current_state = 2;
+          return;
+        }
+
       }
 
       drive_speed(d_speed);
@@ -652,10 +675,10 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       ai->st.mv_fwd = 1;
       not_moving = 0;
       
-      
+
     }
     else if ( *current_state == 4 ) {
-      retract();
+      retract_speed(k_speed);
       *current_state = 5;
     }
     else if ( *current_state == 5 ) {
@@ -663,11 +686,11 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       *current_state = 6;
     }
     else if ( *current_state == 6 ) {
-      kick();
+      kick_speed(k_speed);
       *current_state = 7;
     }
     else if ( *current_state == 7 ) {
-      kick();
+      kick_speed(k_speed);
       *current_state = 8;
     }
     else if ( *current_state == 8 ) {
@@ -706,8 +729,20 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       ai->st.mv_back = 1;
 
     }
+*/
 
-    if(*current_state == 4) {
+    else if(*current_state == 9) {
+
+      int speed = 2 * d_speed;
+
+      drive_speed(speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+      not_moving = 0;
+      *current_state = 10;
+    }
+
+    else if(*current_state == 10) {
 
       if(!ai->st.side && ai->st.self->cy < ai->st.ball->cy) {
         pivot_left_speed(50);
@@ -735,7 +770,7 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       }
       
     }
-*/
+
     // STATE 3: If ball is behind us and heading towards our net, try to intercept
     //	- If parallel to ball, make our route ark upwards/downwards get the ball
     //	- If opp. kicking ball, run in front of ball
@@ -1230,6 +1265,9 @@ int closeToBall(struct RoboAI *ai, struct blob *blobs) {
 
   double x, y, mag;
 
+
+    // + (fabs(x1 - x2) / 2)
+
     x = ai->st.ball->cx - ai->st.self->cx;
     y = ai->st.ball->cy - ai->st.self->cy;
 
@@ -1399,7 +1437,7 @@ int facingWall(struct RoboAI *ai, struct blob *blobs) {
   dot = (fixed_x * x) + (fixed_y * y);
 
   if ( dot > 0.95  ) {
-    fprintf(stderr, "%f facing ball.\n", dot);
+    fprintf(stderr, "%f facing wall.\n", dot);
     return 1;
   }
     
@@ -1564,7 +1602,7 @@ int facingBall(struct RoboAI *ai, struct blob *blobs) {
 
 
 
- if ( dot > 0.95  ) {
+ if ( dot > 0.95 ) {
      fprintf(stderr, "%f facing ball.\n", dot);
      return 1;
  }
@@ -1748,6 +1786,38 @@ int boundCheckSoccer(struct RoboAI *ai, struct blob *blobs) {
 
     *current_state = 99;
   }
+
+}
+
+int checkFwd(struct RoboAI *ai, struct blob *blobs) {
+
+/*
+  double x, y, mag, last_x, last_y, old_mag;
+
+  // Vector from centre of bot to centre of ball
+  x = ai->st.ball->cx - ai->st.self->cx;
+  y = ai->st.ball->cy - ai->st.self->cy;
+
+  mag = sqrt((x*x) + (y*y));
+
+  // Vector from centre of bot to centre of ball
+  last_x = ai->st.old_bcx - ai->st.old_scx;
+  last_y = ai->st.old_bcy - ai->st.old_scy;
+
+  old_mag = sqrt((last_x*last_x) + (last_y*last_y));
+
+  if(old_mag < mag) {
+    return 0;
+  }
+
+  return 1;
+*/
+
+  if((ai->st.self->mx > 0 && fixed_x < 0) || (ai->st.self->mx < 0 && fixed_x > 0)) {
+    return 0;
+  }
+
+  return 1;
 
 }
 
