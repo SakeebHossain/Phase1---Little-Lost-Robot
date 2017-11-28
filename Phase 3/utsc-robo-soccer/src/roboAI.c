@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox, face_down, not_moving, line_up[3]={1,0,2};
+int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox, face_down, not_moving, line_up[3]={1,0,2}, last_mode = -1;
 double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y, dists[2] = {-1.0, -1.0};
 
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
@@ -537,7 +537,7 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
   if((*current_state / 100) < 1) {
 
     // Will we attack or defend?
-    // int mode = chooseMode(ai, blobs);
+     int mode = modeChoice(ai, blobs);
     // Say chunk out 20 states per (least in dist)
     // Defense: 10-30
     // Attack: 40-60
@@ -551,9 +551,23 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     // Above requires a change for inclusion in directionCorrection (ignores bl/br)
     // Also if we disappear may need to somewhat reinitialize direction vector
 
-    if(*current_state == 1) {
+/*
+    if(!mode) {
+      //if(!(*current_state > 4) && !(*current_state == 1)) {
+        // attack!!!!!
+      //}
 
-      not_moving = 1;
+      if(last_mode && !(*current_state < 1)) {
+        *current_state = 2;
+        all_stop();
+        stop_kicker();
+        clear_motion_flags(ai);
+        not_moving = 1;
+      }
+    }
+*/
+
+    if(*current_state == 1) {
 
       if( ai->st.smx > 0) {
           face_right = 1;
@@ -572,15 +586,130 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       *current_state = 2;
     }
 
+    // Defense
+    // STATE 2: If ball is behind us and not approaching our net
+    //	- Either turn around and run, or run backwards
+    //	- If about parallel to ball, move to different position of field and move back
+    //	- Same condition if parallel to opponent
+
+    else if ( *current_state == 2 ) {
+
+      toBallVec(ai, blobs); 
+ 
+      if(facingBall(ai,blobs)) {
+
+        all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
+        *current_state = 3;
+     
+      } 
+    }
+    else if ( *current_state == 3 ) {
+
+      if(closeToBall(ai,blobs)) {
+        *current_state = 4;
+      }
+
+      if(!facingBall(ai,blobs)) {
+        *current_state = 2;
+      }
+
+      drive_speed(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+
+    }
+    else if ( *current_state == 4 ) {
+      retract();
+      *current_state = 5;
+    }
+    else if ( *current_state == 5 ) {
+      stop_kicker();
+      *current_state = 6;
+    }
+    else if ( *current_state == 6 ) {
+      kick();
+      *current_state = 7;
+    }
+    else if ( *current_state == 7 ) {
+      kick();
+      *current_state = 8;
+    }
+    else if ( *current_state == 8 ) {
+      stop_kicker();
+      *current_state = 2;
+    }
+
+/*
     if(*current_state == 2) {
-      pivot_left_speed(50);
-      ai->st.mv_fl = 1;
 
-      //pivot_right_speed(50);
-      //ai->st.mv_fr = 1;
+      toBallVecRev(ai, blobs); 
+ 
+      if(facingBallRev(ai, blobs)) {
+//        if(closeToBall(ai, blobs)) {
+          all_stop();
+          clear_motion_flags(ai);
+          not_moving = 1;
+          *current_state = 3;
+ //       }
+      } 
 
+    }
+
+    else if ( *current_state == 3 ) {
+
+      if(closeToBall(ai,blobs)) {
+        *current_state = 4;
+      }
+
+      if(!facingBallRev(ai,blobs)) {
+        *current_state = 2;
+      }
+
+      reverse_speed(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_back = 1;
+
+    }
+
+    if(*current_state == 4) {
+
+      if(!ai->st.side && ai->st.self->cy < ai->st.ball->cy) {
+        pivot_left_speed(50);
+        clear_motion_flags(ai);
+        ai->st.mv_fl = 1;
+      }
+      else if(!ai->st.side && ai->st.self->cy > ai->st.ball->cy) {
+        pivot_right_speed(50);
+        clear_motion_flags(ai);
+        ai->st.mv_fr = 1;
+      }
+      else if(ai->st.side && ai->st.self->cy < ai->st.ball->cy) {
+        pivot_right_speed(50);
+        clear_motion_flags(ai);
+        ai->st.mv_fr = 1;
+      }
+      else if(ai->st.side && ai->st.self->cy > ai->st.ball->cy) {
+        pivot_left_speed(50);
+        clear_motion_flags(ai);
+        ai->st.mv_fl = 1;
+      }
+
+      if(!closeToBall(ai,blobs)) {
+        *current_state = 2;
+      }
       
     }
+*/
+    // STATE 3: If ball is behind us and heading towards our net, try to intercept
+    //	- If parallel to ball, make our route ark upwards/downwards get the ball
+    //	- If opp. kicking ball, run in front of ball
+    //	- Otherwise approach ball and kick away
+
+    // STATE 4: If opp. have control, get in front of ball
+    // 	- May move backwards when defending
+    last_mode = mode;
   }
   
 
@@ -590,20 +719,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
 //  fprintf(stderr,"state: %d\n", *current_state);
   
-//  if( *current_state == 1) {
-//  }
-  // STATE 1: Initialize
-  //	- Find position
-  //	- Find ball
-  //	- Find opponent
-
-  // STATE 2: Determine offense, defense or neutral
-  //	- if close too ball
-  //		- if facing ball, go to offense
-  //		- if not facing ball, go to neutral
- 
-  // STATE 3: 
-
   else if((*current_state / 100) < 2) {
     if ( *current_state == 101 ) {
       
@@ -788,7 +903,21 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
   }
 */
 
-/* else if ( *current_state == 102 ) {
+/* else if ( *current_state    else if ( *current_state == 209 ) {
+
+      if(closeToBall(ai,blobs)) {
+        *current_state = 204;
+      }
+
+      if(!facingBall(ai,blobs)) {
+        *current_state = 202;
+      }
+
+      drive_speed(d_speed);
+      clear_motion_flags(ai);
+      ai->st.mv_fwd = 1;
+
+    } == 102 ) {
       if (ai->st.self->cx > 954 || ai->st.self->cy > 720) {
         all_stop();
       } else {
@@ -875,22 +1004,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     }  
 
     else if ( *current_state == 202 ) {
-     
-
-      /*
-      toBallVec(ai, blobs);
-      if(closeToBall(ai,blobs)) {
-  
-        if(facingBall(ai,blobs)) {
-         *current_state = 204;
-        }
-
-      } else {
-        if(facingBall(ai,blobs)) {
-        *current_state = 209;
-        }
-      }
-      */
 
       toBallVec(ai, blobs); 
  
@@ -900,19 +1013,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
         clear_motion_flags(ai);
         not_moving = 1;
         *current_state = 209;
-
-/*
-       if(closeToBall(ai,blobs)) {
-
-         // kick the ball            
-         *current_state = 203;
-         
-       } /* else {
-
-         // facing the ball, so zoom towards it 
-         *current_state = 209;
-            
-       } */
      
       } 
     }
@@ -1234,6 +1334,51 @@ void toBallVec(struct RoboAI *ai, struct blob *blobs) {
 
   }
 
+void toBallVecRev(struct RoboAI *ai, struct blob *blobs) {
+
+    double theta, phi, x, y, mag, dot, cross;
+    int correction, speed;
+
+    // Vector from centre of bot to centre of ball
+    x = ai->st.ball->cx - ai->st.self->cx;
+    y = ai->st.ball->cy - ai->st.self->cy;
+
+    mag = 1.0 / sqrt((x*x) + (y*y));
+    x *= mag;
+    y *= mag;
+
+    dot = (fixed_x * x) + (fixed_y * y);
+    dot = 1 - dot;
+
+    if(dot > 1) {
+       dot = 1;
+    }
+
+    cross = (fixed_x * y) - (x * fixed_y);
+
+    speed = t_speed * dot;
+
+    if(speed < 40) {
+       speed = 40;
+    }
+
+
+    if(cross >= 0) {
+       pivot_left_speed(speed);
+       //pivot_right_speed(speed);
+       clear_motion_flags(ai);
+       ai->st.mv_fl = 1;
+    }
+    else if(cross < 0) {
+       pivot_right_speed(speed);
+       //pivot_left_speed(speed);
+       clear_motion_flags(ai);
+       ai->st.mv_fr = 1;       
+    }
+
+  }
+
+
 int checkBlobsExist(struct RoboAI *ai, struct blob *blobs) {
 
 
@@ -1292,6 +1437,33 @@ int facingBall(struct RoboAI *ai, struct blob *blobs) {
 
 
  if ( dot > 0.95  ) {
+     fprintf(stderr, "%f facing ball.\n", dot);
+     return 1;
+ }
+
+  return 0;
+
+}
+
+int facingBallRev(struct RoboAI *ai, struct blob *blobs) {
+
+
+    double x, y, mag, dot;
+    int correction;
+
+    // Vector from centre of bot to centre of ball
+    x = ai->st.ball->cx - ai->st.self->cx;
+    y = ai->st.ball->cy - ai->st.self->cy;
+
+    mag = 1.0 / sqrt((x*x) + (y*y));
+    x *= mag;
+    y *= mag;
+
+    dot = (fixed_x * x) + (fixed_y * y);
+
+
+
+ if ( dot < -0.95  ) {
      fprintf(stderr, "%f facing ball.\n", dot);
      return 1;
  }
