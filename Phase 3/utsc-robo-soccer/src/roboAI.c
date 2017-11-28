@@ -411,7 +411,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
  track_agents(ai,blobs);
 }
 
-int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox = 0, face_down, not_moving, line_up[3]={1,0,2}, last_mode = -1, spawn_top;
+int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox = 0, face_down, not_moving, last_mode = -1, spawn_top;
 double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y, dists[2] = {-1.0, -1.0};
 
 
@@ -575,23 +575,25 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     }
 */
 
-    if(bound_prox != 0 && *current_state > 1 && *current_state < 96) {
+/*
+    if(bound_prox != 0 && *current_state > 1 && *current_state < 95) {
       boundCheckSoccer(ai,blobs);
       all_stop();
       clear_motion_flags(ai);
       not_moving = 1;
       
     }
+*/
 
     if(*current_state == 1) {
 
-      if( ai->st.smx > 0) {
+      if(ai->st.self->mx > 0) {
           face_right = 1;
        } else {
           face_right = 0;
       }
 
-      if( ai->st.smy > 0) {
+      if(ai->st.self->my > 0) {
           face_down = 1;
       } else {
           face_down = 0;
@@ -610,6 +612,19 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
     else if ( *current_state == 2 ) {
 
+/* // below needs a facing function
+      if((!(ai->st.side) && ai->st.self->cx > ai->st.ball->cx) || (ai->st.side && ai->st.self->cx < ai->st.ball->cx)) {
+          getBehindBall(ai, blobs);
+      }
+      else {
+         all_stop();
+         clear_motion_flags(ai);
+         not_moving = 1;
+         //*current_state = 3;
+      }
+      
+*/
+
       toBallVec(ai, blobs); 
  
       if(facingBall(ai,blobs)) {
@@ -619,10 +634,11 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
         not_moving = 1;
         *current_state = 3;
      
-      } 
+      }
+
     }
     else if ( *current_state == 3 ) {
-
+      
       if(closeToBall(ai,blobs)) {
         *current_state = 4;
       }
@@ -634,7 +650,9 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       drive_speed(d_speed);
       clear_motion_flags(ai);
       ai->st.mv_fwd = 1;
-
+      not_moving = 0;
+      
+      
     }
     else if ( *current_state == 4 ) {
       retract();
@@ -726,17 +744,19 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     // STATE 4: If opp. have control, get in front of ball
     // 	- May move backwards when defending
 
+    else if(*current_state == 95) {
+        all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
+        *current_state = prev_state;
+    }
+
     else if(*current_state == 96) {
       
       toWallVec(ai, blobs);
 
       if(facingWall(ai,blobs)) {
-        
-        all_stop();
-        clear_motion_flags(ai);
-        not_moving = 1;
         *current_state = prev_state;
-             
       } 
     }
     else if(*current_state == 97) {
@@ -1136,11 +1156,17 @@ double cross = (ai->st.self->dx * old_dir_y) - (old_dir_x * ai->st.self->dy);
     if(cross < 0) {
       flipped = 1;
     }
+    else {
+      flipped = 0;
+    }
   }
 
   if(ai->st.mv_fr) {
     if(cross > 0) {
       flipped = 1;
+    }
+    else {
+      flipped = 0;
     }
   }
 
@@ -1298,20 +1324,20 @@ void toWallVec(struct RoboAI *ai, struct blob *blobs) {
       int correction, speed;
 
       if(*current_state == 96) {
-        x = 0;
-        y = 1;
+        x = 1; //0
+        y = 0; //1
       }
       else if(*current_state == 97) {
-        x = -1;
-        y = 0;
+        x = 0; //-1
+        y = 1; //0
       }
       else if(*current_state == 98) {
-        x = 0;
-        y = -1;
+        x = -1; //0
+        y = 0;  //-1
       }
       else if(*current_state == 99) {
-        x = 1;
-        y = 0;
+        x = 0; //1
+        y = -1; //0
       }
   
       dot = (fixed_x * x) + (fixed_y * y);
@@ -1335,12 +1361,14 @@ void toWallVec(struct RoboAI *ai, struct blob *blobs) {
          pivot_right_speed(speed);
          clear_motion_flags(ai);
          ai->st.mv_fr = 1;
+         not_moving = 0;
       }
       else if(cross < 0) {
          //turn_left_speed(speed);
          pivot_left_speed(speed);
          clear_motion_flags(ai);
-         ai->st.mv_fl = 1;       
+         ai->st.mv_fl = 1;
+         not_moving = 0;
       }
   
   }
@@ -1351,22 +1379,22 @@ int facingWall(struct RoboAI *ai, struct blob *blobs) {
   double theta, phi, x, y, mag, dot, cross;
   int correction, speed;
 
-  if(*current_state == 96) {
-    x = 0;
-    y = 1;
-  }
-  else if(*current_state == 97) {
-    x = -1;
-    y = 0;
-  }
-  else if(*current_state == 98) {
-    x = 0;
-    y = -1;
-  }
-  else if(*current_state == 99) {
-    x = 1;
-    y = 0;
-  }
+      if(*current_state == 96) {
+        x = 1; //0
+        y = 0; //1
+      }
+      else if(*current_state == 97) {
+        x = 0; //-1
+        y = 1; //0
+      }
+      else if(*current_state == 98) {
+        x = -1; //0
+        y = 0;  //-1
+      }
+      else if(*current_state == 99) {
+        x = 0; //1
+        y = -1; //0
+      }
     
   dot = (fixed_x * x) + (fixed_y * y);
 
@@ -1380,6 +1408,15 @@ int facingWall(struct RoboAI *ai, struct blob *blobs) {
 }
 
 void toBallVec(struct RoboAI *ai, struct blob *blobs) {
+
+
+    if(bound_prox != 0 && *current_state > 1 && *current_state < 95) {
+      boundCheckSoccer(ai,blobs);
+      all_stop();
+      clear_motion_flags(ai);
+      not_moving = 1;
+      return;
+    }
 
     double theta, phi, x, y, mag, dot, cross;
     int correction, speed;
@@ -1413,12 +1450,14 @@ void toBallVec(struct RoboAI *ai, struct blob *blobs) {
        //pivot_right_speed(speed);
        clear_motion_flags(ai);
        ai->st.mv_fr = 1;
+       not_moving = 0;
     }
     else if(cross < 0) {
        turn_left_speed(speed);
        //pivot_left_speed(speed);
        clear_motion_flags(ai);
-       ai->st.mv_fl = 1;       
+       ai->st.mv_fl = 1;
+       not_moving = 0;
     }
 
 }
@@ -1563,19 +1602,19 @@ int facingBallRev(struct RoboAI *ai, struct blob *blobs) {
 
 int closeToBoundary(struct RoboAI *ai, struct blob *blobs) {
 
-   if(ai->st.self->x1 < 65 && ai->st.self->mx < 0) {
+   if(ai->st.self->x1 < 65 && fixed_x < 0) {
       return 1;
    }
 
-   if(ai->st.self->y1 < 65 && ai->st.self->my < 0) {
+   if(ai->st.self->y1 < 65 && fixed_y < 0) {
       return 2;
    }
 
-   if(ai->st.self->x2 > 960 && ai->st.self->mx > 0) {
+   if(ai->st.self->x2 > 960 && fixed_x > 0) {
       return 3;
    }
 
-   if(ai->st.self->y2 > 700 && ai->st.self->my > 0) {
+   if(ai->st.self->y2 > 700 && fixed_y > 0) {
       return 4;
    }
 
@@ -1615,7 +1654,7 @@ int boundCheckSoccer(struct RoboAI *ai, struct blob *blobs) {
       prev_state = *current_state;
     }
     
-    *current_state = 99;
+    *current_state = 96;
   }
 
   if(bound_prox == 2) {
@@ -1646,7 +1685,7 @@ int boundCheckSoccer(struct RoboAI *ai, struct blob *blobs) {
       prev_state = *current_state;
     }
 
-    *current_state = 98;
+    *current_state = 97;
   }
 
   if(bound_prox == 3) {
@@ -1676,7 +1715,7 @@ int boundCheckSoccer(struct RoboAI *ai, struct blob *blobs) {
       prev_state = *current_state;
     }
 
-    *current_state = 97;
+    *current_state = 98;
   }
 
   if(bound_prox == 4) {
@@ -1707,7 +1746,7 @@ int boundCheckSoccer(struct RoboAI *ai, struct blob *blobs) {
       prev_state = *current_state;
     }
 
-    *current_state = 96;
+    *current_state = 99;
   }
 
 }
@@ -1718,42 +1757,6 @@ int modeChoice(struct RoboAI *ai, struct blob *blobs) {
     if(!(ai->st.side) && ai->st.ball->cx >= ai->st.self->cx) return 1;
     if(ai->st.side && ai->st.ball->cx > ai->st.self->cx) return 0;
     if(ai->st.side && ai->st.ball->cx <= ai->st.self->cx) return 1;
-}
-
-void lineUp(struct RoboAI *ai, struct blob *blobs) {
-    // Tells us the order from left (our net) to right (opp net) of all blobs placements
-    // (0->ball, 1->self, 2->opp)
-    if(ai->st.ball->cx < ai->st.self->cx && ai->st.self->cx < ai->st.opp->cx) {
-        line_up[0] = 0;
-        line_up[1] = 1;
-        line_up[2] = 2;
-    }
-    if(ai->st.ball->cx < ai->st.opp->cx && ai->st.opp->cx < ai->st.self->cx) {
-        line_up[0] = 0;
-        line_up[1] = 2;
-        line_up[2] = 1;
-    }
-    if(ai->st.self->cx < ai->st.ball->cx && ai->st.ball->cx < ai->st.opp->cx) {
-        line_up[0] = 1;
-        line_up[1] = 0;
-        line_up[2] = 2;
-    }
-    if(ai->st.self->cx < ai->st.opp->cx && ai->st.opp->cx < ai->st.ball->cx) {
-        line_up[0] = 1;
-        line_up[1] = 2;
-        line_up[2] = 0;
-    }
-    if(ai->st.opp->cx < ai->st.ball->cx && ai->st.ball->cx < ai->st.self->cx) {
-        line_up[0] = 2;
-        line_up[1] = 0;
-        line_up[2] = 1;
-    }
-    if(ai->st.opp->cx < ai->st.self->cx && ai->st.self->cx < ai->st.ball->cx) {
-        line_up[0] = 2;
-        line_up[1] = 1;
-        line_up[2] = 0;
-    }
-    printf("Order-> Left: %d, Middle: %d, Right: %d\n", line_up[0],line_up[1],line_up[2]);
 }
 
 void distancesFromBall(struct RoboAI *ai, struct blob *blobs) {
@@ -1788,8 +1791,8 @@ void initPhantomBall(struct RoboAI *ai, struct blob *blobs) {
       double current_ball_x = fabs(ai->st.ball->x1 - ai->st.ball->x2);
       double current_ball_y = fabs(ai->st.ball->y1 - ai->st.ball->y2);
   
-      if ( fabs(current_ball_x - init_ball_x) > 50 ||
-          fabs(current_ball_y - init_ball_y) > 50) {
+      if ( fabs(current_ball_x - init_ball_x) > 10 ||
+          fabs(current_ball_y - init_ball_y) > 10) {
             return 1;   //it's not the ball!
           }
       
@@ -1798,4 +1801,106 @@ void initPhantomBall(struct RoboAI *ai, struct blob *blobs) {
       }
   
   }
-    
+
+void getBehindBall(struct RoboAI *ai, struct blob *blobs) {
+    clear_motion_flags(ai);
+    // If we're close to ball, but aligned with ball, moving forwards a little
+    if(fabs(ai->st.self->cx - ai->st.ball->cx) < bal_euc && fabs(ai->st.self->cy - ai->st.ball->cy) < bal_euc) {
+        drive(50);
+        ai->st.mv_fwd = 1;
+    }
+    // If robot is close to ball in x-axis, start turning backwards
+    else if(fabs(ai->st.self->cx - ai->st.ball->cx) < bal_euc) {
+        // If below ball, move up
+        if(!(ai->st.side) && ai->st.self->cy > ai->st.ball->cy) {
+            turn_left_reverse(30);
+            ai->st.mv_bl = 1;
+        }
+        else if(ai->st.side && ai->st.self->cy <= ai->st.ball->cy) {
+            turn_right_reverse(30);
+            ai->st.mv_br = 1;        
+        }
+            // Otherwise move down
+        else if(!(ai->st.side) && ai->st.self->cy <= ai->st.ball->cy) {
+            turn_right_reverse(30);
+            ai->st.mv_br = 1;
+        }
+        else {
+            turn_left_reverse(30);
+            ai->st.mv_bl = 1;
+        }
+    }
+    // Otherwise, keep moving backwards
+    else {
+        // If aligned with ball, move around the ball
+        if(fabs(ai->st.self->cy - ai->st.ball->cy) < bal_euc) {
+            // If on bottom half of screen, move up
+            if(!(ai->st.side) && ai->st.self->cy > 384) {
+                turn_left_reverse(30);
+                ai->st.mv_bl = 1;
+            }
+            else if(ai->st.side && ai->st.self->cy <= 384) {
+                turn_right_reverse(30);
+                ai->st.mv_br = 1;
+                
+            }
+            // Otherwise move down
+            else if(!(ai->st.side) && ai->st.self->cy <= 384) {
+                turn_right_reverse(30);
+                ai->st.mv_br = 1;
+            }
+            else {
+                turn_left_reverse(30);
+                ai->st.mv_bl = 1;
+            }
+        }
+        // Otherwise, straighten up and move backwards
+        else {
+            // If not aligned with net, turn backwards
+            if(ai->st.self->dx > .4) {
+                // If below the ball, rotate up
+                if(!(ai->st.side) && ai->st.self->cy > ai->st.ball->cy) {
+                    turn_left_reverse(30);
+                    ai->st.mv_bl = 1;
+                }
+                else if(ai->st.side && ai->st.self->cy <= ai->st.self->cy) {
+                    turn_right_reverse(30);
+                    ai->st.mv_br = 1;
+                }
+                // Otherwise move down
+                else if(!(ai->st.side) && ai->st.self->cy <= ai->st.self->cy) {
+                    turn_right_reverse(30);
+                    ai->st.mv_br = 1;
+                }
+                else {
+                    turn_left_reverse(30);
+                    ai->st.mv_bl = 1;
+                }
+            }
+            else if(ai->st.self->dx > .1) {
+                // If below the ball, rotate up
+                if(!(ai->st.side) && ai->st.self->cy > ai->st.ball->cy) {
+                    turn_left_reverse(30);
+                    ai->st.mv_bl = 1;
+                }
+                else if(ai->st.side && ai->st.self->cy <= ai->st.self->cy) {
+                    turn_right_reverse(30);
+                    ai->st.mv_br = 1;
+                }
+                // Otherwise move down
+                else if(!(ai->st.side) && ai->st.self->cy <= ai->st.self->cy) {
+                    turn_right_reverse(30);
+                    ai->st.mv_br = 1;
+                }
+                else {
+                    turn_left_reverse(30);
+                    ai->st.mv_bl = 1;
+                }
+            }
+            else {
+                reverse(50);
+                ai->st.mv_back = 1;
+            }
+        }
+    }
+}
