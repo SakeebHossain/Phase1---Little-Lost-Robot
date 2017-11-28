@@ -414,6 +414,8 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
 int d_speed = 60, r_speed = 25, t_speed = 50, face_right, bound_prox, face_down, not_moving, line_up[3]={1,0,2}, last_mode = -1;
 double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y, dists[2] = {-1.0, -1.0};
 
+double init_ball_x, init_ball_y;
+
 void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 {
  /*************************************************************************
@@ -504,8 +506,6 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
 
   Below are summaries of what each state is responsible for:	
   
-
-
 
   *****************************************************************************/
 
@@ -1658,11 +1658,16 @@ void distancesFromBall(struct RoboAI *ai, struct blob *blobs) {
     printf("Distances from ball: 1: %f, 2: %f\n", dists[0],dists[1]);
 }
 
-int initPhantomBall(struct RoboAI *ai, struct blob *blobs) {
+void initPhantomBall(struct RoboAI *ai, struct blob *blobs) {
   
     /* 
      * gets the initial parameters of the ball for comparisons later.  
     */
+
+    if(ai->st.ball == NULL) {
+      return;
+    }
+
     init_ball_x = fabs(ai->st.ball->x1 - ai->st.ball->x2);
     init_ball_y = fabs(ai->st.ball->y1 - ai->st.ball->y2);
   
@@ -1673,17 +1678,17 @@ int initPhantomBall(struct RoboAI *ai, struct blob *blobs) {
       /* 
        * check if the ball has changed in size dramatically. If it has it's probably not a ball!  
       */
+
+      double current_ball_x = fabs(ai->st.ball->x1 - ai->st.ball->x2);
+      double current_ball_y = fabs(ai->st.ball->y1 - ai->st.ball->y2);
   
-      double current_ball_x = ai->st.ball->x1 - ai->st.ball->x2;
-      double current_ball_y = ai->st.ball->y1 - ai->st.ball->y2;
-  
-      if (current_ball_x - init_ball_x > 10 ||
-          current_ball_y - init_ball_y > 10) {
-            return 0;   //it's not the ball!
+      if ( fabs(current_ball_x - init_ball_x) > 50 ||
+          fabs(current_ball_y - init_ball_y) > 50) {
+            return 1;   //it's not the ball!
           }
       
       else {
-        return 1;  // it is the ball!
+        return 0;  // it is the ball!
       }
   
   }
