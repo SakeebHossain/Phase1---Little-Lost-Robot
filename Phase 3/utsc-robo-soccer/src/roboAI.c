@@ -412,7 +412,7 @@ void AI_calibrate(struct RoboAI *ai, struct blob *blobs)
 }
 
 int d_speed = 60, r_speed = 25, t_speed = 50, k_speed = 80, face_right, bound_prox = 0, face_down, not_moving, last_mode = -1, spawn_top;
-double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y, dists[2] = {-1.0, -1.0};
+double old_dir_x = -10, old_dir_y = -10, bal_euc, fixed_x, fixed_y, old_fixed_x, old_fixed_y, dists[2] = {-1.0, -1.0};
 
 
 int *current_state, prev_state;
@@ -853,19 +853,21 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
          face_right = 0;
       }
 
+      /*
       if( ai->st.smy > 0) {
           face_down = 1;
       } else {
           face_down = 0;
       }
+      */
 
-      if( ai->st.self->cy < 384) {
+      if( ai->st.self->cy < ai->st.ball->cy) {
          spawn_top = 1;
       } else {
          spawn_top = 0;
       }
 
-      *current_state = 102;
+      *current_state = 107;
     }
 
     // STATE 102: turn to face wall
@@ -955,8 +957,20 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     // STATE 108: move towards center of our net (measured relative to ball)
     else if ( *current_state == 108 ) {
 
-      if( (abs(ai->st.self->cy - ai->st.ball->cy) < 30 && spawn_top) ||
-       (abs(ai->st.self->cy - ai->st.ball->cy) < 100 && !(spawn_top))) {
+      double x, y, mag;
+
+      // Vector from centre of bot to centre of ball
+      x = ai->st.ball->cx - ai->st.self->cx;
+      y = ai->st.ball->cy - ai->st.self->cy;
+
+      mag = 1.0 / sqrt((x*x) + (y*y));
+      x *= mag;
+      y *= mag;
+
+      // Dot product with vector [1, 0]
+      //if( (abs(ai->st.self->cy - ai->st.ball->cy) < 30 && spawn_top) ||
+      // (abs(ai->st.self->cy - ai->st.ball->cy) < 100 && !(spawn_top))) {
+      if(fabs(x) > 0.95) {
         all_stop();
         clear_motion_flags(ai);
         not_moving = 1;
@@ -972,7 +986,9 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     // STATE 109: face the ball
     else if ( *current_state == 109 ) {
 
-      if (lookBall(ai, blobs))  {
+      toBallPenalty(ai, blobs);
+      // used lookBall when it was a Goof Troop
+      if (facingBall(ai,blobs))  {
         all_stop();
         clear_motion_flags(ai);
         not_moving = 1;
@@ -984,7 +1000,17 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     // STATE 110: move towards ball (measured relative to ball)
     else if ( *current_state == 110 ) {
       //if( abs(ai->st.self->cx - ai->st.ball->cx) < 300 ) {
-      if( abs(ai->st.self->x1 - ai->st.ball->cx) < 150 ) {
+
+      int relevant_x;
+
+      if(ai->st.ball->cx > ai->st.self->cx) {
+        relevant_x = ai->st.self->x2;
+      } else {
+        relevant_x = ai->st.self->x1;        
+      }
+
+      //if( abs(relevant_x - ai->st.ball->cx) < bal_euc ) {
+      if(closeToBall(ai,blobs)) {
         all_stop();
         clear_motion_flags(ai);
         not_moving = 1;
@@ -1017,7 +1043,28 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
       *current_state = 118;
     }
     else if ( *current_state == 118 ) {
-      fprintf(stderr,"Turn at Wall");
+      if(fabs(ai->st.ball->cx - ai->st.old_bcx) < fabs(ai->st.ball->x2 - ai->st.ball->x1)) {
+        *current_state = 119;
+      } else {
+        *current_state = 120;
+      }
+    }
+    else if ( *current_state == 119 ) {
+      if(ai->st.bvx == 1) {
+        int speed = d_speed / 2;
+        drive_speed(speed);
+        clear_motion_flags(ai);
+        ai->st.mv_fwd = 1;
+      } else {
+        all_stop();
+        clear_motion_flags(ai);
+        not_moving = 1;
+        *current_state = 113;
+      }
+
+    }
+    else if ( *current_state == 120 ) {
+      // Just catches the robot
     }
 
   }
@@ -1110,6 +1157,8 @@ void AI_main(struct RoboAI *ai, struct blob *blobs, void *state)
     old_dir_y = ai->st.self->dy;
     ai->st.self->dx = fixed_x;
     ai->st.self->dy = fixed_y;
+    old_fixed_x = fixed_x;
+    old_fixed_y = fixed_y;
   }
 
 
@@ -1169,23 +1218,6 @@ else if(not_moving) {
 int flipped = 0;
 double cross = (ai->st.self->dx * old_dir_y) - (old_dir_x * ai->st.self->dy);
 
-/*
- if(ai->st.self->dy > 0 && old_dir_y < 0) {
-
-   if(fabs(ai->st.self->dy - old_dir_y) > 1.0) {
-      flipped = 1;
-   }
-
- }
- else if(ai->st.self->dy < 0 && old_dir_y > 0) {
-
-   if(fabs(ai->st.self->dy - old_dir_y) > 1.0) {
-      flipped = 1;
-   }
-
- }
-
-*/
 
   if(ai->st.mv_fl) {
     if(cross < 0) {
@@ -1227,6 +1259,22 @@ double cross = (ai->st.self->dx * old_dir_y) - (old_dir_x * ai->st.self->dy);
     fixed_y = ai->st.self->dy;
   }
 
+  int double_flipped = 0;
+  double dot = (fixed_x * old_fixed_x) + (old_fixed_y * fixed_y);
+  
+  
+  if(dot < 0) {
+    double_flipped = 1;
+  }
+  else {
+    double_flipped = 0;
+  }
+    
+  
+  if(double_flipped) {
+    fixed_x *= -1;
+    fixed_y *= -1;
+  }
 
  //ai->st.self->dy
  //ai->st.smy
@@ -1321,7 +1369,7 @@ int lookSide(struct RoboAI *ai, struct blob *blobs) {
 int lookNet(struct RoboAI *ai, struct blob *blobs) {
 
   if ( ai->st.self->dx > .1 ) {
-    if(spawn_top) {
+    if((spawn_top && face_right) || (!spawn_top && !face_right)) {
       pivot_right_speed(r_speed);
       clear_motion_flags(ai);
       ai->st.mv_fr = 1;
@@ -1500,7 +1548,7 @@ void toBallVec(struct RoboAI *ai, struct blob *blobs) {
 
 }
 
-void toBallVecRev(struct RoboAI *ai, struct blob *blobs) {
+void toBallPenalty(struct RoboAI *ai, struct blob *blobs) {
 
     double theta, phi, x, y, mag, dot, cross;
     int correction, speed;
@@ -1530,16 +1578,16 @@ void toBallVecRev(struct RoboAI *ai, struct blob *blobs) {
 
 
     if(cross >= 0) {
-       pivot_left_speed(speed);
-       //pivot_right_speed(speed);
+       //pivot_left_speed(speed);
+       pivot_right_speed(speed);
        clear_motion_flags(ai);
-       ai->st.mv_fl = 1;
+       ai->st.mv_fr = 1;
     }
     else if(cross < 0) {
-       pivot_right_speed(speed);
-       //pivot_left_speed(speed);
+       //pivot_right_speed(speed);
+       pivot_left_speed(speed);
        clear_motion_flags(ai);
-       ai->st.mv_fr = 1;       
+       ai->st.mv_fl = 1;       
     }
 
   }
